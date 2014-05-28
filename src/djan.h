@@ -26,5 +26,20 @@
 #ifndef DJAN_H
 #define DJAN_H
 
+// 's' string
+// 'n' number
+// 'o' object
+// 'a' array
+// 't' true
+// 'f' false
+// '0' null
+
+typedef struct dja_value {
+  char type; // or short type; ?
+  char *source;
+  size_t offset;
+  size_t length; // if length == 0, the string is "owned" bv the value
+} dja_value;
+
 #endif // DJAN_H
 
