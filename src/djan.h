@@ -32,14 +32,33 @@
 // 'a' array
 // 't' true
 // 'f' false
-// '0' null
+// '0' null or '\0'
 
 typedef struct dja_value {
+  char *key; // when set, the value is an entry...
   char type; // or short type; ?
   char *source;
-  size_t offset;
-  size_t length; // if length == 0, the string is "owned" bv the value
+  size_t soff;
+  size_t slen; // if slen == 0, the source string is "owned" bv the value
+  struct dja_value **children; // for arrays and objects, else NULL
 } dja_value;
+
+dja_value *dja_parse(char *input);
+dja_value *dja_parse_fragment(char *input, size_t offset, size_t length);
+
+char *dja_dump(dja_value *v);
+char *dja_to_json(dja_value *v);
+
+void dja_value_free(dja_value *v);
+
+char *dja_to_string(dja_value *v);
+int *dja_to_int(dja_value *v);
+
+dja_value *dja_lookup(dja_value *v, char *path);
+char *dja_lookup_string(dja_value *v, char *path);
+
+int dja_push(dja_value *array, dja_value *v);
+int dja_set(dja_value *object, dja_value *v);
 
 #endif // DJAN_H
 
