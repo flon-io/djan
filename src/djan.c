@@ -25,3 +25,39 @@
 
 #define _POSIX_C_SOURCE 200809L
 
+#include <stdlib.h>
+
+#include "djan.h"
+
+
+dja_value *dja_value_malloc(char type)
+{
+  dja_value *v = calloc(1, sizeof(dja_value));
+  v->type = type;
+  return v;
+}
+
+void dja_value_free(dja_value *v)
+{
+  if (v->key != NULL) free(v->key);
+  if (v->slen == 0 && v->source != NULL) free(v->source);
+
+  if (v->children != NULL)
+  {
+    for (size_t i = 0; ; i++)
+    {
+      dja_value *c = v->children[i];
+      if (c == NULL) break;
+      dja_value_free(c);
+    }
+    free(v->children);
+  }
+
+  free(v);
+}
+
+dja_value *dja_parse(char *input)
+{
+  return dja_value_malloc('0');
+}
+
