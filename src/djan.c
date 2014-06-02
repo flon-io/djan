@@ -25,12 +25,13 @@
 
 #define _POSIX_C_SOURCE 200809L
 
+#include "djan.h"
+
 #include <stdlib.h>
-#include <stdio.h>
 #include <string.h>
+#include <stdio.h>
 
 #include "aabro.h"
-#include "djan.h"
 
 
 //
