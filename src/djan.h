@@ -26,6 +26,9 @@
 #ifndef DJAN_H
 #define DJAN_H
 
+#include <stdlib.h>
+#include <string.h>
+
 // 's' string
 // 'n' number
 // 'o' object

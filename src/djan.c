@@ -26,14 +26,24 @@
 #define _POSIX_C_SOURCE 200809L
 
 #include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
 
+#include "aabro.h"
 #include "djan.h"
 
 
-dja_value *dja_value_malloc(char type)
+//
+// dja_value malloc/free
+
+dja_value *dja_value_malloc(char type, char *input, size_t off, size_t len)
 {
   dja_value *v = calloc(1, sizeof(dja_value));
   v->type = type;
+  v->source = input;
+  v->soff = off;
+  v->slen = len;
+
   return v;
 }
 
@@ -56,10 +66,46 @@ void dja_value_free(dja_value *v)
   free(v);
 }
 
+
+//
+// parsing
+
+abr_parser *dja_parser = NULL;
+
+void dja_parser_init()
+{
+  if (dja_parser != NULL) return;
+
+  dja_parser =
+    abr_n_string("null", "null");
+}
+
+dja_value *dja_extract(char *input, abr_tree *t)
+{
+  if (t == NULL) return NULL;
+
+  if (strcmp(t->name, "null") == 0)
+    return dja_value_malloc('0', input, t->offset, t->length);
+
+  return NULL;
+}
+
 dja_value *dja_parse(char *input)
 {
-  return dja_value_malloc('0');
+  dja_parser_init();
+  abr_tree *t = abr_parse_all(input, 0, dja_parser);
+
+  printf("%s\n", abr_tree_to_string(t));
+
+  dja_value *v = dja_extract(input, t);
+  abr_tree_free(t);
+
+  return v;
 }
+
+
+//
+// extracting stuff out of dja_value items
 
 char *dja_to_string(dja_value *v)
 {
