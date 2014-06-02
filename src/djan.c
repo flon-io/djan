@@ -61,3 +61,15 @@ dja_value *dja_parse(char *input)
   return dja_value_malloc('0');
 }
 
+char *dja_to_string(dja_value *v)
+{
+  if (v->slen == 0) return strdup(v->source + v->soff);
+  return strndup(v->source + v->soff, v->slen);
+}
+
+int dja_to_int(dja_value *v)
+{
+  if (v->type != 'n') return -1;
+  return atoi(v->source + v->soff);
+}
+

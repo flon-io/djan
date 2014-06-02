@@ -52,7 +52,7 @@ char *dja_to_json(dja_value *v);
 void dja_value_free(dja_value *v);
 
 char *dja_to_string(dja_value *v);
-int *dja_to_int(dja_value *v);
+int dja_to_int(dja_value *v);
 
 dja_value *dja_lookup(dja_value *v, char *path);
 char *dja_lookup_string(dja_value *v, char *path);
