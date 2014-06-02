@@ -21,7 +21,7 @@ describe "dja_parse()"
 
   it "parses integers"
   {
-    v = dja_parse(strdup("1"));
+    v = dja_parse(rdz_strdup("1"));
 
     ensure(v != NULL);
     ensure(v->type == 'n');
@@ -33,7 +33,7 @@ describe "dja_parse()"
 
   it "parses strings"
   {
-    v = dja_parse(strdup("\"hello\""));
+    v = dja_parse(rdz_strdup("\"hello\""));
 
     ensure(v != NULL);
     ensure(v->type == 's');
@@ -42,7 +42,7 @@ describe "dja_parse()"
 
   it "parses true"
   {
-    v = dja_parse(strdup("true"));
+    v = dja_parse(rdz_strdup("true"));
 
     ensure(v != NULL);
     ensure(v->type == 't');
@@ -51,7 +51,7 @@ describe "dja_parse()"
 
   it "parses false"
   {
-    v = dja_parse(strdup("false"));
+    v = dja_parse(rdz_strdup("false"));
 
     ensure(v != NULL);
     ensure(v->type == 'f');
@@ -60,7 +60,7 @@ describe "dja_parse()"
 
   it "parses null"
   {
-    v = dja_parse(strdup("null"));
+    v = dja_parse(rdz_strdup("null"));
 
     ensure(v != NULL);
     ensure(v->type == '0');
