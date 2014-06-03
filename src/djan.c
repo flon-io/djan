@@ -80,6 +80,7 @@ void dja_parser_init()
   dja_parser =
     abr_n_alt(
       "value",
+      abr_n_regex("string", "^\"(\\\\.|[^\"])*\""),
       abr_n_regex("number", "^-?[0-9]+(\\.[0-9]+)?([eE][+-]?[0-9]+)?"),
       abr_n_string("true", "true"),
       abr_n_string("false", "false"),
@@ -102,6 +103,8 @@ dja_value *dja_extract(char *input, abr_tree *t)
     }
   }
 
+  if (strcmp(t->name, "string") == 0)
+    return dja_value_malloc('s', input, t->offset + 1, t->length - 2);
   if (strcmp(t->name, "number") == 0)
     return dja_value_malloc('n', input, t->offset, t->length);
   if (strcmp(t->name, "true") == 0)
@@ -121,6 +124,7 @@ dja_value *dja_parse(char *input)
   abr_tree *t = abr_parse_all(input, 0, dja_parser);
   // TODO: deal with errors (t->result < 0)
 
+  //printf(">%s<\n", input);
   //printf("%s\n", abr_tree_to_string(t));
 
   dja_value *v = dja_extract(input, t);

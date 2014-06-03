@@ -68,13 +68,21 @@ describe "dja_parse()"
 
   context "strings"
   {
-    it "parses strings"
+    it "parses \"hello\""
     {
       v = dja_parse(rdz_strdup("\"hello\""));
 
       ensure(v != NULL);
       ensure(v->type == 's');
       ensure(dja_to_string(v) ===f "hello");
+    }
+    it "parses \"hello \\\"old bore\\\"\""
+    {
+      v = dja_parse(rdz_strdup("\"hello \\\"old bore\\\"\""));
+
+      ensure(v != NULL);
+      ensure(v->type == 's');
+      ensure(dja_to_string(v) ===f "hello \\\"old bore\\\"");
     }
   }
 
