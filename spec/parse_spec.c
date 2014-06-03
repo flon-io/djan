@@ -29,6 +29,14 @@ describe "dja_parse()"
       ensure(v->type == 'n');
       ensure(dja_to_int(v) == 1);
     }
+    it "parses \"-1\""
+    {
+      v = dja_parse(rdz_strdup("-1"));
+
+      ensure(v != NULL);
+      ensure(v->type == 'n');
+      ensure(dja_to_int(v) == -1);
+    }
 
     it "parses floats"
     it "parses e numbers"

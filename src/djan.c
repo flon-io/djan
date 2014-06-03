@@ -80,9 +80,10 @@ void dja_parser_init()
   dja_parser =
     abr_n_alt(
       "value",
-      abr_n_string("null", "null"),
+      abr_n_regex("number", "^-?[0-9]+(\\.[0-9]+)?([eE][+-]?[0-9]+)?"),
       abr_n_string("true", "true"),
       abr_n_string("false", "false"),
+      abr_n_string("null", "null"),
       NULL);
 }
 
@@ -101,12 +102,14 @@ dja_value *dja_extract(char *input, abr_tree *t)
     }
   }
 
-  if (strcmp(t->name, "null") == 0)
-    return dja_value_malloc('0', input, t->offset, t->length);
+  if (strcmp(t->name, "number") == 0)
+    return dja_value_malloc('n', input, t->offset, t->length);
   if (strcmp(t->name, "true") == 0)
     return dja_value_malloc('t', input, t->offset, t->length);
   if (strcmp(t->name, "false") == 0)
     return dja_value_malloc('f', input, t->offset, t->length);
+  if (strcmp(t->name, "null") == 0)
+    return dja_value_malloc('0', input, t->offset, t->length);
 
   return NULL;
 }
