@@ -84,6 +84,22 @@ describe "dja_parse()"
       ensure(v->type == 's');
       ensure(dja_to_string(v) ===f "hello \\\"old bore\\\"");
     }
+    it "parses \\t"
+    {
+      v = dja_parse(rdz_strdup("\"hello\\ttab\""));
+
+      ensure(v != NULL);
+      ensure(v->type == 's');
+      ensure(dja_to_string(v) ===f "hello\ttab");
+    }
+    it "parses unicode escape sequences"
+    {
+      v = dja_parse(rdz_strdup("\"hello \\u0066ool"));
+
+      ensure(v != NULL);
+      ensure(v->type == 's');
+      ensure(dja_to_string(v) ===f "hello fool");
+    }
   }
 
   context "booleans"

@@ -80,7 +80,7 @@ void dja_parser_init()
   dja_parser =
     abr_n_alt(
       "value",
-      abr_n_regex("string", "^\"(\\\\.|[^\"])*\""),
+      abr_n_regex("string", "^\"(\\\\[\"\\/\\\\bfnrt]|\\\\u[0-9a-fA-F]{4}|[^\"\\])*\""),
       abr_n_regex("number", "^-?[0-9]+(\\.[0-9]+)?([eE][+-]?[0-9]+)?"),
       abr_n_string("true", "true"),
       abr_n_string("false", "false"),
