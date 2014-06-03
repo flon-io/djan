@@ -78,15 +78,35 @@ void dja_parser_init()
   if (dja_parser != NULL) return;
 
   dja_parser =
-    abr_n_string("null", "null");
+    abr_n_alt(
+      "value",
+      abr_n_string("null", "null"),
+      abr_n_string("true", "true"),
+      abr_n_string("false", "false"),
+      NULL);
 }
 
 dja_value *dja_extract(char *input, abr_tree *t)
 {
-  if (t == NULL) return NULL;
+  if (t->result != 1) return NULL;
+  //if (t->name == NULL) return NULL;
+
+  if (strcmp(t->name, "value") == 0)
+  {
+    for(size_t i = 0; ; i++)
+    {
+      if (t->children[i] == NULL) break;
+      if (t->children[i]->result != 1) continue;
+      return dja_extract(input, t->children[i]);
+    }
+  }
 
   if (strcmp(t->name, "null") == 0)
     return dja_value_malloc('0', input, t->offset, t->length);
+  if (strcmp(t->name, "true") == 0)
+    return dja_value_malloc('t', input, t->offset, t->length);
+  if (strcmp(t->name, "false") == 0)
+    return dja_value_malloc('f', input, t->offset, t->length);
 
   return NULL;
 }
@@ -94,9 +114,11 @@ dja_value *dja_extract(char *input, abr_tree *t)
 dja_value *dja_parse(char *input)
 {
   dja_parser_init();
-  abr_tree *t = abr_parse_all(input, 0, dja_parser);
 
-  printf("%s\n", abr_tree_to_string(t));
+  abr_tree *t = abr_parse_all(input, 0, dja_parser);
+  // TODO: deal with errors (t->result < 0)
+
+  //printf("%s\n", abr_tree_to_string(t));
 
   dja_value *v = dja_extract(input, t);
   abr_tree_free(t);
@@ -116,6 +138,8 @@ char *dja_to_string(dja_value *v)
 
 int dja_to_int(dja_value *v)
 {
+  if (v->type == 't') return 1;
+  if (v->type == 'f') return 0;
   if (v->type != 'n') return -1;
   return atoi(v->source + v->soff);
 }
