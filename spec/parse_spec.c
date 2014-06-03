@@ -27,6 +27,8 @@ describe "dja_parse()"
 
       ensure(v != NULL);
       ensure(v->type == 'n');
+      ensure(v->soff == 0);
+      ensure(v->slen == 1);
       ensure(dja_to_int(v) == 1);
     }
     it "parses \"-1\""
@@ -35,11 +37,33 @@ describe "dja_parse()"
 
       ensure(v != NULL);
       ensure(v->type == 'n');
+      ensure(v->soff == 0);
+      ensure(v->slen == 2);
       ensure(dja_to_int(v) == -1);
     }
 
-    it "parses floats"
-    it "parses e numbers"
+    it "parses \"0.0\""
+    {
+      v = dja_parse(rdz_strdup("0.0"));
+
+      ensure(v != NULL);
+      ensure(v->type == 'n');
+      ensure(v->soff == 0);
+      ensure(v->slen == 3);
+      ensure(dja_to_double(v) == 0.0);
+      ensure(dja_to_string(v) ===f "0.0");
+    }
+
+    it "parses \"1.5e1\""
+    {
+      v = dja_parse(rdz_strdup("1.5e1"));
+
+      ensure(v != NULL);
+      ensure(v->type == 'n');
+      ensure(v->soff == 0);
+      ensure(v->slen == 5);
+      ensure(dja_to_double(v) == 15.0);
+    }
   }
 
   context "strings"

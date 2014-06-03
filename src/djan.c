@@ -147,3 +147,9 @@ int dja_to_int(dja_value *v)
   return atoi(v->source + v->soff);
 }
 
+double dja_to_double(dja_value *v)
+{
+  if (v->type != 'n') return 0.0;
+  return atof(v->source + v->soff);
+}
+
