@@ -19,51 +19,63 @@ describe "dja_parse()"
     if (v != NULL) dja_value_free(v);
   }
 
-  it "parses integers"
+  context "numbers"
   {
-    v = dja_parse(rdz_strdup("1"));
+    it "parses \"1\""
+    {
+      v = dja_parse(rdz_strdup("1"));
 
-    ensure(v != NULL);
-    ensure(v->type == 'n');
-    ensure(dja_to_int(v) == 1);
+      ensure(v != NULL);
+      ensure(v->type == 'n');
+      ensure(dja_to_int(v) == 1);
+    }
+
+    it "parses floats"
+    it "parses e numbers"
   }
 
-  it "parses floats"
-  it "parses e numbers"
-
-  it "parses strings"
+  context "strings"
   {
-    v = dja_parse(rdz_strdup("\"hello\""));
+    it "parses strings"
+    {
+      v = dja_parse(rdz_strdup("\"hello\""));
 
-    ensure(v != NULL);
-    ensure(v->type == 's');
-    ensure(dja_to_string(v) ===f "hello");
+      ensure(v != NULL);
+      ensure(v->type == 's');
+      ensure(dja_to_string(v) ===f "hello");
+    }
   }
 
-  it "parses true"
+  context "booleans"
   {
-    v = dja_parse(rdz_strdup("true"));
+    it "parses \"true\""
+    {
+      v = dja_parse(rdz_strdup("true"));
 
-    ensure(v != NULL);
-    ensure(v->type == 't');
-    ensure(dja_to_int(v) == 1);
+      ensure(v != NULL);
+      ensure(v->type == 't');
+      ensure(dja_to_int(v) == 1);
+    }
+
+    it "parses \"false\""
+    {
+      v = dja_parse(rdz_strdup("false"));
+
+      ensure(v != NULL);
+      ensure(v->type == 'f');
+      ensure(dja_to_int(v) == 0);
+    }
   }
 
-  it "parses false"
+  context "null"
   {
-    v = dja_parse(rdz_strdup("false"));
+    it "parses \"null\""
+    {
+      v = dja_parse(rdz_strdup("null"));
 
-    ensure(v != NULL);
-    ensure(v->type == 'f');
-    ensure(dja_to_int(v) == 0);
-  }
-
-  it "parses null"
-  {
-    v = dja_parse(rdz_strdup("null"));
-
-    ensure(v != NULL);
-    ensure(v->type == '0');
+      ensure(v != NULL);
+      ensure(v->type == '0');
+    }
   }
 
   context "arrays"
