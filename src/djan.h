@@ -65,5 +65,10 @@ char *dja_lookup_string(dja_value *v, char *path);
 int dja_push(dja_value *array, dja_value *v);
 int dja_set(dja_value *object, char *key, dja_value *v);
 
+char *dja_escape(char *s);
+char *dja_unescape(char *s);
+char *dja_n_escape(char *s, size_t n);
+char *dja_n_unescape(char *s, size_t n);
+
 #endif // DJAN_H
 

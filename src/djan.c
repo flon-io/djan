@@ -153,7 +153,7 @@ char *dja_to_string(dja_value *v)
 {
   if (v->type != 's') return dja_string(v);
 
-  return strndup(v->source + v->soff + 1, v->slen - 2);
+  return dja_n_unescape(v->source + v->soff + 1, v->slen - 2);
 }
 
 int dja_to_int(dja_value *v)
@@ -168,5 +168,26 @@ double dja_to_double(dja_value *v)
 {
   if (v->type != 'n') return 0.0;
   return atof(v->source + v->soff);
+}
+
+
+//
+// [un]escape
+
+char *dja_escape(char *s)
+{
+  return strdup("(implement me)");
+}
+char *dja_n_escape(char *s, size_t n)
+{
+  return strdup("(implement me)");
+}
+char *dja_unescape(char *s)
+{
+  return strdup("(implement me)");
+}
+char *dja_n_unescape(char *s, size_t n)
+{
+  return strdup("(implement me)");
 }
 
