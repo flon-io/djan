@@ -100,12 +100,18 @@ describe "dja_parse()"
     }
     it "parses unicode escape sequences"
     {
-      v = dja_parse(rdz_strdup("\"hello \\u0066ool"));
+      v = dja_parse(rdz_strdup("\"hello \\u0066ool\""));
 
       ensure(v != NULL);
       ensure(v->type == 's');
       ensure(dja_string(v) ===f "\"hello \\u0066ool\"");
       ensure(dja_to_string(v) ===f "hello fool");
+    }
+    it "doesn't parse unknown escapes"
+    {
+      v = dja_parse(rdz_strdup("\"hello \\z\""));
+
+      ensure(v == NULL);
     }
   }
 
