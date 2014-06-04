@@ -53,7 +53,9 @@ char *dja_to_json(dja_value *v);
 
 void dja_value_free(dja_value *v);
 
+char *dja_string(dja_value *v);
 char *dja_to_string(dja_value *v);
+
 int dja_to_int(dja_value *v);
 double dja_to_double(dja_value *v);
 

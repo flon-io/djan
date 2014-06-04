@@ -51,18 +51,21 @@ describe "dja_parse()"
       ensure(v->soff == 0);
       ensure(v->slen == 3);
       ensure(dja_to_double(v) == 0.0);
+      ensure(dja_string(v) ===f "0.0");
       ensure(dja_to_string(v) ===f "0.0");
     }
 
-    it "parses \"1.5e1\""
+    it "parses \"1.5e2\""
     {
-      v = dja_parse(rdz_strdup("1.5e1"));
+      v = dja_parse(rdz_strdup("1.5e2"));
 
       ensure(v != NULL);
       ensure(v->type == 'n');
       ensure(v->soff == 0);
       ensure(v->slen == 5);
-      ensure(dja_to_double(v) == 15.0);
+      ensure(dja_to_double(v) == 150.0);
+      ensure(dja_string(v) ===f "1.5e2");
+      ensure(dja_to_string(v) ===f "1.5e2");
     }
   }
 
@@ -74,6 +77,7 @@ describe "dja_parse()"
 
       ensure(v != NULL);
       ensure(v->type == 's');
+      ensure(dja_string(v) ===f "\"hello\"");
       ensure(dja_to_string(v) ===f "hello");
     }
     it "parses \"hello \\\"old bore\\\"\""
@@ -82,6 +86,7 @@ describe "dja_parse()"
 
       ensure(v != NULL);
       ensure(v->type == 's');
+      ensure(dja_string(v) ===f "\"hello \\\"old bore\\\"\"");
       ensure(dja_to_string(v) ===f "hello \\\"old bore\\\"");
     }
     it "parses \\t"
@@ -90,6 +95,7 @@ describe "dja_parse()"
 
       ensure(v != NULL);
       ensure(v->type == 's');
+      ensure(dja_string(v) ===f "\"hello\\ttab\"");
       ensure(dja_to_string(v) ===f "hello\ttab");
     }
     it "parses unicode escape sequences"
@@ -98,6 +104,7 @@ describe "dja_parse()"
 
       ensure(v != NULL);
       ensure(v->type == 's');
+      ensure(dja_string(v) ===f "\"hello \\u0066ool\"");
       ensure(dja_to_string(v) ===f "hello fool");
     }
   }
@@ -110,6 +117,7 @@ describe "dja_parse()"
 
       ensure(v != NULL);
       ensure(v->type == 't');
+      ensure(dja_string(v) ===f "true");
       ensure(dja_to_int(v) == 1);
     }
 
@@ -119,6 +127,7 @@ describe "dja_parse()"
 
       ensure(v != NULL);
       ensure(v->type == 'f');
+      ensure(dja_string(v) ===f "false");
       ensure(dja_to_int(v) == 0);
     }
   }
@@ -131,6 +140,7 @@ describe "dja_parse()"
 
       ensure(v != NULL);
       ensure(v->type == '0');
+      ensure(dja_string(v) ===f "null");
     }
   }
 

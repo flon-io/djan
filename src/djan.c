@@ -110,16 +110,15 @@ dja_value *dja_extract(char *input, abr_tree *t)
     }
   }
 
-  if (strcmp(t->name, "string") == 0)
-    return dja_value_malloc('s', input, t->offset + 1, t->length - 2);
-  if (strcmp(t->name, "number") == 0)
-    return dja_value_malloc('n', input, t->offset, t->length);
-  if (strcmp(t->name, "true") == 0)
-    return dja_value_malloc('t', input, t->offset, t->length);
-  if (strcmp(t->name, "false") == 0)
-    return dja_value_malloc('f', input, t->offset, t->length);
-  if (strcmp(t->name, "null") == 0)
-    return dja_value_malloc('0', input, t->offset, t->length);
+  char ty = '-';
+
+  if (strcmp(t->name, "string") == 0) ty = 's';
+  else if (strcmp(t->name, "number") == 0) ty = 'n';
+  else if (strcmp(t->name, "true") == 0) ty = 't';
+  else if (strcmp(t->name, "false") == 0) ty = 'f';
+  else if (strcmp(t->name, "null") == 0) ty = '0';
+
+  if (ty != '-') return dja_value_malloc(ty, input, t->offset, t->length);
 
   return NULL;
 }
@@ -144,10 +143,17 @@ dja_value *dja_parse(char *input)
 //
 // extracting stuff out of dja_value items
 
-char *dja_to_string(dja_value *v)
+char *dja_string(dja_value *v)
 {
   if (v->slen == 0) return strdup(v->source + v->soff);
   return strndup(v->source + v->soff, v->slen);
+}
+
+char *dja_to_string(dja_value *v)
+{
+  if (v->type != 's') return dja_string(v);
+
+  return strndup(v->source + v->soff + 1, v->slen - 2);
 }
 
 int dja_to_int(dja_value *v)
