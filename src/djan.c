@@ -178,16 +178,35 @@ char *dja_escape(char *s)
 {
   return strdup("(implement me)");
 }
+
 char *dja_n_escape(char *s, size_t n)
 {
+  // TODO: use the flu buffer
+
   return strdup("(implement me)");
 }
+
 char *dja_unescape(char *s)
 {
-  return strdup("(implement me)");
+  return dja_n_unescape(s, strlen(s));
 }
+
 char *dja_n_unescape(char *s, size_t n)
 {
-  return strdup("(implement me)");
+  // TODO: t" \bfnr from >\"bfnrt<
+
+  char *d = calloc(n + 1, sizeof(char));
+
+  for (size_t is = 0, id = 0; is < n; is++)
+  {
+    if (s[is] != '\\') { d[id++] = s[is]; continue; }
+
+    char c = s[is + 1];
+    if (c == 't') d[id++] = '\t';
+    else if (c == '"') d[id++] = '"';
+    is++;
+  }
+
+  return d;
 }
 

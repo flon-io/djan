@@ -24,7 +24,7 @@ context "escapes"
   {
     it "unescapes tabs"
     {
-      ensure(dja_unescape("a \\ttab") ===f "a\ttab");
+      ensure(dja_unescape("a\\ttab") ===f "a\ttab");
     }
   }
 

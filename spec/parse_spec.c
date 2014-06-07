@@ -87,7 +87,7 @@ describe "dja_parse()"
       ensure(v != NULL);
       ensure(v->type == 's');
       ensure(dja_string(v) ===f "\"hello \\\"old bore\\\"\"");
-      ensure(dja_to_string(v) ===f "hello \\\"old bore\\\"");
+      ensure(dja_to_string(v) ===f "hello \"old bore\"");
     }
     it "parses \\t"
     {
