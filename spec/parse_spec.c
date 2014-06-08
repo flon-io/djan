@@ -23,7 +23,7 @@ describe "dja_parse()"
   {
     it "parses \"1\""
     {
-      v = dja_parse(rdz_strdup("1"));
+      v = dja_parse("1");
 
       ensure(v != NULL);
       ensure(v->type == 'n');
@@ -33,7 +33,7 @@ describe "dja_parse()"
     }
     it "parses \"-1\""
     {
-      v = dja_parse(rdz_strdup("-1"));
+      v = dja_parse("-1");
 
       ensure(v != NULL);
       ensure(v->type == 'n');
@@ -44,7 +44,7 @@ describe "dja_parse()"
 
     it "parses \"0.0\""
     {
-      v = dja_parse(rdz_strdup("0.0"));
+      v = dja_parse("0.0");
 
       ensure(v != NULL);
       ensure(v->type == 'n');
@@ -57,7 +57,7 @@ describe "dja_parse()"
 
     it "parses \"1.5e2\""
     {
-      v = dja_parse(rdz_strdup("1.5e2"));
+      v = dja_parse("1.5e2");
 
       ensure(v != NULL);
       ensure(v->type == 'n');
@@ -73,7 +73,7 @@ describe "dja_parse()"
   {
     it "parses \"hello\""
     {
-      v = dja_parse(rdz_strdup("\"hello\""));
+      v = dja_parse("\"hello\"");
 
       ensure(v != NULL);
       ensure(v->type == 's');
@@ -82,7 +82,7 @@ describe "dja_parse()"
     }
     it "parses \"hello \\\"old bore\\\"\""
     {
-      v = dja_parse(rdz_strdup("\"hello \\\"old bore\\\"\""));
+      v = dja_parse("\"hello \\\"old bore\\\"\"");
 
       ensure(v != NULL);
       ensure(v->type == 's');
@@ -91,7 +91,7 @@ describe "dja_parse()"
     }
     it "parses \\t"
     {
-      v = dja_parse(rdz_strdup("\"hello\\ttab\""));
+      v = dja_parse("\"hello\\ttab\"");
 
       ensure(v != NULL);
       ensure(v->type == 's');
@@ -100,7 +100,7 @@ describe "dja_parse()"
     }
     it "parses unicode escape sequences"
     {
-      v = dja_parse(rdz_strdup("\"hello \\u0066ool\""));
+      v = dja_parse("\"hello \\u0066ool\"");
 
       ensure(v != NULL);
       ensure(v->type == 's');
@@ -109,7 +109,7 @@ describe "dja_parse()"
     }
     it "doesn't parse unknown escapes"
     {
-      v = dja_parse(rdz_strdup("\"hello \\z\""));
+      v = dja_parse("\"hello \\z\"");
 
       ensure(v == NULL);
     }
@@ -119,7 +119,7 @@ describe "dja_parse()"
   {
     it "parses \"true\""
     {
-      v = dja_parse(rdz_strdup("true"));
+      v = dja_parse("true");
 
       ensure(v != NULL);
       ensure(v->type == 't');
@@ -129,7 +129,7 @@ describe "dja_parse()"
 
     it "parses \"false\""
     {
-      v = dja_parse(rdz_strdup("false"));
+      v = dja_parse("false");
 
       ensure(v != NULL);
       ensure(v->type == 'f');
@@ -142,7 +142,7 @@ describe "dja_parse()"
   {
     it "parses \"null\""
     {
-      v = dja_parse(rdz_strdup("null"));
+      v = dja_parse("null");
 
       ensure(v != NULL);
       ensure(v->type == '0');
