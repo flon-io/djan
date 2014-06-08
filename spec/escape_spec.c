@@ -16,7 +16,10 @@ context "escapes"
     {
       ensure(dja_escape("new\nline") ===f "new\\nline");
     }
-
+    it "escapes double quotes"
+    {
+      ensure(dja_escape("double \" quotes") ===f "double \\\" quotes");
+    }
     it "doesn't escape if not necessary"
     {
       ensure(dja_escape("fuji山") ===f "fuji山");

@@ -195,7 +195,7 @@ char *dja_n_escape(char *s, size_t n)
     else if (c == '\n') flu_sbprintf(b, "\\n");
     else if (c == '\r') flu_sbprintf(b, "\\r");
     else if (c == '\t') flu_sbprintf(b, "\\t");
-    else flu_sbprintc(b, c);
+    else flu_sbputc(b, c);
   }
 
   return flu_sbuffer_to_string(b);
