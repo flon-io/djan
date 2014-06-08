@@ -12,12 +12,15 @@ context "escapes"
 {
   describe "dja_escape()"
   {
-    it "escapes"
-  }
+    it "escapes newlines"
+    {
+      ensure(dja_escape("new\nline") ===f "new\\nline");
+    }
 
-  describe "dja_n_escape()"
-  {
-    it "escapes"
+    it "doesn't escape if not necessary"
+    {
+      ensure(dja_escape("fuji山") ===f "fuji山");
+    }
   }
 
   describe "dja_unescape()"
@@ -46,11 +49,6 @@ context "escapes"
     {
       ensure(dja_unescape("that's \\zorro") ===f "that's \\zorro");
     }
-  }
-
-  describe "dja_n_unescape()"
-  {
-    it "unescapes"
   }
 }
 

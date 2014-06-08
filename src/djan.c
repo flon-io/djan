@@ -32,6 +32,7 @@
 #include <stdio.h>
 
 #include "aabro.h"
+#include "flutil.h"
 
 
 //
@@ -176,14 +177,28 @@ double dja_to_double(dja_value *v)
 
 char *dja_escape(char *s)
 {
-  return strdup("(implement me)");
+  return dja_n_escape(s, strlen(s));
 }
 
 char *dja_n_escape(char *s, size_t n)
 {
-  // TODO: use the flu buffer
+  flu_sbuffer *b = flu_sbuffer_malloc();
 
-  return strdup("(implement me)");
+  for (size_t i; i < n; i++)
+  {
+    char c = s[i];
+    if (c == '\0') break;
+    if (c == '\\') flu_sbprintf(b, "\\\\");
+    else if (c == '"') flu_sbprintf(b, "\\\"");
+    else if (c == '\b') flu_sbprintf(b, "\\b");
+    else if (c == '\f') flu_sbprintf(b, "\\f");
+    else if (c == '\n') flu_sbprintf(b, "\\n");
+    else if (c == '\r') flu_sbprintf(b, "\\r");
+    else if (c == '\t') flu_sbprintf(b, "\\t");
+    else flu_sbprintc(b, c);
+  }
+
+  return flu_sbuffer_to_string(b);
 }
 
 char *dja_unescape(char *s)
