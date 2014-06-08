@@ -211,7 +211,9 @@ char *dja_n_unescape(char *s, size_t n)
     else if (c == 't') d[id++] = '\t';
     else if (c == 'u')
     {
-      unsigned int u = strtol(strndup(s + is + 2, 4), NULL, 16);
+      char *su = strndup(s + is + 2, 4);
+      unsigned int u = strtol(su, NULL, 16);
+      free(su);
       if (u < 0x80)
       {
         d[id++] = (char)u;
