@@ -191,10 +191,10 @@ char *dja_unescape(char *s)
   return dja_n_unescape(s, strlen(s));
 }
 
+// based on cutef8 by Jeff Bezanson
+//
 char *dja_n_unescape(char *s, size_t n)
 {
-  // TODO: t" \bfnr from >\"bfnrt<
-
   char *d = calloc(n + 1, sizeof(char));
 
   for (size_t is = 0, id = 0; is < n; is++)
@@ -202,8 +202,37 @@ char *dja_n_unescape(char *s, size_t n)
     if (s[is] != '\\') { d[id++] = s[is]; continue; }
 
     char c = s[is + 1];
-    if (c == 't') d[id++] = '\t';
+    if (c == '\\') d[id++] = '\\';
     else if (c == '"') d[id++] = '"';
+    else if (c == 'b') d[id++] = '\b';
+    else if (c == 'f') d[id++] = '\f';
+    else if (c == 'n') d[id++] = '\n';
+    else if (c == 'r') d[id++] = '\r';
+    else if (c == 't') d[id++] = '\t';
+    else if (c == 'u')
+    {
+      unsigned int u = strtol(strndup(s + is + 2, 4), NULL, 16);
+      if (u < 0x80)
+      {
+        d[id++] = (char)u;
+      }
+      else if (u < 0x800)
+      {
+        d[id++] = (u >> 6) | 0xc0;
+        d[id++] = (u & 0x3f) | 0x80;
+      }
+      else //if (u < 0x8000)
+      {
+        d[id++] = (u >> 12) | 0xe0;
+        d[id++] = ((u >> 6) & 0x3f) | 0x80;
+        d[id++] = (u & 0x3f) | 0x80;
+      }
+      is += 4;
+    }
+    else // leave as is
+    {
+      d[id++] = '\\'; d[id++] = c;
+    }
     is++;
   }
 
