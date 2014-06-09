@@ -51,9 +51,22 @@ dja_value *dja_parse_fragment(char *input, size_t offset, size_t length);
 char *dja_dump(dja_value *v);
 char *dja_to_json(dja_value *v);
 
+/*
+ * Frees the dja_value resources. If the dja_value has children, they
+ * will be freed as well.
+ */
 void dja_value_free(dja_value *v);
 
+/*
+ * Returns a copy of the string representation of the dja_value.
+ */
 char *dja_string(dja_value *v);
+
+/*
+ * Returns the string value behind the dja_value. For a string dja_value,
+ * the enclosing double quotes will not be included and the string will be
+ * unescaped.
+ */
 char *dja_to_string(dja_value *v);
 
 int dja_to_int(dja_value *v);
@@ -65,9 +78,18 @@ char *dja_lookup_string(dja_value *v, char *path);
 int dja_push(dja_value *array, dja_value *v);
 int dja_set(dja_value *object, char *key, dja_value *v);
 
+/*
+ * Returns an escaped copy of the given string.
+ * Only escapes \ " \b \f \n \r \t. It doesn't escape UTF-8 chars (the
+ * ones above ASCII).
+ */
 char *dja_escape(char *s);
-char *dja_unescape(char *s);
 char *dja_n_escape(char *s, size_t n);
+
+/*
+ * Returns an unescaped copy of the given string.
+ */
+char *dja_unescape(char *s);
 char *dja_n_unescape(char *s, size_t n);
 
 #endif // DJAN_H
