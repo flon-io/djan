@@ -163,10 +163,15 @@ describe "dja_parse()"
 
     it "parses [1,2,3]"
     {
-      v = dja_parse("[ 1, 2, 3 ]");
+      v = dja_parse("[1,2,3]");
 
       ensure(v != NULL);
       ensure(v->type == 'a');
+      ensure(v->children[0] != NULL);
+      ensure(dja_to_int(v->children[0]) == 1);
+      ensure(dja_to_int(v->children[1]) == 2);
+      ensure(dja_to_int(v->children[2]) == 3);
+      ensure(v->children[3] == NULL);
     }
   }
 
