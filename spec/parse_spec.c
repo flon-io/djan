@@ -153,11 +153,33 @@ describe "dja_parse()"
   context "arrays"
   {
     it "parses []"
+    {
+      v = dja_parse("[]");
+
+      ensure(v != NULL);
+      ensure(v->type == 'a');
+      ensure(v->children[0] == NULL);
+    }
+
+    it "parses [1,2,3]"
+    {
+      v = dja_parse("[ 1, 2, 3 ]");
+
+      ensure(v != NULL);
+      ensure(v->type == 'a');
+    }
   }
 
   context "objects"
   {
     it "parses {}"
+    {
+      v = dja_parse("{}");
+
+      ensure(v != NULL);
+      ensure(v->type == 'o');
+      ensure(v->children[0] == NULL);
+    }
   }
 }
 

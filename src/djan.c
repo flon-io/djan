@@ -78,6 +78,20 @@ void dja_parser_init()
 {
   if (dja_parser != NULL) return;
 
+  abr_parser *object =
+    abr_n_seq(
+      "object",
+      abr_string("{"),
+      abr_string("}"),
+      NULL);
+
+  abr_parser *array =
+    abr_n_seq(
+      "array",
+      abr_string("["),
+      abr_string("]"),
+      NULL);
+
   dja_parser =
     abr_n_alt(
       "value",
@@ -90,6 +104,8 @@ void dja_parser_init()
           "[^\"\\]"
         ")*\""),
       abr_n_regex("number", "^-?[0-9]+(\\.[0-9]+)?([eE][+-]?[0-9]+)?"),
+      object,
+      array,
       abr_n_string("true", "true"),
       abr_n_string("false", "false"),
       abr_n_string("null", "null"),
@@ -103,7 +119,7 @@ dja_value *dja_extract(char *input, abr_tree *t)
 
   if (strcmp(t->name, "value") == 0)
   {
-    for(size_t i = 0; ; i++)
+    for (size_t i = 0; ; i++)
     {
       if (t->children[i] == NULL) break;
       if (t->children[i]->result != 1) continue;
@@ -118,10 +134,33 @@ dja_value *dja_extract(char *input, abr_tree *t)
   else if (strcmp(t->name, "true") == 0) ty = 't';
   else if (strcmp(t->name, "false") == 0) ty = 'f';
   else if (strcmp(t->name, "null") == 0) ty = '0';
+  else if (strcmp(t->name, "array") == 0) ty = 'a';
+  else if (strcmp(t->name, "object") == 0) ty = 'o';
 
-  if (ty != '-') return dja_value_malloc(ty, input, t->offset, t->length);
+  if (ty == '-') return NULL;
 
-  return NULL;
+  dja_value *v = dja_value_malloc(ty, input, t->offset, t->length);
+
+  if (ty == 'a' || ty == 'o')
+  {
+    size_t l = 0;
+    for (size_t i = 0; ; i++) {
+      abr_tree *tc = t->children[i];
+      if (tc == NULL) break;
+      if (tc->name != NULL && strcmp(tc->name, "value") == 0) l++;
+    }
+    v->children = calloc(l + 1, sizeof(dja_value *));
+
+    for (size_t i = 0, j = 0; ; i++)
+    {
+      abr_tree *tc = t->children[i];
+      if (tc == NULL) break;
+      if (tc->name == NULL || strcmp(tc->name, "value") != 0) continue;
+      v->children[j++] = dja_extract(input, t->children[i]);
+    }
+  }
+
+  return v;
 }
 
 dja_value *dja_parse(char *input)
