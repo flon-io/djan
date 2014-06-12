@@ -164,6 +164,7 @@ dja_value **dja_extract_values(char *input, abr_tree *t)
     //printf("** %s\n", abr_tree_to_string(ts[i]));
     vs[i] = dja_extract_value(input, ts[i]);
   }
+  free(ts);
 
   return vs;
 }
