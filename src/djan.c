@@ -130,33 +130,42 @@ void dja_parser_init()
       NULL);
 }
 
+// forward declaration...
+dja_value *dja_extract_value(char *input, abr_tree *t);
+
 dja_value **dja_extract_entries(char *input, abr_tree *t)
 {
   return calloc(1, sizeof(dja_value *));
 }
 
-size_t count_name_occurrences(char *name, abr_tree *t)
+//typedef int abr_tree_func(abr_tree *);
+//
+int dja_atree_is_value(abr_tree *t)
 {
-  if (t->result != 1) return 0;
-  if (t->name != NULL && strcmp(t->name, name) == 0) return 1;
+  // -1: fail, do not continue
+  //  0: fail, please check my children
+  //  1: success
 
-  if (t->children == 0) return 0;
-  size_t count = 0;
-  for (size_t i = 0; ; i++)
-  {
-    if (t->children[i] == NULL) break;
-    count = count + count_name_occurrences(name, t->children[i]);
-  }
-  return count;
+  if (t->result != 1) return -1;
+  return t->name && strcmp(t->name, "value") == 0;
 }
 
 dja_value **dja_extract_values(char *input, abr_tree *t)
 {
   //printf("%s\n", abr_tree_to_string(t));
-  size_t l = count_name_occurrences("value", t);
-  printf("occurences: %d\n", l);
 
-  return calloc(1, sizeof(dja_value *));
+  abr_tree **ts = abr_tree_collect(t, dja_atree_is_value);
+  size_t l = 0; while (ts[l] != NULL) l++;
+
+  dja_value **vs = calloc(l + 1, sizeof(dja_value *));
+
+  for (size_t i = 0; i < l; i++)
+  {
+    //printf("** %s\n", abr_tree_to_string(ts[i]));
+    vs[i] = dja_extract_value(input, ts[i]);
+  }
+
+  return vs;
 }
 
 dja_value *dja_extract_value(char *input, abr_tree *t)
