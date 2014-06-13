@@ -168,13 +168,13 @@ describe "dja_parse()"
       ensure(v != NULL);
       ensure(v->type == 'a');
       ensure(v->children[0] != NULL);
+      ensure(v->children[3] == NULL);
       ensure(v->children[0]->type == 'n');
       ensure(v->children[1]->type == 'n');
       ensure(v->children[2]->type == 'n');
       ensure(dja_to_int(v->children[0]) == 1);
       ensure(dja_to_int(v->children[1]) == 2);
       ensure(dja_to_int(v->children[2]) == 3);
-      ensure(v->children[3] == NULL);
     }
   }
 
@@ -187,6 +187,18 @@ describe "dja_parse()"
       ensure(v != NULL);
       ensure(v->type == 'o');
       ensure(v->children[0] == NULL);
+    }
+
+    it "parses {\"a\":0,\"bb\":null,\"cc c\":true}"
+    {
+      v = dja_parse("{\"a\":0,\"bb\":null,\"cc c\":true}");
+
+      ensure(v != NULL);
+      ensure(v->type == 'o');
+      ensure(v->children[0] != NULL);
+      ensure(v->children[1] != NULL);
+      ensure(v->children[2] != NULL);
+      ensure(v->children[3] == NULL);
     }
   }
 }

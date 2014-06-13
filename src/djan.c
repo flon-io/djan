@@ -78,14 +78,26 @@ void dja_parser_init()
 {
   if (dja_parser != NULL) return;
 
-  // TODO: move away from the "values" model...
+  abr_parser *string =
+    abr_n_regex(
+      "string",
+      "^\"("
+        //"\\\\." "|"
+        "\\\\[\"\\/\\\\bfnrt]" "|"
+        "\\\\u[0-9a-fA-F]{4}" "|"
+        "[^\"\\]"
+      ")*\"");
+
+  abr_parser *entry =
+    abr_n_seq("entry", string, abr_string(":"), abr_n("value"), NULL);
+
   abr_parser *entries =
     abr_n_rep(
       "entries",
       abr_seq(
-        abr_n("value"),
+        entry,
         abr_rep(
-          abr_seq(abr_string(","), abr_n("value"), NULL),
+          abr_seq(abr_string(","), entry, NULL),
           0, -1),
         NULL
       ),
@@ -94,7 +106,6 @@ void dja_parser_init()
   abr_parser *object =
     abr_n_seq("object", abr_string("{"), entries, abr_string("}"), NULL);
 
-  // array == `[` + (value + (`,` + value) * 0) * 0 + `]`
   abr_parser *values =
     abr_n_rep(
       "values",
@@ -113,14 +124,7 @@ void dja_parser_init()
   dja_parser =
     abr_n_alt(
       "value",
-      abr_n_regex(
-        "string",
-        "^\"("
-          //"\\\\." "|"
-          "\\\\[\"\\/\\\\bfnrt]" "|"
-          "\\\\u[0-9a-fA-F]{4}" "|"
-          "[^\"\\]"
-        ")*\""),
+      string,
       abr_n_regex("number", "^-?[0-9]+(\\.[0-9]+)?([eE][+-]?[0-9]+)?"),
       object,
       array,
@@ -212,7 +216,8 @@ dja_value *dja_parse(char *input)
   // TODO: deal with errors (t->result < 0)
 
   //printf(">%s<\n", input);
-  //printf("%s\n", abr_tree_to_string(t));
+  ////puts(abr_tree_to_string(t));
+  //puts(abr_tree_to_string_with_leaves(input, t));
 
   dja_value *v = dja_extract_value(input, t);
   abr_tree_free(t);
@@ -254,6 +259,8 @@ double dja_to_double(dja_value *v)
 
 //
 // [un]escape
+
+// TODO: move to flu (aabro needs it in abr_tree_to_string_with_leaves)
 
 char *dja_escape(char *s)
 {
