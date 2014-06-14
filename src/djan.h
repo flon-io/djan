@@ -78,19 +78,5 @@ char *dja_lookup_string(dja_value *v, char *path);
 int dja_push(dja_value *array, dja_value *v);
 int dja_set(dja_value *object, char *key, dja_value *v);
 
-/*
- * Returns an escaped copy of the given string.
- * Only escapes \ " \b \f \n \r \t. It doesn't escape UTF-8 chars (the
- * ones above ASCII).
- */
-char *dja_escape(char *s);
-char *dja_n_escape(char *s, size_t n);
-
-/*
- * Returns an unescaped copy of the given string.
- */
-char *dja_unescape(char *s);
-char *dja_n_unescape(char *s, size_t n);
-
 #endif // DJAN_H
 

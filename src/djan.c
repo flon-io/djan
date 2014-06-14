@@ -239,7 +239,7 @@ char *dja_to_string(dja_value *v)
 {
   if (v->type != 's') return dja_string(v);
 
-  return dja_n_unescape(v->source + v->soff + 1, v->slen - 2);
+  return flu_n_unescape(v->source + v->soff + 1, v->slen - 2);
 }
 
 int dja_to_int(dja_value *v)
@@ -254,92 +254,5 @@ double dja_to_double(dja_value *v)
 {
   if (v->type != 'n') return 0.0;
   return atof(v->source + v->soff);
-}
-
-
-//
-// [un]escape
-
-// TODO: move to flu (aabro needs it in abr_tree_to_string_with_leaves)
-
-char *dja_escape(char *s)
-{
-  return dja_n_escape(s, strlen(s));
-}
-
-char *dja_n_escape(char *s, size_t n)
-{
-  flu_sbuffer *b = flu_sbuffer_malloc();
-
-  for (size_t i; i < n; i++)
-  {
-    char c = s[i];
-    if (c == '\0') break;
-    if (c == '\\') flu_sbprintf(b, "\\\\");
-    else if (c == '"') flu_sbprintf(b, "\\\"");
-    else if (c == '\b') flu_sbprintf(b, "\\b");
-    else if (c == '\f') flu_sbprintf(b, "\\f");
-    else if (c == '\n') flu_sbprintf(b, "\\n");
-    else if (c == '\r') flu_sbprintf(b, "\\r");
-    else if (c == '\t') flu_sbprintf(b, "\\t");
-    else flu_sbputc(b, c);
-  }
-
-  return flu_sbuffer_to_string(b);
-}
-
-char *dja_unescape(char *s)
-{
-  return dja_n_unescape(s, strlen(s));
-}
-
-// based on cutef8 by Jeff Bezanson
-//
-char *dja_n_unescape(char *s, size_t n)
-{
-  char *d = calloc(n + 1, sizeof(char));
-
-  for (size_t is = 0, id = 0; is < n; is++)
-  {
-    if (s[is] != '\\') { d[id++] = s[is]; continue; }
-
-    char c = s[is + 1];
-    if (c == '\\') d[id++] = '\\';
-    else if (c == '"') d[id++] = '"';
-    else if (c == 'b') d[id++] = '\b';
-    else if (c == 'f') d[id++] = '\f';
-    else if (c == 'n') d[id++] = '\n';
-    else if (c == 'r') d[id++] = '\r';
-    else if (c == 't') d[id++] = '\t';
-    else if (c == 'u')
-    {
-      char *su = strndup(s + is + 2, 4);
-      unsigned int u = strtol(su, NULL, 16);
-      free(su);
-      if (u < 0x80)
-      {
-        d[id++] = (char)u;
-      }
-      else if (u < 0x800)
-      {
-        d[id++] = (u >> 6) | 0xc0;
-        d[id++] = (u & 0x3f) | 0x80;
-      }
-      else //if (u < 0x8000)
-      {
-        d[id++] = (u >> 12) | 0xe0;
-        d[id++] = ((u >> 6) & 0x3f) | 0x80;
-        d[id++] = (u & 0x3f) | 0x80;
-      }
-      is += 4;
-    }
-    else // leave as is
-    {
-      d[id++] = '\\'; d[id++] = c;
-    }
-    is++;
-  }
-
-  return d;
 }
 
