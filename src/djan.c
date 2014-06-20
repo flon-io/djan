@@ -38,7 +38,8 @@
 //
 // dja_value malloc/free
 
-dja_value *dja_value_malloc(char type, char *input, size_t off, size_t len)
+dja_value *dja_value_malloc(
+  char type, const char *input, size_t off, size_t len)
 {
   dja_value *v = calloc(1, sizeof(dja_value));
   v->type = type;
@@ -135,9 +136,9 @@ void dja_parser_init()
 }
 
 // forward declaration...
-dja_value *dja_extract_value(char *input, abr_tree *t);
+dja_value *dja_extract_value(const char *input, abr_tree *t);
 
-dja_value **dja_extract_entries(char *input, abr_tree *t)
+dja_value **dja_extract_entries(const char *input, abr_tree *t)
 {
   return calloc(1, sizeof(dja_value *));
 }
@@ -154,7 +155,7 @@ int dja_atree_is_value(abr_tree *t)
   return t->name && strcmp(t->name, "value") == 0;
 }
 
-dja_value **dja_extract_values(char *input, abr_tree *t)
+dja_value **dja_extract_values(const char *input, abr_tree *t)
 {
   //printf("%s\n", abr_tree_to_string(t));
 
@@ -173,7 +174,7 @@ dja_value **dja_extract_values(char *input, abr_tree *t)
   return vs;
 }
 
-dja_value *dja_extract_value(char *input, abr_tree *t)
+dja_value *dja_extract_value(const char *input, abr_tree *t)
 {
   if (t->result != 1) return NULL;
   //if (t->name == NULL) return NULL;
@@ -208,7 +209,7 @@ dja_value *dja_extract_value(char *input, abr_tree *t)
   return v;
 }
 
-dja_value *dja_parse(char *input)
+dja_value *dja_parse(const char *input)
 {
   dja_parser_init();
 
