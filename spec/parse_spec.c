@@ -199,6 +199,14 @@ describe "dja_parse()"
       ensure(v->children[1] != NULL);
       ensure(v->children[2] != NULL);
       ensure(v->children[3] == NULL);
+      ensure(v->children[0]->key === "a");
+      ensure(v->children[1]->key === "bb");
+      ensure(v->children[2]->key === "cc c");
+      ensure(v->children[0]->type == 'n');
+      ensure(v->children[1]->type == '0');
+      ensure(v->children[2]->type == 't');
+      ensure(dja_to_int(v->children[0]) == 0);
+      ensure(dja_to_int(v->children[2]) == 1);
     }
   }
 }

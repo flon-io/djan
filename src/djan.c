@@ -39,7 +39,7 @@
 // dja_value malloc/free
 
 dja_value *dja_value_malloc(
-  char type, const char *input, size_t off, size_t len)
+  char type, char *input, size_t off, size_t len)
 {
   dja_value *v = calloc(1, sizeof(dja_value));
   v->type = type;
@@ -90,7 +90,9 @@ void dja_parser_init()
       ")*\"");
 
   abr_parser *entry =
-    abr_n_seq("entry", string, abr_string(":"), abr_n("value"), NULL);
+    abr_n_seq(
+      "entry",
+      abr_name("key", string), abr_string(":"), abr_n("value"), NULL);
 
   abr_parser *entries =
     abr_n_rep(
@@ -136,26 +138,49 @@ void dja_parser_init()
 }
 
 // forward declaration...
-dja_value *dja_extract_value(const char *input, abr_tree *t);
-
-dja_value **dja_extract_entries(const char *input, abr_tree *t)
-{
-  return calloc(1, sizeof(dja_value *));
-}
+dja_value *dja_extract_value(char *input, abr_tree *t);
 
 //typedef int abr_tree_func(abr_tree *);
 //
+// -1: fail, do not continue
+//  0: fail, please check my children
+//  1: success
+//
 int dja_atree_is_value(abr_tree *t)
 {
-  // -1: fail, do not continue
-  //  0: fail, please check my children
-  //  1: success
-
   if (t->result != 1) return -1;
   return t->name && strcmp(t->name, "value") == 0;
 }
+int dja_atree_is_entry(abr_tree *t)
+{
+  if (t->result != 1) return -1;
+  return t->name && strcmp(t->name, "entry") == 0;
+}
 
-dja_value **dja_extract_values(const char *input, abr_tree *t)
+dja_value **dja_extract_entries(char *input, abr_tree *t)
+{
+  //printf("%s\n", abr_tree_to_string_with_leaves(input, t));
+
+  abr_tree **ts = abr_tree_collect(t, dja_atree_is_entry);
+  size_t l = 0; while (ts[l] != NULL) l++;
+
+  dja_value **vs = calloc(l + 1, sizeof(dja_value *));
+
+  for (size_t i = 0; i < l; i++)
+  {
+    //printf("**\n%s\n", abr_tree_to_string_with_leaves(input, ts[i]));
+    abr_tree *tk = ts[i]->children[0];
+    abr_tree *tv = ts[i]->children[2];
+    dja_value *v = dja_extract_value(input, tv);
+    v->key = flu_n_unescape(input + tk->offset + 1, tk->length - 2);
+    vs[i] = v;
+  }
+  free(ts);
+
+  return vs;
+}
+
+dja_value **dja_extract_values(char *input, abr_tree *t)
 {
   //printf("%s\n", abr_tree_to_string(t));
 
@@ -174,7 +199,7 @@ dja_value **dja_extract_values(const char *input, abr_tree *t)
   return vs;
 }
 
-dja_value *dja_extract_value(const char *input, abr_tree *t)
+dja_value *dja_extract_value(char *input, abr_tree *t)
 {
   if (t->result != 1) return NULL;
   //if (t->name == NULL) return NULL;
@@ -209,7 +234,7 @@ dja_value *dja_extract_value(const char *input, abr_tree *t)
   return v;
 }
 
-dja_value *dja_parse(const char *input)
+dja_value *dja_parse(char *input)
 {
   dja_parser_init();
 
