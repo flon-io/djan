@@ -30,6 +30,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include <stdint.h>
 
 #include "aabro.h"
 #include "flutil.h"
@@ -314,5 +315,27 @@ double dja_to_double(dja_value *v)
 {
   if (v->type != 'n') return 0.0;
   return atof(v->source + v->soff);
+}
+
+size_t dja_size(dja_value *v)
+{
+  if (v->children == NULL) return 0;
+
+  for (size_t i = 0; i < SIZE_MAX; i++)
+  {
+    if (v->children[i] == NULL) return i;
+  }
+}
+
+dja_value *dja_lookup(dja_value *v, const char *path)
+{
+  int index = atoi(path);
+  int len = dja_size(v);
+  if (index < 0) index = len + index;
+
+  if (index < 0) return NULL;
+  if (index >= len) return NULL;
+
+  return v->children[index];
 }
 

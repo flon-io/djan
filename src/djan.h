@@ -72,6 +72,7 @@ char *dja_to_string(dja_value *v);
 int dja_to_int(dja_value *v);
 double dja_to_double(dja_value *v);
 
+size_t dja_size(dja_value *v);
 dja_value *dja_lookup(dja_value *v, const char *path);
 char *dja_lookup_string(dja_value *v, const char *path);
 
