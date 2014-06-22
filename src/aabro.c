@@ -29,11 +29,13 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdarg.h>
+#include <stdint.h>
+#include <limits.h>
 
 #include "flutil.h"
 #include "aabro.h"
 
-#define MAX_REPS 2048 // TODO: decide
+#define MAX_REPS 100 * 1024
 #define MAX_P_CHILDREN 64
 #define MAX_DEPTH 2048
 
@@ -455,10 +457,6 @@ void abr_p_seq_to_s(flu_sbuffer *b, int indent, abr_parser *p)
   abr_p_wchildren_to_s("seq", b, indent, p);
 }
 
-void abr_p_not_to_s(flu_sbuffer *b, int indent, abr_parser *p)
-{
-}
-
 void abr_p_name_to_s(flu_sbuffer *b, int indent, abr_parser *p)
 {
   flu_sbprintf(b, "abr_name(\n");
@@ -466,6 +464,10 @@ void abr_p_name_to_s(flu_sbuffer *b, int indent, abr_parser *p)
   flu_sbprintf(b, "\"%s\",\n", p->name);
   abr_p_to_s(b, indent + 1, p->children[0]);
   flu_sbprintf(b, ")");
+}
+
+void abr_p_not_to_s(flu_sbuffer *b, int indent, abr_parser *p)
+{
 }
 
 void abr_p_presence_to_s(flu_sbuffer *b, int indent, abr_parser *p)
@@ -562,7 +564,7 @@ abr_tree *abr_p_rep(
 
   int result = 1;
 
-  for (size_t i = 0; i < p->max; i++)
+  for (size_t i = 0; i < max; i++)
   {
     count++;
     reps[i] = abr_do_parse(input, off, depth + 1, p->children[0]);
