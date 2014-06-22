@@ -99,7 +99,8 @@ void dja_parser_init()
       abr_name("key", string),
       blanks,
       abr_string(":"),
-      abr_n("value"), NULL);
+      abr_n("value"),
+      NULL);
 
   abr_parser *entries =
     abr_n_rep(
