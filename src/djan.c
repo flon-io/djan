@@ -113,7 +113,7 @@ void dja_parser_init()
       abr_seq(
         entry,
         abr_rep(
-          abr_seq(abr_string(","), entry, NULL),
+          abr_seq(abr_regex("^,?"), entry, NULL),
           0, -1),
         NULL
       ),
@@ -128,7 +128,7 @@ void dja_parser_init()
       abr_seq(
         abr_n("value"),
         abr_rep(
-          abr_seq(abr_string(","), abr_n("value"), NULL),
+          abr_seq(abr_regex("^,?"), abr_n("value"), NULL),
           0, -1),
         NULL
       ),
@@ -277,7 +277,6 @@ dja_value *dja_parse(char *input)
   // TODO: deal with errors (t->result < 0)
 
   //printf(">%s<\n", input);
-  ////puts(abr_tree_to_string(t));
   //puts(abr_tree_to_string_with_leaves(input, t));
 
   dja_value *v = dja_extract_value(input, t);

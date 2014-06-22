@@ -176,6 +176,22 @@ describe "dja_parse()"
       ensure(dja_to_int(v->children[1]) == 2);
       ensure(dja_to_int(v->children[2]) == 3);
     }
+
+    it "parses with or without commas"
+    {
+      v = dja_parse("[ 10 20,30, 40 50\t51\n52]");
+
+      ensure(v != NULL);
+      ensure(v->type == 'a');
+      ensure(dja_to_int(v->children[0]) == 10);
+      ensure(dja_to_int(v->children[1]) == 20);
+      ensure(dja_to_int(v->children[2]) == 30);
+      ensure(dja_to_int(v->children[3]) == 40);
+      ensure(dja_to_int(v->children[4]) == 50);
+      ensure(dja_to_int(v->children[5]) == 51);
+      ensure(dja_to_int(v->children[6]) == 52);
+      ensure(v->children[7] == NULL);
+    }
   }
 
   context "objects"
@@ -220,6 +236,20 @@ describe "dja_parse()"
       ensure(dja_to_int(v->children[0]) == 0);
       ensure(dja_to_string(v->children[1]) ===f "null");
       ensure(v->children[2] == NULL);
+    }
+
+    it "parses with or without commas"
+    {
+      v = dja_parse("{ a_a: 0, bb_: null \"c\": true\nd: [ 1, 2 ] }");
+
+      ensure(v != NULL);
+      ensure(v->type == 'o');
+      ensure(v->children[0]->key === "a_a");
+      ensure(v->children[1]->key === "bb_");
+      ensure(v->children[2]->key === "c");
+      ensure(v->children[3]->key === "d");
+      ensure(v->children[4] == NULL);
+      ensure(v->children[3]->type == 'a');
     }
   }
 
