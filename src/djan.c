@@ -79,6 +79,9 @@ void dja_parser_init()
 {
   if (dja_parser != NULL) return;
 
+  abr_parser *blanks =
+    abr_regex("^[ \t\n\r]*");
+
   abr_parser *string =
     abr_n_regex(
       "string",
@@ -92,7 +95,11 @@ void dja_parser_init()
   abr_parser *entry =
     abr_n_seq(
       "entry",
-      abr_name("key", string), abr_string(":"), abr_n("value"), NULL);
+      blanks,
+      abr_name("key", string),
+      blanks,
+      abr_string(":"),
+      abr_n("value"), NULL);
 
   abr_parser *entries =
     abr_n_rep(
@@ -125,15 +132,19 @@ void dja_parser_init()
     abr_n_seq("array", abr_string("["), values, abr_string("]"), NULL);
 
   dja_parser =
-    abr_n_alt(
+    abr_n_seq(
       "value",
-      string,
-      abr_n_regex("number", "^-?[0-9]+(\\.[0-9]+)?([eE][+-]?[0-9]+)?"),
-      object,
-      array,
-      abr_n_string("true", "true"),
-      abr_n_string("false", "false"),
-      abr_n_string("null", "null"),
+      blanks,
+      abr_alt(
+        string,
+        abr_n_regex("number", "^-?[0-9]+(\\.[0-9]+)?([eE][+-]?[0-9]+)?"),
+        object,
+        array,
+        abr_n_string("true", "true"),
+        abr_n_string("false", "false"),
+        abr_n_string("null", "null"),
+        NULL),
+      blanks,
       NULL);
 }
 
@@ -169,8 +180,8 @@ dja_value **dja_extract_entries(char *input, abr_tree *t)
   for (size_t i = 0; i < l; i++)
   {
     //printf("**\n%s\n", abr_tree_to_string_with_leaves(input, ts[i]));
-    abr_tree *tk = ts[i]->children[0];
-    abr_tree *tv = ts[i]->children[2];
+    abr_tree *tk = ts[i]->children[1];
+    abr_tree *tv = ts[i]->children[4];
     dja_value *v = dja_extract_value(input, tv);
     v->key = flu_n_unescape(input + tk->offset + 1, tk->length - 2);
     vs[i] = v;
@@ -199,21 +210,8 @@ dja_value **dja_extract_values(char *input, abr_tree *t)
   return vs;
 }
 
-dja_value *dja_extract_value(char *input, abr_tree *t)
+dja_value *dja_extract_v(char *input, abr_tree *t)
 {
-  if (t->result != 1) return NULL;
-  //if (t->name == NULL) return NULL;
-
-  if (strcmp(t->name, "value") == 0)
-  {
-    for (size_t i = 0; ; i++)
-    {
-      if (t->children[i] == NULL) break;
-      if (t->children[i]->result != 1) continue;
-      return dja_extract_value(input, t->children[i]);
-    }
-  }
-
   char ty = '-';
 
   if (strcmp(t->name, "string") == 0) ty = 's';
@@ -224,7 +222,7 @@ dja_value *dja_extract_value(char *input, abr_tree *t)
   else if (strcmp(t->name, "array") == 0) ty = 'a';
   else if (strcmp(t->name, "object") == 0) ty = 'o';
 
-  if (ty == '-') return NULL;
+  //if (ty == '-') return NULL;
 
   dja_value *v = dja_value_malloc(ty, input, t->offset, t->length);
 
@@ -232,6 +230,24 @@ dja_value *dja_extract_value(char *input, abr_tree *t)
   else if (ty == 'a') v->children = dja_extract_values(input, t->children[1]);
 
   return v;
+}
+
+dja_value *dja_extract_value(char *input, abr_tree *t)
+{
+  //printf("%s\n", abr_tree_to_string_with_leaves(input, t));
+
+  if (t->result != 1) return NULL;
+
+  t = t->children[1];
+
+  for (size_t i = 0; ; i++)
+  {
+    if (t->children[i] == NULL) break;
+    if (t->children[i]->result != 1) continue;
+    return dja_extract_v(input, t->children[i]);
+  }
+
+  return NULL;
 }
 
 dja_value *dja_parse(char *input)

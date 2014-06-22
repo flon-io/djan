@@ -209,5 +209,47 @@ describe "dja_parse()"
       ensure(dja_to_int(v->children[2]) == 1);
     }
   }
+
+  context "whitespaces"
+  {
+    it "accepts whitespace around values"
+    {
+      v = dja_parse(" 77.0 ");
+
+      ensure(v != NULL);
+      ensure(v->type == 'n');
+      ensure(dja_to_string(v) ===f "77.0");
+    }
+    it "accepts whitespace inside of arrays"
+    {
+      v = dja_parse(" [1, 2,\n\t3 ] ");
+
+      ensure(v != NULL);
+      ensure(v->type == 'a');
+      ensure(dja_to_int(v->children[0]) == 1);
+      ensure(dja_to_int(v->children[1]) == 2);
+      ensure(dja_to_int(v->children[2]) == 3);
+      ensure(v->children[3] == NULL);
+    }
+    it "accepts whitespace inside of objects"
+    {
+      v = dja_parse("\n{\n\"a\": 0, \"bb\": null, \"cc c\": true\n}\n");
+
+      ensure(v != NULL);
+      ensure(v->type == 'o');
+      ensure(v->children[0] != NULL);
+      ensure(v->children[1] != NULL);
+      ensure(v->children[2] != NULL);
+      ensure(v->children[3] == NULL);
+      ensure(v->children[0]->key === "a");
+      ensure(v->children[1]->key === "bb");
+      ensure(v->children[2]->key === "cc c");
+      ensure(v->children[0]->type == 'n');
+      ensure(v->children[1]->type == '0');
+      ensure(v->children[2]->type == 't');
+      ensure(dja_to_int(v->children[0]) == 0);
+      ensure(dja_to_int(v->children[2]) == 1);
+    }
+  }
 }
 
