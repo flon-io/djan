@@ -92,11 +92,16 @@ void dja_parser_init()
         "[^\"\\]"
       ")*\"");
 
+  abr_parser *symbol =
+    abr_n_regex(
+      "symbol",
+      "^[a-zA-Z_]+");
+
   abr_parser *entry =
     abr_n_seq(
       "entry",
       blanks,
-      abr_name("key", string),
+      abr_n_alt("key", string, symbol, NULL),
       blanks,
       abr_string(":"),
       abr_n("value"),
@@ -149,7 +154,7 @@ void dja_parser_init()
       NULL);
 }
 
-// forward declaration...
+// forward declarations
 dja_value *dja_extract_value(char *input, abr_tree *t);
 
 //typedef int abr_tree_func(abr_tree *);
@@ -169,6 +174,19 @@ int dja_atree_is_entry(abr_tree *t)
   return t->name && strcmp(t->name, "entry") == 0;
 }
 
+char *dja_extract_key(char *input, abr_tree *t)
+{
+  //printf("tk\n%s\n", abr_tree_to_string_with_leaves(input, t));
+
+  abr_tree *c = t->children[0];
+
+  if (c->result == 1)
+    return flu_n_unescape(input + c->offset + 1, c->length - 2);
+
+  c = t->children[1];
+  return strndup(input + c->offset, c->length);
+}
+
 dja_value **dja_extract_entries(char *input, abr_tree *t)
 {
   //printf("%s\n", abr_tree_to_string_with_leaves(input, t));
@@ -181,10 +199,8 @@ dja_value **dja_extract_entries(char *input, abr_tree *t)
   for (size_t i = 0; i < l; i++)
   {
     //printf("**\n%s\n", abr_tree_to_string_with_leaves(input, ts[i]));
-    abr_tree *tk = ts[i]->children[1];
-    abr_tree *tv = ts[i]->children[4];
-    dja_value *v = dja_extract_value(input, tv);
-    v->key = flu_n_unescape(input + tk->offset + 1, tk->length - 2);
+    dja_value *v = dja_extract_value(input, ts[i]->children[4]);
+    v->key = dja_extract_key(input, ts[i]->children[1]);
     vs[i] = v;
   }
   free(ts);
@@ -213,6 +229,8 @@ dja_value **dja_extract_values(char *input, abr_tree *t)
 
 dja_value *dja_extract_v(char *input, abr_tree *t)
 {
+  //printf("%s\n", abr_tree_to_string_with_leaves(input, t));
+
   char ty = '-';
 
   if (strcmp(t->name, "string") == 0) ty = 's';
@@ -223,7 +241,7 @@ dja_value *dja_extract_v(char *input, abr_tree *t)
   else if (strcmp(t->name, "array") == 0) ty = 'a';
   else if (strcmp(t->name, "object") == 0) ty = 'o';
 
-  //if (ty == '-') return NULL;
+  if (ty == '-') return NULL;
 
   dja_value *v = dja_value_malloc(ty, input, t->offset, t->length);
 

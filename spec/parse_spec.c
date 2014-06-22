@@ -208,6 +208,19 @@ describe "dja_parse()"
       ensure(dja_to_int(v->children[0]) == 0);
       ensure(dja_to_int(v->children[2]) == 1);
     }
+
+    it "accepts 'symbols' as keys"
+    {
+      v = dja_parse("{ a_a: 0, bb_: null }");
+
+      ensure(v != NULL);
+      ensure(v->type == 'o');
+      ensure(v->children[0]->key === "a_a");
+      ensure(v->children[1]->key === "bb_");
+      ensure(dja_to_int(v->children[0]) == 0);
+      ensure(dja_to_string(v->children[1]) ===f "null");
+      ensure(v->children[2] == NULL);
+    }
   }
 
   context "whitespaces"
