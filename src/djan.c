@@ -192,19 +192,21 @@ dja_value **dja_extract_entries(char *input, abr_tree *t)
 {
   //printf("%s\n", abr_tree_to_string_with_leaves(input, t));
 
-  abr_tree **ts = abr_tree_collect(t, dja_atree_is_entry);
-  size_t l = 0; while (ts[l] != NULL) l++;
+  flu_list *ts = abr_tree_list(t, dja_atree_is_entry);
 
-  dja_value **vs = calloc(l + 1, sizeof(dja_value *));
+  dja_value **vs = calloc(ts->size + 1, sizeof(dja_value *));
 
-  for (size_t i = 0; i < l; i++)
+  size_t i = 0;
+  for (flu_node *n = ts->first; n != NULL; n = n->next)
   {
-    //printf("**\n%s\n", abr_tree_to_string_with_leaves(input, ts[i]));
-    dja_value *v = dja_extract_value(input, abr_t_child(ts[i], 4));
-    v->key = dja_extract_key(input, abr_t_child(ts[i], 1));
-    vs[i] = v;
+    abr_tree *tt = (abr_tree *)n->item;
+    //printf("**\n%s\n", abr_tree_to_string_with_leaves(input, tt));
+    dja_value *v = dja_extract_value(input, abr_t_child(tt, 4));
+    v->key = dja_extract_key(input, abr_t_child(tt, 1));
+    vs[i++] = v;
   }
-  free(ts);
+
+  flu_list_free(ts);
 
   return vs;
 }
@@ -213,17 +215,18 @@ dja_value **dja_extract_values(char *input, abr_tree *t)
 {
   //printf("%s\n", abr_tree_to_string(t));
 
-  abr_tree **ts = abr_tree_collect(t, dja_atree_is_value);
-  size_t l = 0; while (ts[l] != NULL) l++;
+  flu_list *ts = abr_tree_list(t, dja_atree_is_value);
 
-  dja_value **vs = calloc(l + 1, sizeof(dja_value *));
+  dja_value **vs = calloc(ts->size + 1, sizeof(dja_value *));
 
-  for (size_t i = 0; i < l; i++)
+  size_t i = 0;
+  for (flu_node *n = ts->first; n != NULL; n = n->next)
   {
     //printf("** %s\n", abr_tree_to_string(ts[i]));
-    vs[i] = dja_extract_value(input, ts[i]);
+    vs[i++] = dja_extract_value(input, (abr_tree *)n->item);
   }
-  free(ts);
+
+  flu_list_free(ts);
 
   return vs;
 }
