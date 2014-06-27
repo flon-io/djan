@@ -164,12 +164,12 @@ dja_value *dja_extract_value(char *input, abr_tree *t);
 //  0: fail, please check my children
 //  1: success
 //
-int dja_atree_is_value(abr_tree *t)
+short dja_atree_is_value(abr_tree *t)
 {
   if (t->result != 1) return -1;
   return t->name && strcmp(t->name, "value") == 0;
 }
-int dja_atree_is_entry(abr_tree *t)
+short dja_atree_is_entry(abr_tree *t)
 {
   if (t->result != 1) return -1;
   return t->name && strcmp(t->name, "entry") == 0;
@@ -179,12 +179,12 @@ char *dja_extract_key(char *input, abr_tree *t)
 {
   //printf("tk\n%s\n", abr_tree_to_string_with_leaves(input, t));
 
-  abr_tree *c = t->children[0];
+  abr_tree *c = t->child;
 
   if (c->result == 1)
     return flu_n_unescape(input + c->offset + 1, c->length - 2);
 
-  c = t->children[1];
+  c = c->sibling;
   return strndup(input + c->offset, c->length);
 }
 
@@ -200,8 +200,8 @@ dja_value **dja_extract_entries(char *input, abr_tree *t)
   for (size_t i = 0; i < l; i++)
   {
     //printf("**\n%s\n", abr_tree_to_string_with_leaves(input, ts[i]));
-    dja_value *v = dja_extract_value(input, ts[i]->children[4]);
-    v->key = dja_extract_key(input, ts[i]->children[1]);
+    dja_value *v = dja_extract_value(input, abr_t_child(ts[i], 4));
+    v->key = dja_extract_key(input, abr_t_child(ts[i], 1));
     vs[i] = v;
   }
   free(ts);
@@ -246,8 +246,10 @@ dja_value *dja_extract_v(char *input, abr_tree *t)
 
   dja_value *v = dja_value_malloc(ty, input, t->offset, t->length);
 
-  if (ty == 'o') v->children = dja_extract_entries(input, t->children[1]);
-  else if (ty == 'a') v->children = dja_extract_values(input, t->children[1]);
+  if (ty == 'o')
+    v->children = dja_extract_entries(input, abr_t_child(t, 1));
+  else if (ty == 'a')
+    v->children = dja_extract_values(input, abr_t_child(t, 1));
 
   return v;
 }
@@ -258,13 +260,11 @@ dja_value *dja_extract_value(char *input, abr_tree *t)
 
   if (t->result != 1) return NULL;
 
-  t = t->children[1];
+  t = abr_t_child(t, 1);
 
-  for (size_t i = 0; ; i++)
+  for (abr_tree *c = t->child; c != NULL; c = c->sibling)
   {
-    if (t->children[i] == NULL) break;
-    if (t->children[i]->result != 1) continue;
-    return dja_extract_v(input, t->children[i]);
+    if (c->result == 1) return dja_extract_v(input, c);
   }
 
   return NULL;
