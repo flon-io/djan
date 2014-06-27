@@ -38,13 +38,21 @@ typedef struct abr_parser {
   size_t string_length;
   regex_t *regex;
   int min; int max;
-  struct abr_parser *sibling;
-  struct abr_parser *child;
+  struct abr_parser **children;
 } abr_parser;
 
 void abr_parser_free(abr_parser *p);
 
+/*
+ * Returns a string representation of the parser (and its children).
+ */
 char *abr_parser_to_string(abr_parser *p);
+
+/*
+ * Returns a string representation of the parser
+ * (but doesn't dive into its children).
+ */
+char *abr_parser_to_s(abr_parser *p);
 
 //
 // abr_tree
