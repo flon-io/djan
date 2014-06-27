@@ -322,12 +322,11 @@ double dja_to_double(dja_value *v)
 
 size_t dja_size(dja_value *v)
 {
-  if (v->children == NULL) return 0;
-
-  for (size_t i = 0; i < SIZE_MAX; i++)
+  if (v->children != NULL) for (size_t i = 0; i < SIZE_MAX; i++)
   {
     if (v->children[i] == NULL) return i;
   }
+  return 0;
 }
 
 dja_value *dja_lookup(dja_value *v, const char *path)
