@@ -90,6 +90,8 @@ static void dja_parser_init()
         "\\\\u[0-9a-fA-F]{4}" "|"
         "[^\"\\]"
       ")*\"");
+  abr_parser *sqstring =
+    abr_n_regex("sqstring", "^'(\\\\'|[^'])*'");
 
   abr_parser *symbol =
     abr_n_regex(
@@ -142,6 +144,7 @@ static void dja_parser_init()
       blanks,
       abr_alt(
         string,
+        sqstring,
         abr_n_regex("number", "^-?[0-9]+(\\.[0-9]+)?([eE][+-]?[0-9]+)?"),
         object,
         array,
@@ -241,6 +244,7 @@ static dja_value *dja_extract_v(char *input, abr_tree *t)
   char ty = '-';
 
   if (strcmp(t->name, "string") == 0) ty = 's';
+  else if (strcmp(t->name, "sqstring") == 0) ty = 'q';
   else if (strcmp(t->name, "number") == 0) ty = 'n';
   else if (strcmp(t->name, "true") == 0) ty = 't';
   else if (strcmp(t->name, "false") == 0) ty = 'f';
@@ -300,11 +304,29 @@ char *dja_string(dja_value *v)
   return strndup(v->source + v->soff, v->slen);
 }
 
+static char *dja_sq_unescape(const char *s, size_t n)
+{
+  char *r = calloc(n + 1, sizeof(char));
+  for (size_t i = 0, j = 0; i < n; i++)
+  {
+    char c = s[i];
+    if (c == '\0') break;
+    if (c != '\\') r[j++] = c;
+  }
+  return r;
+}
+
 char *dja_to_string(dja_value *v)
 {
-  if (v->type != 's') return dja_string(v);
-
-  return flu_n_unescape(v->source + v->soff + 1, v->slen - 2);
+  if (v->type == 's')
+  {
+    return flu_n_unescape(v->source + v->soff + 1, v->slen - 2);
+  }
+  if (v->type == 'q')
+  {
+    return dja_sq_unescape(v->source + v->soff + 1, v->slen - 2);
+  }
+  return dja_string(v);
 }
 
 int dja_to_int(dja_value *v)

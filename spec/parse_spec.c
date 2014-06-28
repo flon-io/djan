@@ -113,6 +113,27 @@ describe "dja_parse()"
 
       ensure(v == NULL);
     }
+    context "single quotes"
+    {
+      it "parses single quotes strings"
+      {
+        v = dja_parse("'hello \"world\"'");
+
+        ensure(v != NULL);
+        ensure(v->type == 'q');
+        ensure(dja_string(v) ===f "'hello \"world\"'");
+        ensure(dja_to_string(v) ===f "hello \"world\"");
+      }
+      it "lets a quote being escaped"
+      {
+        v = dja_parse("'aujourd\\'hui'");
+
+        ensure(v != NULL);
+        ensure(v->type == 'q');
+        ensure(dja_string(v) ===f "'aujourd\\'hui'");
+        ensure(dja_to_string(v) ===f "aujourd'hui");
+      }
+    }
   }
 
   context "booleans"
