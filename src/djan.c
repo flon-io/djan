@@ -47,6 +47,8 @@ dja_value *dja_value_malloc(
   v->source = input;
   v->soff = off;
   v->slen = len;
+  v->sibling = NULL;
+  v->child = NULL;
 
   return v;
 }
@@ -56,15 +58,11 @@ void dja_value_free(dja_value *v)
   if (v->key != NULL) free(v->key);
   if (v->slen == 0 && v->source != NULL) free(v->source);
 
-  if (v->children != NULL)
+  for (dja_value *c = v->child, *next = NULL; c != NULL; )
   {
-    for (size_t i = 0; ; i++)
-    {
-      dja_value *c = v->children[i];
-      if (c == NULL) break;
-      dja_value_free(c);
-    }
-    free(v->children);
+    next = c->sibling;
+    dja_value_free(c);
+    c = next;
   }
 
   free(v);
@@ -188,47 +186,52 @@ char *dja_extract_key(char *input, abr_tree *t)
   return strndup(input + c->offset, c->length);
 }
 
-dja_value **dja_extract_entries(char *input, abr_tree *t)
+dja_value *dja_extract_entries(char *input, abr_tree *t)
 {
   //printf("%s\n", abr_tree_to_string_with_leaves(input, t));
 
   flu_list *ts = abr_tree_list(t, dja_atree_is_entry);
 
-  dja_value **vs = calloc(ts->size + 1, sizeof(dja_value *));
+  dja_value *first = NULL;
+  dja_value *child = NULL;
 
-  size_t i = 0;
   for (flu_node *n = ts->first; n != NULL; n = n->next)
   {
     abr_tree *tt = (abr_tree *)n->item;
     //printf("**\n%s\n", abr_tree_to_string_with_leaves(input, tt));
     dja_value *v = dja_extract_value(input, abr_t_child(tt, 4));
     v->key = dja_extract_key(input, abr_t_child(tt, 1));
-    vs[i++] = v;
+    if (first == NULL) first = v;
+    if (child != NULL) child->sibling = v;
+    child = v;
   }
 
   flu_list_free(ts);
 
-  return vs;
+  return first;
 }
 
-dja_value **dja_extract_values(char *input, abr_tree *t)
+dja_value *dja_extract_values(char *input, abr_tree *t)
 {
   //printf("%s\n", abr_tree_to_string(t));
 
   flu_list *ts = abr_tree_list(t, dja_atree_is_value);
 
-  dja_value **vs = calloc(ts->size + 1, sizeof(dja_value *));
+  dja_value *first = NULL;
+  dja_value *child = NULL;
 
-  size_t i = 0;
   for (flu_node *n = ts->first; n != NULL; n = n->next)
   {
     //printf("** %s\n", abr_tree_to_string(ts[i]));
-    vs[i++] = dja_extract_value(input, (abr_tree *)n->item);
+    dja_value *v = dja_extract_value(input, (abr_tree *)n->item);
+    if (first == NULL) first = v;
+    if (child != NULL) child->sibling = v;
+    child = v;
   }
 
   flu_list_free(ts);
 
-  return vs;
+  return first;
 }
 
 dja_value *dja_extract_v(char *input, abr_tree *t)
@@ -249,10 +252,8 @@ dja_value *dja_extract_v(char *input, abr_tree *t)
 
   dja_value *v = dja_value_malloc(ty, input, t->offset, t->length);
 
-  if (ty == 'o')
-    v->children = dja_extract_entries(input, abr_t_child(t, 1));
-  else if (ty == 'a')
-    v->children = dja_extract_values(input, abr_t_child(t, 1));
+  if (ty == 'o') v->child = dja_extract_entries(input, abr_t_child(t, 1));
+  else if (ty == 'a') v->child = dja_extract_values(input, abr_t_child(t, 1));
 
   return v;
 }
@@ -322,22 +323,34 @@ double dja_to_double(dja_value *v)
 
 size_t dja_size(dja_value *v)
 {
-  if (v->children != NULL) for (size_t i = 0; i < SIZE_MAX; i++)
+  size_t i = 0; for (dja_value *c = v->child; ; c = c->sibling)
   {
-    if (v->children[i] == NULL) return i;
+    if (c == NULL || i == SIZE_MAX) break;
+    i++;
   }
-  return 0;
+  return i;
+}
+
+dja_value *dja_value_at(dja_value *v, long n)
+{
+  if (n < 0)
+  {
+    n = dja_size(v) + n;
+    if (n < 0) return NULL;
+  }
+
+  size_t i = 0; for (dja_value *c = v->child; c != NULL; c = c->sibling)
+  {
+    if (i++ == n) return c;
+  }
+
+  return NULL;
 }
 
 dja_value *dja_lookup(dja_value *v, const char *path)
 {
-  int index = atoi(path);
-  int len = dja_size(v);
-  if (index < 0) index = len + index;
+  long index = atol(path);
 
-  if (index < 0) return NULL;
-  if (index >= len) return NULL;
-
-  return v->children[index];
+  return dja_value_at(v, index);
 }
 

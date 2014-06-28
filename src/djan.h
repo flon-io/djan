@@ -42,7 +42,8 @@ typedef struct dja_value {
   char *source;
   size_t soff;
   size_t slen; // if slen == 0, the source string is "owned" bv the value
-  struct dja_value **children; // for arrays and objects, else NULL
+  struct dja_value *sibling;
+  struct dja_value *child;
 } dja_value;
 
 dja_value *dja_parse(char *input);
@@ -73,6 +74,7 @@ int dja_to_int(dja_value *v);
 double dja_to_double(dja_value *v);
 
 size_t dja_size(dja_value *v);
+dja_value *dja_value_at(dja_value *v, long n);
 dja_value *dja_lookup(dja_value *v, const char *path);
 char *dja_lookup_string(dja_value *v, const char *path);
 

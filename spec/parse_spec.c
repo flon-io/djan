@@ -158,7 +158,7 @@ describe "dja_parse()"
 
       ensure(v != NULL);
       ensure(v->type == 'a');
-      ensure(v->children[0] == NULL);
+      ensure(v->child == NULL);
     }
 
     it "parses [1,2,3]"
@@ -167,14 +167,14 @@ describe "dja_parse()"
 
       ensure(v != NULL);
       ensure(v->type == 'a');
-      ensure(v->children[0] != NULL);
-      ensure(v->children[3] == NULL);
-      ensure(v->children[0]->type == 'n');
-      ensure(v->children[1]->type == 'n');
-      ensure(v->children[2]->type == 'n');
-      ensure(dja_to_int(v->children[0]) == 1);
-      ensure(dja_to_int(v->children[1]) == 2);
-      ensure(dja_to_int(v->children[2]) == 3);
+      ensure(dja_value_at(v, 0) != NULL);
+      ensure(dja_value_at(v, 3) == NULL);
+      ensure(dja_value_at(v, 0)->type == 'n');
+      ensure(dja_value_at(v, 1)->type == 'n');
+      ensure(dja_value_at(v, 2)->type == 'n');
+      ensure(dja_to_int(dja_value_at(v, 0)) == 1);
+      ensure(dja_to_int(dja_value_at(v, 1)) == 2);
+      ensure(dja_to_int(dja_value_at(v, 2)) == 3);
     }
 
     it "parses with or without commas"
@@ -183,14 +183,14 @@ describe "dja_parse()"
 
       ensure(v != NULL);
       ensure(v->type == 'a');
-      ensure(dja_to_int(v->children[0]) == 10);
-      ensure(dja_to_int(v->children[1]) == 20);
-      ensure(dja_to_int(v->children[2]) == 30);
-      ensure(dja_to_int(v->children[3]) == 40);
-      ensure(dja_to_int(v->children[4]) == 50);
-      ensure(dja_to_int(v->children[5]) == 51);
-      ensure(dja_to_int(v->children[6]) == 52);
-      ensure(v->children[7] == NULL);
+      ensure(dja_to_int(dja_value_at(v, 0)) == 10);
+      ensure(dja_to_int(dja_value_at(v, 1)) == 20);
+      ensure(dja_to_int(dja_value_at(v, 2)) == 30);
+      ensure(dja_to_int(dja_value_at(v, 3)) == 40);
+      ensure(dja_to_int(dja_value_at(v, 4)) == 50);
+      ensure(dja_to_int(dja_value_at(v, 5)) == 51);
+      ensure(dja_to_int(dja_value_at(v, 6)) == 52);
+      ensure(dja_value_at(v, 7) == NULL);
     }
   }
 
@@ -202,7 +202,7 @@ describe "dja_parse()"
 
       ensure(v != NULL);
       ensure(v->type == 'o');
-      ensure(v->children[0] == NULL);
+      ensure(dja_value_at(v, 0) == NULL);
     }
 
     it "parses {\"a\":0,\"bb\":null,\"cc c\":true}"
@@ -211,18 +211,18 @@ describe "dja_parse()"
 
       ensure(v != NULL);
       ensure(v->type == 'o');
-      ensure(v->children[0] != NULL);
-      ensure(v->children[1] != NULL);
-      ensure(v->children[2] != NULL);
-      ensure(v->children[3] == NULL);
-      ensure(v->children[0]->key === "a");
-      ensure(v->children[1]->key === "bb");
-      ensure(v->children[2]->key === "cc c");
-      ensure(v->children[0]->type == 'n');
-      ensure(v->children[1]->type == '0');
-      ensure(v->children[2]->type == 't');
-      ensure(dja_to_int(v->children[0]) == 0);
-      ensure(dja_to_int(v->children[2]) == 1);
+      ensure(dja_value_at(v, 0) != NULL);
+      ensure(dja_value_at(v, 1) != NULL);
+      ensure(dja_value_at(v, 2) != NULL);
+      ensure(dja_value_at(v, 3) == NULL);
+      ensure(dja_value_at(v, 0)->key === "a");
+      ensure(dja_value_at(v, 1)->key === "bb");
+      ensure(dja_value_at(v, 2)->key === "cc c");
+      ensure(dja_value_at(v, 0)->type == 'n');
+      ensure(dja_value_at(v, 1)->type == '0');
+      ensure(dja_value_at(v, 2)->type == 't');
+      ensure(dja_to_int(dja_value_at(v, 0)) == 0);
+      ensure(dja_to_int(dja_value_at(v, 2)) == 1);
     }
 
     it "accepts 'symbols' as keys"
@@ -231,11 +231,11 @@ describe "dja_parse()"
 
       ensure(v != NULL);
       ensure(v->type == 'o');
-      ensure(v->children[0]->key === "a_a");
-      ensure(v->children[1]->key === "bb_");
-      ensure(dja_to_int(v->children[0]) == 0);
-      ensure(dja_to_string(v->children[1]) ===f "null");
-      ensure(v->children[2] == NULL);
+      ensure(dja_value_at(v, 0)->key === "a_a");
+      ensure(dja_value_at(v, 1)->key === "bb_");
+      ensure(dja_to_int(dja_value_at(v, 0)) == 0);
+      ensure(dja_to_string(dja_value_at(v, 1)) ===f "null");
+      ensure(dja_value_at(v, 2) == NULL);
     }
 
     it "parses with or without commas"
@@ -244,12 +244,12 @@ describe "dja_parse()"
 
       ensure(v != NULL);
       ensure(v->type == 'o');
-      ensure(v->children[0]->key === "a_a");
-      ensure(v->children[1]->key === "bb_");
-      ensure(v->children[2]->key === "c");
-      ensure(v->children[3]->key === "d");
-      ensure(v->children[4] == NULL);
-      ensure(v->children[3]->type == 'a');
+      ensure(dja_value_at(v, 0)->key === "a_a");
+      ensure(dja_value_at(v, 1)->key === "bb_");
+      ensure(dja_value_at(v, 2)->key === "c");
+      ensure(dja_value_at(v, 3)->key === "d");
+      ensure(dja_value_at(v, 4) == NULL);
+      ensure(dja_value_at(v, 3)->type == 'a');
     }
   }
 
@@ -269,10 +269,10 @@ describe "dja_parse()"
 
       ensure(v != NULL);
       ensure(v->type == 'a');
-      ensure(dja_to_int(v->children[0]) == 1);
-      ensure(dja_to_int(v->children[1]) == 2);
-      ensure(dja_to_int(v->children[2]) == 3);
-      ensure(v->children[3] == NULL);
+      ensure(dja_to_int(dja_value_at(v, 0)) == 1);
+      ensure(dja_to_int(dja_value_at(v, 1)) == 2);
+      ensure(dja_to_int(dja_value_at(v, 2)) == 3);
+      ensure(dja_value_at(v, 3) == NULL);
     }
     it "accepts whitespace inside of objects"
     {
@@ -280,18 +280,18 @@ describe "dja_parse()"
 
       ensure(v != NULL);
       ensure(v->type == 'o');
-      ensure(v->children[0] != NULL);
-      ensure(v->children[1] != NULL);
-      ensure(v->children[2] != NULL);
-      ensure(v->children[3] == NULL);
-      ensure(v->children[0]->key === "a");
-      ensure(v->children[1]->key === "bb");
-      ensure(v->children[2]->key === "cc c");
-      ensure(v->children[0]->type == 'n');
-      ensure(v->children[1]->type == '0');
-      ensure(v->children[2]->type == 't');
-      ensure(dja_to_int(v->children[0]) == 0);
-      ensure(dja_to_int(v->children[2]) == 1);
+      ensure(dja_value_at(v, 0) != NULL);
+      ensure(dja_value_at(v, 1) != NULL);
+      ensure(dja_value_at(v, 2) != NULL);
+      ensure(dja_value_at(v, 3) == NULL);
+      ensure(dja_value_at(v, 0)->key === "a");
+      ensure(dja_value_at(v, 1)->key === "bb");
+      ensure(dja_value_at(v, 2)->key === "cc c");
+      ensure(dja_value_at(v, 0)->type == 'n');
+      ensure(dja_value_at(v, 1)->type == '0');
+      ensure(dja_value_at(v, 2)->type == 't');
+      ensure(dja_to_int(dja_value_at(v, 0)) == 0);
+      ensure(dja_to_int(dja_value_at(v, 2)) == 1);
     }
   }
 }
