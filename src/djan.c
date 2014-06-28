@@ -102,7 +102,7 @@ static void dja_parser_init()
     abr_n_seq(
       "entry",
       blanks,
-      abr_n_alt("key", string, symbol, NULL),
+      abr_n_alt("key", string, sqstring, symbol, NULL),
       blanks,
       abr_string(":"),
       abr_n("value"),
@@ -176,6 +176,18 @@ static short dja_atree_is_entry(abr_tree *t)
   return t->name && strcmp(t->name, "entry") == 0;
 }
 
+static char *dja_sq_unescape(const char *s, size_t n)
+{
+  char *r = calloc(n + 1, sizeof(char));
+  for (size_t i = 0, j = 0; i < n; i++)
+  {
+    char c = s[i];
+    if (c == '\0') break;
+    if (c != '\\') r[j++] = c;
+  }
+  return r;
+}
+
 static char *dja_extract_key(char *input, abr_tree *t)
 {
   //printf("tk\n%s\n", abr_tree_to_string_with_leaves(input, t));
@@ -186,6 +198,12 @@ static char *dja_extract_key(char *input, abr_tree *t)
     return flu_n_unescape(input + c->offset + 1, c->length - 2);
 
   c = c->sibling;
+
+  if (c->result == 1)
+    return dja_sq_unescape(input + c->offset + 1, c->length - 2);
+
+  c = c->sibling;
+
   return strndup(input + c->offset, c->length);
 }
 
@@ -302,18 +320,6 @@ char *dja_string(dja_value *v)
 {
   if (v->slen == 0) return strdup(v->source + v->soff);
   return strndup(v->source + v->soff, v->slen);
-}
-
-static char *dja_sq_unescape(const char *s, size_t n)
-{
-  char *r = calloc(n + 1, sizeof(char));
-  for (size_t i = 0, j = 0; i < n; i++)
-  {
-    char c = s[i];
-    if (c == '\0') break;
-    if (c != '\\') r[j++] = c;
-  }
-  return r;
 }
 
 char *dja_to_string(dja_value *v)

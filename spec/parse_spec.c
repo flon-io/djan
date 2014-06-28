@@ -258,6 +258,18 @@ describe "dja_parse()"
       ensure(dja_to_string(dja_value_at(v, 1)) ===f "null");
       ensure(dja_value_at(v, 2) == NULL);
     }
+    it "accepts 'single quote strings' as keys"
+    {
+      v = dja_parse("{ 'a_a': 0, 'bb_': null }");
+
+      ensure(v != NULL);
+      ensure(v->type == 'o');
+      ensure(dja_value_at(v, 0)->key === "a_a");
+      ensure(dja_value_at(v, 1)->key === "bb_");
+      ensure(dja_to_int(dja_value_at(v, 0)) == 0);
+      ensure(dja_to_string(dja_value_at(v, 1)) ===f "null");
+      ensure(dja_value_at(v, 2) == NULL);
+    }
 
     it "parses with or without commas"
     {
