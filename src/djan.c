@@ -39,7 +39,7 @@
 //
 // dja_value malloc/free
 
-dja_value *dja_value_malloc(
+static dja_value *dja_value_malloc(
   char type, char *input, size_t off, size_t len)
 {
   dja_value *v = calloc(1, sizeof(dja_value));
@@ -72,9 +72,9 @@ void dja_value_free(dja_value *v)
 //
 // parsing
 
-abr_parser *dja_parser = NULL;
+static abr_parser *dja_parser = NULL;
 
-void dja_parser_init()
+static void dja_parser_init()
 {
   if (dja_parser != NULL) return;
 
@@ -154,7 +154,7 @@ void dja_parser_init()
 }
 
 // forward declarations
-dja_value *dja_extract_value(char *input, abr_tree *t);
+static dja_value *dja_extract_value(char *input, abr_tree *t);
 
 //typedef int abr_tree_func(abr_tree *);
 //
@@ -162,18 +162,18 @@ dja_value *dja_extract_value(char *input, abr_tree *t);
 //  0: fail, please check my children
 //  1: success
 //
-short dja_atree_is_value(abr_tree *t)
+static short dja_atree_is_value(abr_tree *t)
 {
   if (t->result != 1) return -1;
   return t->name && strcmp(t->name, "value") == 0;
 }
-short dja_atree_is_entry(abr_tree *t)
+static short dja_atree_is_entry(abr_tree *t)
 {
   if (t->result != 1) return -1;
   return t->name && strcmp(t->name, "entry") == 0;
 }
 
-char *dja_extract_key(char *input, abr_tree *t)
+static char *dja_extract_key(char *input, abr_tree *t)
 {
   //printf("tk\n%s\n", abr_tree_to_string_with_leaves(input, t));
 
@@ -186,7 +186,7 @@ char *dja_extract_key(char *input, abr_tree *t)
   return strndup(input + c->offset, c->length);
 }
 
-dja_value *dja_extract_entries(char *input, abr_tree *t)
+static dja_value *dja_extract_entries(char *input, abr_tree *t)
 {
   //printf("%s\n", abr_tree_to_string_with_leaves(input, t));
 
@@ -211,7 +211,7 @@ dja_value *dja_extract_entries(char *input, abr_tree *t)
   return first;
 }
 
-dja_value *dja_extract_values(char *input, abr_tree *t)
+static dja_value *dja_extract_values(char *input, abr_tree *t)
 {
   //printf("%s\n", abr_tree_to_string(t));
 
@@ -234,7 +234,7 @@ dja_value *dja_extract_values(char *input, abr_tree *t)
   return first;
 }
 
-dja_value *dja_extract_v(char *input, abr_tree *t)
+static dja_value *dja_extract_v(char *input, abr_tree *t)
 {
   //printf("%s\n", abr_tree_to_string_with_leaves(input, t));
 
@@ -258,7 +258,7 @@ dja_value *dja_extract_v(char *input, abr_tree *t)
   return v;
 }
 
-dja_value *dja_extract_value(char *input, abr_tree *t)
+static dja_value *dja_extract_value(char *input, abr_tree *t)
 {
   //printf("%s\n", abr_tree_to_string_with_leaves(input, t));
 
