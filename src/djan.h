@@ -70,6 +70,11 @@ char *dja_string(dja_value *v);
  */
 char *dja_to_string(dja_value *v);
 
+/*
+ * Returns a string representation of the value v.
+ */
+char *dja_value_to_string(dja_value *v);
+
 int dja_to_int(dja_value *v);
 double dja_to_double(dja_value *v);
 

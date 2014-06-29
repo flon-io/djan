@@ -288,6 +288,31 @@ describe "dja_parse()"
     }
   }
 
+  context "symbols"
+  {
+    it "accepts symbols in lieu of strings"
+    {
+      v = dja_parse("sk8park");
+
+      ensure(v != NULL);
+      ensure(v->type == 'y');
+      ensure(dja_string(v) ===f "sk8park");
+      ensure(dja_to_string(v) ===f "sk8park");
+    }
+    it "accepts symbols (nested)"
+    {
+      v = dja_parse("[ mi6, cia, kgb c64 ]");
+
+      ensure(v != NULL);
+      ensure(v->type == 'a');
+
+      ensure(dja_value_to_string(dja_value_at(v, 0)) ===f "y >mi6< 2, 3");
+      ensure(dja_value_to_string(dja_value_at(v, 1)) ===f "y >cia< 7, 3");
+      ensure(dja_value_to_string(dja_value_at(v, 2)) ===f "y >kgb< 12, 3");
+      ensure(dja_value_to_string(dja_value_at(v, 3)) ===f "y >c64< 16, 3");
+    }
+  }
+
   context "whitespaces"
   {
     it "accepts whitespace around values"

@@ -151,6 +151,7 @@ static void dja_parser_init()
         abr_n_string("true", "true"),
         abr_n_string("false", "false"),
         abr_n_string("null", "null"),
+        symbol,
         NULL),
       blanks,
       NULL);
@@ -263,6 +264,7 @@ static dja_value *dja_extract_v(char *input, abr_tree *t)
 
   if (strcmp(t->name, "string") == 0) ty = 's';
   else if (strcmp(t->name, "sqstring") == 0) ty = 'q';
+  else if (strcmp(t->name, "symbol") == 0) ty = 'y';
   else if (strcmp(t->name, "number") == 0) ty = 'n';
   else if (strcmp(t->name, "true") == 0) ty = 't';
   else if (strcmp(t->name, "false") == 0) ty = 'f';
@@ -333,6 +335,14 @@ char *dja_to_string(dja_value *v)
     return dja_sq_unescape(v->source + v->soff + 1, v->slen - 2);
   }
   return dja_string(v);
+}
+
+char *dja_value_to_string(dja_value *v)
+{
+  char *s = dja_string(v);
+  char *r = flu_sprintf("%c >%s< %zu, %zu", v->type, s, v->soff, v->slen);
+  free(s);
+  return r;
 }
 
 int dja_to_int(dja_value *v)
