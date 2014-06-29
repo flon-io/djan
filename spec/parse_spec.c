@@ -248,15 +248,17 @@ describe "dja_parse()"
 
     it "accepts 'symbols' as keys"
     {
-      v = dja_parse("{ a_a: 0, bb_: null }");
+      v = dja_parse("{ a_a: 0, bb_: null, c3:\"three\" }");
 
       ensure(v != NULL);
       ensure(v->type == 'o');
       ensure(dja_value_at(v, 0)->key === "a_a");
       ensure(dja_value_at(v, 1)->key === "bb_");
+      ensure(dja_value_at(v, 2)->key === "c3");
       ensure(dja_to_int(dja_value_at(v, 0)) == 0);
       ensure(dja_to_string(dja_value_at(v, 1)) ===f "null");
-      ensure(dja_value_at(v, 2) == NULL);
+      ensure(dja_to_string(dja_value_at(v, 2)) ===f "three");
+      ensure(dja_value_at(v, 3) == NULL);
     }
     it "accepts 'single quote strings' as keys"
     {

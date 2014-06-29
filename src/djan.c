@@ -96,7 +96,7 @@ static void dja_parser_init()
   abr_parser *symbol =
     abr_n_regex(
       "symbol",
-      "^[a-zA-Z_]+");
+      "^[a-zA-Z_][a-zA-Z_0-9]*");
 
   abr_parser *entry =
     abr_n_seq(
