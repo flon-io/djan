@@ -53,6 +53,8 @@ dja_value *dja_parse_radial(char *input);
 
 char *dja_dump(dja_value *v);
 char *dja_to_json(dja_value *v);
+char *dja_to_djan(dja_value *v);
+char *dja_to_radial(dja_value *v);
 
 /*
  * Frees the dja_value resources. If the dja_value has children, they

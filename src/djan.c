@@ -384,6 +384,61 @@ dja_value *dja_parse_radial(char *input)
 
 
 //
+// outputting
+
+static void dja_to_j(flu_sbuffer *b, dja_value *v)
+{
+  if (v->key != NULL)
+  {
+    flu_sbprintf(b, "\"%s\":", v->key);
+  }
+
+  if (v->type == 'q')
+  {
+    char *s = dja_to_string(v);
+    flu_sbprintf(b, "\"%s\"", s);
+    free(s);
+  }
+  else if (v->type == 'y')
+  {
+    char *s = dja_string(v);
+    flu_sbprintf(b, "\"%s\"", s);
+    free(s);
+  }
+  else if (v->type == 'a')
+  {
+    flu_sbputc(b, '[');
+    for (dja_value *c = v->child; c != NULL; c = c->sibling)
+    {
+      dja_to_j(b, c);
+      if (c->sibling != NULL) flu_sbputc(b, ',');
+    }
+    flu_sbputc(b, ']');
+  }
+  else if (v->type == 'o')
+  {
+    flu_sbputc(b, '{');
+    for (dja_value *c = v->child; c != NULL; c = c->sibling)
+    {
+      dja_to_j(b, c);
+      if (c->sibling != NULL) flu_sbputc(b, ',');
+    }
+    flu_sbputc(b, '}');
+  }
+  else if (v->slen == 0) flu_sbputs(b, v->source + v->soff);
+  else flu_sbputs_n(b, v->source + v->soff, v->slen);
+}
+
+char *dja_to_json(dja_value *v)
+{
+  flu_sbuffer *b = flu_sbuffer_malloc();
+  dja_to_j(b, v);
+
+  return flu_sbuffer_to_string(b);
+}
+
+
+//
 // extracting stuff out of dja_value items
 
 char *dja_string(dja_value *v)
@@ -403,14 +458,6 @@ char *dja_to_string(dja_value *v)
     return dja_sq_unescape(v->source + v->soff + 1, v->slen - 2);
   }
   return dja_string(v);
-}
-
-char *dja_value_to_string(dja_value *v)
-{
-  char *s = dja_string(v);
-  char *r = flu_sprintf("%c >%s< %zu, %zu", v->type, s, v->soff, v->slen);
-  free(s);
-  return r;
 }
 
 int dja_to_int(dja_value *v)

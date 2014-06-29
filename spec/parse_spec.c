@@ -30,6 +30,7 @@ describe "dja_parse()"
       ensure(v->soff == 0);
       ensure(v->slen == 1);
       ensure(dja_to_int(v) == 1);
+      ensure(dja_to_json(v) ===f "1");
     }
     it "parses \"-1\""
     {
@@ -40,6 +41,7 @@ describe "dja_parse()"
       ensure(v->soff == 0);
       ensure(v->slen == 2);
       ensure(dja_to_int(v) == -1);
+      ensure(dja_to_json(v) ===f "-1");
     }
 
     it "parses \"0.0\""
@@ -53,6 +55,7 @@ describe "dja_parse()"
       ensure(dja_to_double(v) == 0.0);
       ensure(dja_string(v) ===f "0.0");
       ensure(dja_to_string(v) ===f "0.0");
+      ensure(dja_to_json(v) ===f "0.0");
     }
 
     it "parses \"1.5e2\""
@@ -66,6 +69,7 @@ describe "dja_parse()"
       ensure(dja_to_double(v) == 150.0);
       ensure(dja_string(v) ===f "1.5e2");
       ensure(dja_to_string(v) ===f "1.5e2");
+      ensure(dja_to_json(v) ===f "1.5e2");
     }
   }
 
@@ -79,6 +83,7 @@ describe "dja_parse()"
       ensure(v->type == 's');
       ensure(dja_string(v) ===f "\"hello\"");
       ensure(dja_to_string(v) ===f "hello");
+      ensure(dja_to_json(v) ===f "\"hello\"");
     }
     it "parses \"hello \\\"old bore\\\"\""
     {
@@ -88,6 +93,7 @@ describe "dja_parse()"
       ensure(v->type == 's');
       ensure(dja_string(v) ===f "\"hello \\\"old bore\\\"\"");
       ensure(dja_to_string(v) ===f "hello \"old bore\"");
+      ensure(dja_to_json(v) ===f "\"hello \\\"old bore\\\"\"");
     }
     it "parses \\t"
     {
@@ -97,6 +103,7 @@ describe "dja_parse()"
       ensure(v->type == 's');
       ensure(dja_string(v) ===f "\"hello\\ttab\"");
       ensure(dja_to_string(v) ===f "hello\ttab");
+      ensure(dja_to_json(v) ===f "\"hello\\ttab\"");
     }
     it "parses unicode escape sequences"
     {
@@ -106,6 +113,7 @@ describe "dja_parse()"
       ensure(v->type == 's');
       ensure(dja_string(v) ===f "\"hello \\u0066ool\"");
       ensure(dja_to_string(v) ===f "hello fool");
+      ensure(dja_to_json(v) ===f "\"hello \\u0066ool\"");
     }
     it "doesn't parse unknown escapes"
     {
@@ -123,6 +131,7 @@ describe "dja_parse()"
         ensure(v->type == 'q');
         ensure(dja_string(v) ===f "'hello \"world\"'");
         ensure(dja_to_string(v) ===f "hello \"world\"");
+        ensure(dja_to_json(v) ===f "\"hello \"world\"\"");
       }
       it "lets a quote being escaped"
       {
@@ -132,6 +141,7 @@ describe "dja_parse()"
         ensure(v->type == 'q');
         ensure(dja_string(v) ===f "'aujourd\\'hui'");
         ensure(dja_to_string(v) ===f "aujourd'hui");
+        ensure(dja_to_json(v) ===f "\"aujourd'hui\"");
       }
     }
   }
@@ -146,6 +156,7 @@ describe "dja_parse()"
       ensure(v->type == 't');
       ensure(dja_string(v) ===f "true");
       ensure(dja_to_int(v) == 1);
+      ensure(dja_to_json(v) ===f "true");
     }
 
     it "parses \"false\""
@@ -156,6 +167,7 @@ describe "dja_parse()"
       ensure(v->type == 'f');
       ensure(dja_string(v) ===f "false");
       ensure(dja_to_int(v) == 0);
+      ensure(dja_to_json(v) ===f "false");
     }
   }
 
@@ -168,6 +180,7 @@ describe "dja_parse()"
       ensure(v != NULL);
       ensure(v->type == '0');
       ensure(dja_string(v) ===f "null");
+      ensure(dja_to_json(v) ===f "null");
     }
   }
 
@@ -180,6 +193,7 @@ describe "dja_parse()"
       ensure(v != NULL);
       ensure(v->type == 'a');
       ensure(v->child == NULL);
+      ensure(dja_to_json(v) ===f "[]");
     }
 
     it "parses [1,2,3]"
@@ -196,6 +210,7 @@ describe "dja_parse()"
       ensure(dja_to_int(dja_value_at(v, 0)) == 1);
       ensure(dja_to_int(dja_value_at(v, 1)) == 2);
       ensure(dja_to_int(dja_value_at(v, 2)) == 3);
+      ensure(dja_to_json(v) ===f "[1,2,3]");
     }
 
     it "parses with or without commas"
@@ -212,6 +227,7 @@ describe "dja_parse()"
       ensure(dja_to_int(dja_value_at(v, 5)) == 51);
       ensure(dja_to_int(dja_value_at(v, 6)) == 52);
       ensure(dja_value_at(v, 7) == NULL);
+      ensure(dja_to_json(v) ===f "[10,20,30,40,50,51,52]");
     }
   }
 
@@ -224,6 +240,7 @@ describe "dja_parse()"
       ensure(v != NULL);
       ensure(v->type == 'o');
       ensure(dja_value_at(v, 0) == NULL);
+      ensure(dja_to_json(v) ===f "{}");
     }
 
     it "parses {\"a\":0,\"bb\":null,\"cc c\":true}"
@@ -244,6 +261,7 @@ describe "dja_parse()"
       ensure(dja_value_at(v, 2)->type == 't');
       ensure(dja_to_int(dja_value_at(v, 0)) == 0);
       ensure(dja_to_int(dja_value_at(v, 2)) == 1);
+      ensure(dja_to_json(v) ===f "{\"a\":0,\"bb\":null,\"cc c\":true}");
     }
 
     it "accepts 'symbols' as keys"
@@ -259,6 +277,7 @@ describe "dja_parse()"
       ensure(dja_to_string(dja_value_at(v, 1)) ===f "null");
       ensure(dja_to_string(dja_value_at(v, 2)) ===f "three");
       ensure(dja_value_at(v, 3) == NULL);
+      ensure(dja_to_json(v) ===f "{\"a_a\":0,\"bb_\":null,\"c3\":\"three\"}");
     }
     it "accepts 'single quote strings' as keys"
     {
@@ -271,6 +290,7 @@ describe "dja_parse()"
       ensure(dja_to_int(dja_value_at(v, 0)) == 0);
       ensure(dja_to_string(dja_value_at(v, 1)) ===f "null");
       ensure(dja_value_at(v, 2) == NULL);
+      ensure(dja_to_json(v) ===f "{\"a_a\":0,\"bb_\":null}");
     }
 
     it "parses with or without commas"
@@ -285,6 +305,9 @@ describe "dja_parse()"
       ensure(dja_value_at(v, 3)->key === "d");
       ensure(dja_value_at(v, 4) == NULL);
       ensure(dja_value_at(v, 3)->type == 'a');
+
+      ensure(dja_to_json(v) ===f ""
+        "{\"a_a\":0,\"bb_\":null,\"c\":true,\"d\":[1,2]}");
     }
   }
 
@@ -298,6 +321,7 @@ describe "dja_parse()"
       ensure(v->type == 'y');
       ensure(dja_string(v) ===f "sk8park");
       ensure(dja_to_string(v) ===f "sk8park");
+      ensure(dja_to_json(v) ===f "\"sk8park\"");
     }
     it "accepts symbols (nested)"
     {
@@ -306,10 +330,7 @@ describe "dja_parse()"
       ensure(v != NULL);
       ensure(v->type == 'a');
 
-      ensure(dja_value_to_string(dja_value_at(v, 0)) ===f "y >mi6< 2, 3");
-      ensure(dja_value_to_string(dja_value_at(v, 1)) ===f "y >cia< 7, 3");
-      ensure(dja_value_to_string(dja_value_at(v, 2)) ===f "y >kgb< 12, 3");
-      ensure(dja_value_to_string(dja_value_at(v, 3)) ===f "y >c64< 16, 3");
+      ensure(dja_to_json(v) ===f "[\"mi6\",\"cia\",\"kgb\",\"c64\"]");
     }
   }
 
@@ -322,6 +343,7 @@ describe "dja_parse()"
       ensure(v != NULL);
       ensure(v->type == 'n');
       ensure(dja_to_string(v) ===f "77.0");
+      ensure(dja_to_json(v) ===f "77.0");
     }
     it "accepts whitespace inside of arrays"
     {
@@ -333,6 +355,7 @@ describe "dja_parse()"
       ensure(dja_to_int(dja_value_at(v, 1)) == 2);
       ensure(dja_to_int(dja_value_at(v, 2)) == 3);
       ensure(dja_value_at(v, 3) == NULL);
+      ensure(dja_to_json(v) ===f "[1,2,3]");
     }
     it "accepts whitespace inside of objects"
     {
@@ -352,6 +375,7 @@ describe "dja_parse()"
       ensure(dja_value_at(v, 2)->type == 't');
       ensure(dja_to_int(dja_value_at(v, 0)) == 0);
       ensure(dja_to_int(dja_value_at(v, 2)) == 1);
+      ensure(dja_to_json(v) ===f "{\"a\":0,\"bb\":null,\"cc c\":true}");
     }
   }
 }
