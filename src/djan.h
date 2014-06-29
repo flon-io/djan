@@ -49,6 +49,8 @@ typedef struct dja_value {
 dja_value *dja_parse(char *input);
 dja_value *dja_parse_fragment(char *input, size_t offset, size_t length);
 
+dja_value *dja_parse_radial(char *input);
+
 char *dja_dump(dja_value *v);
 char *dja_to_json(dja_value *v);
 

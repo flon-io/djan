@@ -73,10 +73,13 @@ void dja_value_free(dja_value *v)
 // parsing
 
 static abr_parser *dja_parser = NULL;
+static abr_parser *dja_radial_parser = NULL;
 
 static void dja_parser_init()
 {
   if (dja_parser != NULL) return;
+
+  // djan (JSON & co)
 
   abr_parser *blanks =
     abr_regex("^[ \t\n\r]*");
@@ -138,22 +141,70 @@ static void dja_parser_init()
   abr_parser *array =
     abr_n_seq("array", abr_string("["), values, abr_string("]"), NULL);
 
+  abr_parser *pure_value =
+    abr_alt(
+      string,
+      sqstring,
+      abr_n_regex("number", "^-?[0-9]+(\\.[0-9]+)?([eE][+-]?[0-9]+)?"),
+      object,
+      array,
+      abr_n_string("true", "true"),
+      abr_n_string("false", "false"),
+      abr_n_string("null", "null"),
+      symbol,
+      NULL);
+
   dja_parser =
-    abr_n_seq(
-      "value",
-      blanks,
-      abr_alt(
-        string,
-        sqstring,
-        abr_n_regex("number", "^-?[0-9]+(\\.[0-9]+)?([eE][+-]?[0-9]+)?"),
-        object,
-        array,
-        abr_n_string("true", "true"),
-        abr_n_string("false", "false"),
-        abr_n_string("null", "null"),
-        symbol,
-        NULL),
-      blanks,
+    abr_n_seq("value", blanks, pure_value, blanks, NULL);
+
+  // radial
+
+  //abr_parser *radas = abr_rep
+
+  //abr_parser *exparg =
+  //  abr_n_rep(
+  //    "expa", dja_, 0, 1);
+
+  //abr_parser *expatts =
+  //  abr_n_rep(
+  //    "expas",
+  //    abr_seq(
+  //      dja_parser,
+  //      abr_rep(
+  //        abr_seq(abr_regex("^,?"), dja_parser, NULL),
+  //        0, -1),
+  //      NULL
+  //    ),
+  //    0, 1);
+
+  //abr_parser *line =
+  //  abr_n_seq("line", expindent, expname, exparg, expatts, NULL);
+
+  abr_parser *rad_blank = abr_regex("^[ \t]*");
+
+  abr_parser *rad_i = abr_n_regex("rad_i", "^[ \t]*");
+  abr_parser *rad_n = abr_name("radn", symbol);
+
+  abr_parser *rad_a =
+    abr_rep(abr_n_seq("rad_a", rad_blank, pure_value, NULL), 0, 1);
+
+  //abr_parser *rad_comment =
+  //  abr_regex("^#[^\n\r]*");
+
+  //abr_parser *rad_blank_l =
+  //  abr_seq(rad_blank, NULL);
+
+  abr_parser *rad_l =
+    abr_n_seq("rad_l", rad_i, rad_n, rad_a, NULL);
+
+  abr_parser *rad_line =
+    rad_l;
+
+  dja_radial_parser =
+    abr_seq(
+      //abr_rep(rad_nl, 0, -1),
+      rad_line,
+      //abr_rep(rad_nl, 0, -1),
       NULL);
 }
 
@@ -312,6 +363,23 @@ dja_value *dja_parse(char *input)
   abr_tree_free(t);
 
   return v;
+}
+
+dja_value *dja_parse_radial(char *input)
+{
+  dja_parser_init();
+
+  abr_tree *t = abr_parse_all(input, 0, dja_radial_parser);
+  // TODO: deal with errors (t->result < 0)
+
+  printf(">%s<\n", input);
+  puts(abr_tree_to_string_with_leaves(input, t));
+
+  //dja_value *v = dja_extract_value(input, t);
+  //abr_tree_free(t);
+
+  //return v;
+  return NULL;
 }
 
 
