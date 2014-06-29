@@ -183,28 +183,30 @@ static void dja_parser_init()
   abr_parser *rad_blank = abr_regex("^[ \t]*");
 
   abr_parser *rad_i = abr_n_regex("rad_i", "^[ \t]*");
-  abr_parser *rad_n = abr_name("radn", symbol);
+  abr_parser *rad_n = abr_name("rad_n", symbol);
 
   abr_parser *rad_a =
     abr_rep(abr_n_seq("rad_a", rad_blank, pure_value, NULL), 0, 1);
 
-  //abr_parser *rad_comment =
-  //  abr_regex("^#[^\n\r]*");
-
-  //abr_parser *rad_blank_l =
-  //  abr_seq(rad_blank, NULL);
+  abr_parser *rad_eol =
+    abr_regex("^[ \t]*(#[^\n\r]*)?");
 
   abr_parser *rad_l =
     abr_n_seq("rad_l", rad_i, rad_n, rad_a, NULL);
 
   abr_parser *rad_line =
-    rad_l;
+    abr_seq(abr_rep(rad_l, 0, 1), rad_eol, NULL);
 
   dja_radial_parser =
     abr_seq(
-      //abr_rep(rad_nl, 0, -1),
+      abr_regex("^[\n\r]*"),
       rad_line,
-      //abr_rep(rad_nl, 0, -1),
+      abr_rep(
+        abr_seq(
+          abr_regex("^[\n\r]+"),
+          rad_line,
+          NULL),
+        0, -1),
       NULL);
 }
 
@@ -365,6 +367,12 @@ dja_value *dja_parse(char *input)
   return v;
 }
 
+static short dja_atree_is_radl(abr_tree *t)
+{
+  if (t->result != 1) return -1;
+  return t->name && strcmp(t->name, "rad_l") == 0;
+}
+
 dja_value *dja_parse_radial(char *input)
 {
   dja_parser_init();
@@ -372,14 +380,29 @@ dja_value *dja_parse_radial(char *input)
   abr_tree *t = abr_parse_all(input, 0, dja_radial_parser);
   // TODO: deal with errors (t->result < 0)
 
-  printf(">%s<\n", input);
-  puts(abr_tree_to_string_with_leaves(input, t));
+  //printf(">%s<\n", input);
+  //puts(abr_tree_to_string_with_leaves(input, t));
 
-  //dja_value *v = dja_extract_value(input, t);
-  //abr_tree_free(t);
+  flu_list *ls = abr_tree_list(t, dja_atree_is_radl);
 
-  //return v;
-  return NULL;
+  dja_value *root = NULL;
+
+  if (ls->size > 0)
+  {
+    root = dja_value_malloc('a', NULL, 0, 0);
+    dja_value *current = NULL; // ...
+
+    for (flu_node *n = ls->first; n != NULL; n = n->next)
+    {
+      abr_tree *l = (abr_tree *)n->item;
+      printf("**\n%s\n", abr_tree_to_string_with_leaves(input, l));
+    }
+  }
+
+  flu_list_free(ls);
+  abr_tree_free(t);
+
+  return root;
 }
 
 
