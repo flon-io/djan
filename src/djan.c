@@ -373,6 +373,16 @@ static short dja_atree_is_radl(abr_tree *t)
   return t->name && strcmp(t->name, "rad_l") == 0;
 }
 
+static dja_value *dja_parse_radl(
+  char *input, abr_tree *radl, dja_value *current)
+{
+  printf("**\n");
+  abr_tree *radi = abr_tree_lookup(radl, "rad_i");
+  printf("indent: %zu\n", radi->length);
+  printf("%s\n", abr_tree_to_string_with_leaves(input, radl));
+  return NULL;
+}
+
 dja_value *dja_parse_radial(char *input)
 {
   dja_parser_init();
@@ -386,17 +396,12 @@ dja_value *dja_parse_radial(char *input)
   flu_list *ls = abr_tree_list(t, dja_atree_is_radl);
 
   dja_value *root = NULL;
+  dja_value *current = NULL;
 
-  if (ls->size > 0)
+  if (ls->size > 0) for (flu_node *n = ls->first; n != NULL; n = n->next)
   {
-    root = dja_value_malloc('a', NULL, 0, 0);
-    dja_value *current = NULL; // ...
-
-    for (flu_node *n = ls->first; n != NULL; n = n->next)
-    {
-      abr_tree *l = (abr_tree *)n->item;
-      printf("**\n%s\n", abr_tree_to_string_with_leaves(input, l));
-    }
+    current = dja_parse_radl(input, (abr_tree *)n->item, current);
+    if (root == NULL) root = current;
   }
 
   flu_list_free(ls);

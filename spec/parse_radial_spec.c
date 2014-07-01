@@ -31,14 +31,32 @@ describe "dja_parse_radial()"
   it "parses"
   {
     v = dja_parse_radial(""
+      "sequence"
+    );
+
+    ensure(v != NULL);
+    ensure(v->type == 'a');
+
+    ensure(dja_to_json(v) ===f ""
+      "[\"sequence\",{},[]]"
+    );
+  }
+
+  it "parses"
+  {
+    v = dja_parse_radial(""
       "sequence\n"
       "  participant 'bravo'"
     );
 
     ensure(v != NULL);
     ensure(v->type == 'a');
-    ensure(dja_value_at(v, 0) != NULL);
-    ensure(dja_value_at(v, 0)->type = 'y');
+
+    ensure(dja_to_json(v) ===f ""
+      "[\"sequence\",{},["
+        "[\"participant\",{\"_a\":\"bravo\"},[]]"
+      "]]"
+    );
   }
 }
 
