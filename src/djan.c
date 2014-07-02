@@ -43,6 +43,7 @@ static dja_value *dja_value_malloc(
   char type, char *input, size_t off, size_t len)
 {
   dja_value *v = calloc(1, sizeof(dja_value));
+  v->key = NULL;
   v->type = type;
   v->source = input;
   v->soff = off;
@@ -337,7 +338,7 @@ static dja_value *dja_extract_v(char *input, abr_tree *t)
 
 static dja_value *dja_extract_value(char *input, abr_tree *t)
 {
-  //printf("%s\n", abr_tree_to_string_with_leaves(input, t));
+  //printf("dev() %s\n", abr_tree_to_string_with_leaves(input, t));
 
   if (t->result != 1) return NULL;
 
@@ -373,14 +374,83 @@ static short dja_atree_is_radl(abr_tree *t)
   return t->name && strcmp(t->name, "rad_l") == 0;
 }
 
-static dja_value *dja_parse_radl(
-  char *input, abr_tree *radl, dja_value *current)
+static void dja_add_radc(dja_value *parent, dja_value *child)
 {
-  printf("**\n");
+  parent = dja_value_at(parent, 2);
+
+  if (parent->child == NULL)
+  {
+    parent->child = child;
+  }
+  else {
+    for (dja_value *c = parent->child; ; c = c->sibling)
+    {
+      if (c->sibling == NULL) { c->sibling = child; break; }
+    }
+  }
+}
+
+static void dja_stack_radl(flu_list *values, dja_value *v)
+{
+  long i = (long)v->soff; // indentation
+
+  dja_value *current = NULL;
+  long ci = -1;
+  if (values->size > 0)
+  {
+    current = (dja_value *)values->first->item;
+    ci = current->soff;
+  }
+
+  if (i < ci)
+  {
+    // go closer to the root
+    flu_list_shift(values);
+    dja_stack_radl(values, v);
+  }
+  else if (i == ci)
+  {
+    // replace current
+    flu_list_shift(values);
+    dja_add_radc((dja_value *)values->first->item, v);
+    flu_list_unshift(values, v);
+  }
+  else
+  {
+    // add here
+    if (current != NULL) dja_add_radc(current, v);
+    flu_list_unshift(values, v);
+  }
+}
+
+static void dja_parse_radl(char *input, abr_tree *radl, flu_list *values)
+{
   abr_tree *radi = abr_tree_lookup(radl, "rad_i");
-  printf("indent: %zu\n", radi->length);
-  printf("%s\n", abr_tree_to_string_with_leaves(input, radl));
-  return NULL;
+  abr_tree *radn = abr_tree_lookup(radl, "rad_n");
+  abr_tree *rada = abr_tree_lookup(radl, "rad_a");
+
+  size_t i = radi->length; // indentation
+
+  // [ "sequence", {}, [] ]
+  dja_value *v = dja_value_malloc('a', NULL, i, 0);
+  dja_value *vname = dja_extract_v(input, radn->child);
+  dja_value *vatts = dja_value_malloc('o', NULL, 0, 0);
+  dja_value *vchildren = dja_value_malloc('a', NULL, 0, 0);
+
+  // single "_a" attribute
+  dja_value *va = dja_extract_value(input, rada);
+  if (va != NULL) va->key = strdup("_a");
+  vatts->child = va;
+
+  v->child = vname;
+  vname->sibling = vatts;
+  vatts->sibling = vchildren;
+
+  dja_stack_radl(values, v);
+
+  //printf("**\n");
+  //printf("indent: %zu\n", radi->length);
+  //printf("%s\n", abr_tree_to_string_with_leaves(input, radl));
 }
 
 dja_value *dja_parse_radial(char *input)
@@ -394,18 +464,19 @@ dja_value *dja_parse_radial(char *input)
   //puts(abr_tree_to_string_with_leaves(input, t));
 
   flu_list *ls = abr_tree_list(t, dja_atree_is_radl);
-
-  dja_value *root = NULL;
-  dja_value *current = NULL;
+  flu_list *vs = flu_list_malloc();
 
   if (ls->size > 0) for (flu_node *n = ls->first; n != NULL; n = n->next)
   {
-    current = dja_parse_radl(input, (abr_tree *)n->item, current);
-    if (root == NULL) root = current;
+    dja_parse_radl(input, (abr_tree *)n->item, vs);
   }
 
   flu_list_free(ls);
   abr_tree_free(t);
+
+  dja_value *root = NULL;
+  if (vs->size > 0) root = (dja_value *)vs->last->item;
+  flu_list_free(vs);
 
   return root;
 }

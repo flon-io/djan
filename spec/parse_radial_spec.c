@@ -58,5 +58,31 @@ describe "dja_parse_radial()"
       "]]"
     );
   }
+
+  it "parses"
+  {
+    v = dja_parse_radial(""
+      "sequence\n"
+      "  participant 'alpha'\n"
+      "  concurrence\n"
+      "    participant 'bravo'\n"
+      "    participant 'charly'\n"
+      "  participant 'delta'"
+    );
+
+    ensure(v != NULL);
+    ensure(v->type == 'a');
+
+    ensure(dja_to_json(v) ===f ""
+      "[\"sequence\",{},["
+        "[\"participant\",{\"_a\":\"alpha\"},[]],"
+        "[\"concurrence\",{},["
+          "[\"participant\",{\"_a\":\"bravo\"},[]],"
+          "[\"participant\",{\"_a\":\"charly\"},[]]"
+        "]],"
+        "[\"participant\",{\"_a\":\"delta\"},[]]"
+      "]]"
+    );
+  }
 }
 
