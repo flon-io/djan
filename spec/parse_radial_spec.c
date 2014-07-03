@@ -84,5 +84,23 @@ describe "dja_parse_radial()"
       "]]"
     );
   }
+
+  it "accepts json/djan as first attribute"
+  {
+    v = dja_parse_radial(""
+      "iterate [\n"
+      "  1 2 3 ]\n"
+      "  bravo"
+    );
+
+    ensure(v != NULL);
+    ensure(v->type == 'a');
+
+    ensure(dja_to_json(v) ===f ""
+      "[\"iterate\",{\"_a\":[1,2,3]},["
+        "[\"bravo\",{},[]]"
+      "]]"
+    );
+  }
 }
 
