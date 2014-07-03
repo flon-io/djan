@@ -207,23 +207,6 @@ static void dja_parser_init()
 // forward declarations
 static dja_value *dja_extract_value(char *input, abr_tree *t);
 
-//typedef int abr_tree_func(abr_tree *);
-//
-// -1: fail, do not continue
-//  0: fail, please check my children
-//  1: success
-//
-static short dja_atree_is_value(abr_tree *t)
-{
-  if (t->result != 1) return -1;
-  return t->name && strcmp(t->name, "value") == 0;
-}
-static short dja_atree_is_entry(abr_tree *t)
-{
-  if (t->result != 1) return -1;
-  return t->name && strcmp(t->name, "entry") == 0;
-}
-
 static char *dja_sq_unescape(const char *s, size_t n)
 {
   char *r = calloc(n + 1, sizeof(char));
@@ -259,7 +242,7 @@ static dja_value *dja_extract_entries(char *input, abr_tree *t)
 {
   //printf("%s\n", abr_tree_to_string_with_leaves(input, t));
 
-  flu_list *ts = abr_tree_list(t, dja_atree_is_entry);
+  flu_list *ts = abr_tree_list_named(t, "entry");
 
   dja_value *first = NULL;
   dja_value *child = NULL;
@@ -284,7 +267,7 @@ static dja_value *dja_extract_values(char *input, abr_tree *t)
 {
   //printf("%s\n", abr_tree_to_string(t));
 
-  flu_list *ts = abr_tree_list(t, dja_atree_is_value);
+  flu_list *ts = abr_tree_list_named(t, "value");
 
   dja_value *first = NULL;
   dja_value *child = NULL;
@@ -359,12 +342,6 @@ dja_value *dja_parse(char *input)
   abr_tree_free(t);
 
   return v;
-}
-
-static short dja_atree_is_radl(abr_tree *t)
-{
-  if (t->result != 1) return -1;
-  return t->name && strcmp(t->name, "rad_l") == 0;
 }
 
 static void dja_add_radc(dja_value *parent, dja_value *child)
@@ -459,7 +436,7 @@ dja_value *dja_parse_radial(char *input)
   printf(">%s<\n", input);
   puts(abr_tree_to_string_with_leaves(input, t));
 
-  flu_list *ls = abr_tree_list(t, dja_atree_is_radl);
+  flu_list *ls = abr_tree_list_named(t, "rad_l");
   flu_list *vs = flu_list_malloc();
 
   if (ls->size > 0) for (flu_node *n = ls->first; n != NULL; n = n->next)
