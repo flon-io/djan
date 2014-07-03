@@ -28,7 +28,7 @@ describe "dja_parse_radial()"
     ensure(v == NULL);
   }
 
-  it "parses"
+  it "parses a single line"
   {
     v = dja_parse_radial(""
       "sequence"
@@ -42,7 +42,7 @@ describe "dja_parse_radial()"
     );
   }
 
-  it "parses"
+  it "parses a couple of lines"
   {
     v = dja_parse_radial(""
       "sequence\n"
@@ -59,7 +59,7 @@ describe "dja_parse_radial()"
     );
   }
 
-  it "parses"
+  it "parses a tree of lines"
   {
     v = dja_parse_radial(""
       "sequence\n"
