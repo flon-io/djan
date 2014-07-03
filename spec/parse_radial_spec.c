@@ -71,7 +71,6 @@ describe "dja_parse_radial()"
     );
 
     ensure(v != NULL);
-    ensure(v->type == 'a');
 
     ensure(dja_to_json(v) ===f ""
       "[\"sequence\",{},["
@@ -94,7 +93,6 @@ describe "dja_parse_radial()"
     );
 
     ensure(v != NULL);
-    ensure(v->type == 'a');
 
     ensure(dja_to_json(v) ===f ""
       "[\"iterate\",{\"_a\":[1,2,3]},["
@@ -102,5 +100,30 @@ describe "dja_parse_radial()"
       "]]"
     );
   }
+
+  it "accepts attributes"
+  {
+    v = dja_parse_radial(""
+      "participant charly a: 0, b: one c: true, d: [ four ]"
+    );
+
+    ensure(v != NULL);
+
+    ensure(dja_to_json(v) ===f ""
+      "["
+        "\"participant\","
+        "{"
+          "\"_a\":\"charly\","
+          "\"a\":0,"
+          "\"b\":\"one\","
+          "\"c\":true,"
+          "\"d\":[\"four\"],"
+        "},"
+        "[]"
+      "]]"
+    );
+  }
+
+      //"participant charly a: 0,\n b: one c: true, d: [ four ]"
 }
 

@@ -160,27 +160,6 @@ static void dja_parser_init()
 
   // radial
 
-  //abr_parser *radas = abr_rep
-
-  //abr_parser *exparg =
-  //  abr_n_rep(
-  //    "expa", dja_, 0, 1);
-
-  //abr_parser *expatts =
-  //  abr_n_rep(
-  //    "expas",
-  //    abr_seq(
-  //      dja_parser,
-  //      abr_rep(
-  //        abr_seq(abr_regex("^,?"), dja_parser, NULL),
-  //        0, -1),
-  //      NULL
-  //    ),
-  //    0, 1);
-
-  //abr_parser *line =
-  //  abr_n_seq("line", expindent, expname, exparg, expatts, NULL);
-
   abr_parser *rad_blank = abr_regex("^[ \t]*");
 
   abr_parser *rad_i = abr_n_regex("rad_i", "^[ \t]*");
@@ -189,11 +168,25 @@ static void dja_parser_init()
   abr_parser *rad_a =
     abr_rep(abr_n_seq("rad_a", rad_blank, pure_value, NULL), 0, 1);
 
+  abr_parser *rad_e =
+    abr_n_seq(
+      "rad_e",
+      abr_regex("^[ \t]*(,[ \t\n\r]*)?"),
+      abr_n_alt("key", string, sqstring, symbol, NULL),
+      rad_blank,
+      abr_string(":"),
+      abr_regex("^[ \t\n\r]*"),
+      pure_value,
+      NULL);
+
+  abr_parser *rad_as =
+    abr_n_rep("rad_as", rad_e, 0, -1);
+
   abr_parser *rad_eol =
     abr_regex("^[ \t]*(#[^\n\r]*)?");
 
   abr_parser *rad_l =
-    abr_n_seq("rad_l", rad_i, rad_n, rad_a, NULL);
+    abr_n_seq("rad_l", rad_i, rad_n, rad_a, rad_as, NULL);
 
   abr_parser *rad_line =
     abr_seq(abr_rep(rad_l, 0, 1), rad_eol, NULL);
@@ -442,6 +435,9 @@ static void dja_parse_radl(char *input, abr_tree *radl, flu_list *values)
   if (va != NULL) va->key = strdup("_a");
   vatts->child = va;
 
+  // attributes
+  //flu_list *as = abr_tree_list_named(t, "rad_e");
+
   v->child = vname;
   vname->sibling = vatts;
   vatts->sibling = vchildren;
@@ -460,8 +456,8 @@ dja_value *dja_parse_radial(char *input)
   abr_tree *t = abr_parse_all(input, 0, dja_radial_parser);
   // TODO: deal with errors (t->result < 0)
 
-  //printf(">%s<\n", input);
-  //puts(abr_tree_to_string_with_leaves(input, t));
+  printf(">%s<\n", input);
+  puts(abr_tree_to_string_with_leaves(input, t));
 
   flu_list *ls = abr_tree_list(t, dja_atree_is_radl);
   flu_list *vs = flu_list_malloc();
