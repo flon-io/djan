@@ -175,8 +175,7 @@ static void dja_parser_init()
       abr_n_alt("key", string, sqstring, symbol, NULL),
       rad_blank,
       abr_string(":"),
-      abr_regex("^[ \t\n\r]*"),
-      pure_value,
+      abr_n_seq("val", abr_regex("^[ \t\n\r]*"), pure_value, NULL),
       NULL);
 
   abr_parser *rad_as =
@@ -288,7 +287,7 @@ static dja_value *dja_extract_values(char *input, abr_tree *t)
 
 static dja_value *dja_extract_v(char *input, abr_tree *t)
 {
-  //printf("%s\n", abr_tree_to_string_with_leaves(input, t));
+  //printf("de_v() %s\n", abr_tree_to_string_with_leaves(input, t));
 
   char ty = '-';
 
@@ -398,6 +397,7 @@ static void dja_parse_radl(char *input, abr_tree *radl, flu_list *values)
   abr_tree *radi = abr_tree_lookup(radl, "rad_i");
   abr_tree *radn = abr_tree_lookup(radl, "rad_n");
   abr_tree *rada = abr_tree_lookup(radl, "rad_a");
+  abr_tree *radas = abr_tree_lookup(radl, "rad_as");
 
   size_t i = radi->length; // indentation
 
@@ -413,17 +413,25 @@ static void dja_parse_radl(char *input, abr_tree *radl, flu_list *values)
   vatts->child = va;
 
   // attributes
-  //flu_list *as = abr_tree_list_named(t, "rad_e");
+  dja_value **anext = &vatts->child;
+  if (vatts->child != NULL) anext = &vatts->child->sibling;
+  flu_list *as = abr_tree_list_named(radas, "rad_e");
+  for (flu_node *n = as->first; n != NULL; n = n->next)
+  {
+    abr_tree *ak = abr_t_child(n->item, 1);
+    abr_tree *av = abr_t_child(n->item, 4);
+    va = dja_extract_value(input, av);
+    va->key = abr_tree_string(input, ak);
+    *anext = va;
+    anext = &va->sibling;
+  }
+  flu_list_free(as);
 
   v->child = vname;
   vname->sibling = vatts;
   vatts->sibling = vchildren;
 
   dja_stack_radl(values, v);
-
-  //printf("**\n");
-  //printf("indent: %zu\n", radi->length);
-  //printf("%s\n", abr_tree_to_string_with_leaves(input, radl));
 }
 
 dja_value *dja_parse_radial(char *input)
@@ -433,8 +441,8 @@ dja_value *dja_parse_radial(char *input)
   abr_tree *t = abr_parse_all(input, 0, dja_radial_parser);
   // TODO: deal with errors (t->result < 0)
 
-  printf(">%s<\n", input);
-  puts(abr_tree_to_string_with_leaves(input, t));
+  //printf(">%s<\n", input);
+  //puts(abr_tree_to_string_with_leaves(input, t));
 
   flu_list *ls = abr_tree_list_named(t, "rad_l");
   flu_list *vs = flu_list_malloc();
