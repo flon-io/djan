@@ -124,6 +124,32 @@ describe "dja_parse_radial()"
     );
   }
 
-      //"participant charly a: 0,\n b: one c: true, d: [ four ]"
+  it "accepts attributes (and some newlines)"
+  {
+    v = dja_parse_radial(""
+      "participant charly,\n"
+      "  aa: 0,\n"
+      "  bb: one,\n"
+      "  cc: true,\n"
+      "  dd: [ four ]"
+    );
+
+    ensure(v != NULL);
+
+    ensure(dja_to_json(v) ===f ""
+      "["
+        "\"participant\","
+        "{"
+          "\"_a\":\"charly\","
+          "\"aa\":0,"
+          "\"bb\":\"one\","
+          "\"cc\":true,"
+          "\"dd\":[\"four\"]"
+        "},"
+        "[]"
+      "]"
+    );
+  }
+
 }
 
