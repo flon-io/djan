@@ -220,20 +220,17 @@ static char *dja_sq_unescape(const char *s, size_t n)
 
 static char *dja_extract_key(char *input, abr_tree *t)
 {
-  //printf("tk\n%s\n", abr_tree_to_string_with_leaves(input, t));
+  //printf("dek()\n%s\n", abr_tree_to_string_with_leaves(input, t));
 
   abr_tree *c = t->child;
 
-  if (c->result == 1)
+  if (strcmp(c->name, "string") == 0)
     return flu_n_unescape(input + c->offset + 1, c->length - 2);
 
-  c = c->sibling;
-
-  if (c->result == 1)
+  if (strcmp(c->name, "sqstring") == 0)
     return dja_sq_unescape(input + c->offset + 1, c->length - 2);
 
-  c = c->sibling;
-
+  //if (strcmp(c->name, "symbol") == 0)
   return strndup(input + c->offset, c->length);
 }
 
@@ -408,9 +405,12 @@ static void dja_parse_radl(char *input, abr_tree *radl, flu_list *values)
   dja_value *vchildren = dja_value_malloc('a', NULL, 0, 0);
 
   // single "_a" attribute
-  dja_value *va = dja_extract_value(input, rada);
-  if (va != NULL) va->key = strdup("_a");
-  vatts->child = va;
+  if (rada != NULL)
+  {
+    dja_value *va = dja_extract_value(input, rada);
+    if (va != NULL) va->key = strdup("_a");
+    vatts->child = va;
+  }
 
   // attributes
   dja_value **anext = &vatts->child;
@@ -420,7 +420,7 @@ static void dja_parse_radl(char *input, abr_tree *radl, flu_list *values)
   {
     abr_tree *ak = abr_t_child(n->item, 1);
     abr_tree *av = abr_t_child(n->item, 4);
-    va = dja_extract_value(input, av);
+    dja_value *va = dja_extract_value(input, av);
     va->key = abr_tree_string(input, ak);
     *anext = va;
     anext = &va->sibling;
