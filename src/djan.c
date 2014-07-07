@@ -160,20 +160,20 @@ static void dja_parser_init()
 
   // radial
 
-  abr_parser *rad_blank = abr_regex("^[ \t]*");
+  abr_parser *spaces = abr_regex("^[ \t]*");
 
-  abr_parser *rad_i = abr_name("rad_i", rad_blank);
+  abr_parser *rad_i = abr_name("rad_i", spaces);
   abr_parser *rad_n = abr_name("rad_n", symbol);
 
   abr_parser *rad_a =
-    abr_rep(abr_n_seq("rad_a", rad_blank, pure_value, NULL), 0, 1);
+    abr_rep(abr_n_seq("rad_a", spaces, pure_value, NULL), 0, 1);
 
   abr_parser *rad_e =
     abr_n_seq(
       "rad_e",
       abr_regex("^[ \t]*(,[ \t\n\r]*)?"),
       abr_n_alt("key", string, sqstring, symbol, NULL),
-      rad_blank,
+      spaces,
       abr_string(":"),
       abr_n_seq("val", abr_regex("^[ \t\n\r]*"), pure_value, NULL),
       NULL);
