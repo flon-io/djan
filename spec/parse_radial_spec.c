@@ -151,5 +151,22 @@ describe "dja_parse_radial()"
     );
   }
 
+  it "accepts comments at the end of the radial lines"
+  {
+    v = dja_parse_radial(""
+      "sequence\n"
+      "  participant toto # blind\n"
+      "  participant tutu # deaf"
+    );
+
+    ensure(v != NULL);
+
+    ensure(dja_to_json(v) ===f ""
+      "[\"sequence\",{},["
+        "[\"participant\",{\"_a\":\"toto\"},[]],"
+        "[\"participant\",{\"_a\":\"tutu\"},[]]"
+      "]]"
+    );
+  }
 }
 
