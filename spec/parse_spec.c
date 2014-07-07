@@ -345,6 +345,7 @@ describe "dja_parse()"
       ensure(dja_to_string(v) ===f "77.0");
       ensure(dja_to_json(v) ===f "77.0");
     }
+
     it "accepts whitespace inside of arrays"
     {
       v = dja_parse(" [1, 2,\n\t3 ] ");
@@ -357,6 +358,7 @@ describe "dja_parse()"
       ensure(dja_value_at(v, 3) == NULL);
       ensure(dja_to_json(v) ===f "[1,2,3]");
     }
+
     it "accepts whitespace inside of objects"
     {
       v = dja_parse("\n{\n\"a\": 0, \"bb\": null, \"cc c\": true\n}\n");
@@ -375,6 +377,20 @@ describe "dja_parse()"
       ensure(dja_value_at(v, 2)->type == 't');
       ensure(dja_to_int(dja_value_at(v, 0)) == 0);
       ensure(dja_to_int(dja_value_at(v, 2)) == 1);
+      ensure(dja_to_json(v) ===f "{\"a\":0,\"bb\":null,\"cc c\":true}");
+    }
+
+    it "accepts comments at the end of lines"
+    {
+      v = dja_parse(""
+        "{\n"
+        "  \"a\": 0,      # alpha delta\n"
+        "  \"bb\": null,  # bravo johnny\n"
+        "  \"cc c\": true # charly\n"
+        "} # over"
+      );
+
+      ensure(v != NULL);
       ensure(dja_to_json(v) ===f "{\"a\":0,\"bb\":null,\"cc c\":true}");
     }
   }

@@ -82,8 +82,8 @@ static void dja_parser_init()
 
   // djan (JSON & co)
 
-  abr_parser *blanks =
-    abr_regex("^[ \t\n\r]*");
+  abr_parser *blanks = // blanks and comments
+    abr_regex("^([ \t]*((#[^\r\n]*)?([\r\n]|$))?)*");
 
   abr_parser *string =
     abr_n_regex(
@@ -162,7 +162,7 @@ static void dja_parser_init()
 
   abr_parser *rad_blank = abr_regex("^[ \t]*");
 
-  abr_parser *rad_i = abr_n_regex("rad_i", "^[ \t]*");
+  abr_parser *rad_i = abr_name("rad_i", rad_blank);
   abr_parser *rad_n = abr_name("rad_n", symbol);
 
   abr_parser *rad_a =
