@@ -178,6 +178,30 @@ describe "dja_parse_radial()"
     );
   }
 
+  it "accepts comments in the attributes (after the colon)"
+  {
+    v = dja_parse_radial(""
+      "participant charly, # charlie\n"
+      "  aa:     # zero\n"
+      "    0,    # zero indeed\n"
+      "  bb: one # one\n"
+    );
+
+    ensure(v != NULL);
+
+    ensure(dja_to_json(v) ===f ""
+      "["
+        "\"participant\","
+        "{"
+          "\"_a\":\"charly\","
+          "\"aa\":0,"
+          "\"bb\":\"one\""
+        "},"
+        "[]"
+      "]"
+    );
+  }
+
   it "accepts comments at the end of the radial lines"
   {
     v = dja_parse_radial(""
