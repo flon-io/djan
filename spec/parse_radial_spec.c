@@ -168,5 +168,22 @@ describe "dja_parse_radial()"
       "]]"
     );
   }
+
+  it "accepts comments before the radial lines"
+  {
+    v = dja_parse_radial(""
+      "# Tue Jul  8 05:50:28 JST 2014\n"
+      "sequence\n"
+      "  participant toto"
+    );
+
+    ensure(v != NULL);
+
+    ensure(dja_to_json(v) ===f ""
+      "[\"sequence\",{},["
+        "[\"participant\",{\"_a\":\"toto\"},[]]"
+      "]]"
+    );
+  }
 }
 

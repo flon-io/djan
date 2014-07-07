@@ -192,7 +192,6 @@ static void dja_parser_init()
 
   dja_radial_parser =
     abr_seq(
-      abr_regex("^[\n\r]*"),
       rad_line,
       abr_rep(
         abr_seq(
