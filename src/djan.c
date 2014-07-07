@@ -223,6 +223,7 @@ static char *dja_extract_key(char *input, abr_tree *t)
   //printf("dek()\n%s\n", abr_tree_to_string_with_leaves(input, t));
 
   abr_tree *c = t->child;
+  while (c->result != 1) c = c->sibling; // unpruned trees are ok too
 
   if (strcmp(c->name, "string") == 0)
     return flu_n_unescape(input + c->offset + 1, c->length - 2);
