@@ -158,8 +158,8 @@ static void dja_parser_init()
   abr_parser *rad_n = abr_name("rad_n", symbol);
 
   abr_parser *rad_a =
-    abr_rep(abr_n_seq("rad_a", spaces, pure_value, NULL), 0, 1);
-    //abr_n_seq("rad_a", spaces, pure_value, abr_r("?"));
+    //abr_rep(abr_n_seq("rad_a", spaces, pure_value, NULL), 0, 1);
+    abr_n_seq("rad_a", spaces, pure_value, abr_n_r("", "?"));
 
   abr_parser *rad_e =
     abr_n_seq(
