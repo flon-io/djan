@@ -113,31 +113,23 @@ static void dja_parser_init()
       NULL);
 
   abr_parser *entries =
-    abr_n_rep(
+    abr_n_seq(
       "entries",
-      abr_seq(
-        entry,
-        abr_rep(
-          abr_seq(abr_regex("^,?"), entry, NULL),
-          0, -1),
-        NULL
-      ),
-      0, 1);
+      entry,
+      abr_seq(abr_regex("^,?"), entry, abr_r("*")),
+      abr_r("?")
+    );
 
   abr_parser *object =
     abr_n_seq("object", abr_string("{"), entries, abr_string("}"), NULL);
 
   abr_parser *values =
-    abr_n_rep(
+    abr_n_seq(
       "values",
-      abr_seq(
-        abr_n("value"),
-        abr_rep(
-          abr_seq(abr_regex("^,?"), abr_n("value"), NULL),
-          0, -1),
-        NULL
-      ),
-      0, 1);
+      abr_n("value"),
+      abr_seq(abr_regex("^,?"), abr_n("value"), abr_r("*")),
+      abr_r("?")
+    );
 
   abr_parser *array =
     abr_n_seq("array", abr_string("["), values, abr_string("]"), NULL);
@@ -167,6 +159,7 @@ static void dja_parser_init()
 
   abr_parser *rad_a =
     abr_rep(abr_n_seq("rad_a", spaces, pure_value, NULL), 0, 1);
+    //abr_n_seq("rad_a", spaces, pure_value, abr_r("?"));
 
   abr_parser *rad_e =
     abr_n_seq(
@@ -193,12 +186,10 @@ static void dja_parser_init()
   dja_radial_parser =
     abr_seq(
       rad_line,
-      abr_rep(
-        abr_seq(
-          abr_regex("^[\n\r]+"),
-          rad_line,
-          NULL),
-        0, -1),
+      abr_seq(
+        abr_regex("^[\n\r]+"),
+        rad_line,
+        abr_r("*")),
       NULL);
 }
 
