@@ -83,24 +83,22 @@ static void dja_parser_init()
   // djan (JSON & co)
 
   abr_parser *blanks = // blanks and comments
-    abr_regex("^([ \t]*((#[^\r\n]*)?([\r\n]|$))?)*");
+    abr_rex("([ \t]*((#[^\r\n]*)?([\r\n]|$))?)*");
 
   abr_parser *string =
-    abr_n_regex(
+    abr_n_rex(
       "string",
-      "^\"("
+      "\"("
         //"\\\\." "|"
         "\\\\[\"\\/\\\\bfnrt]" "|"
         "\\\\u[0-9a-fA-F]{4}" "|"
         "[^\"\\]"
       ")*\"");
   abr_parser *sqstring =
-    abr_n_regex("sqstring", "^'(\\\\'|[^'])*'");
+    abr_n_rex("sqstring", "'(\\\\'|[^'])*'");
 
   abr_parser *symbol =
-    abr_n_regex(
-      "symbol",
-      "^[a-zA-Z_][a-zA-Z_0-9]*");
+    abr_n_rex("symbol", "[a-zA-Z_][a-zA-Z_0-9]*");
 
   abr_parser *entry =
     abr_n_seq(
@@ -116,7 +114,7 @@ static void dja_parser_init()
     abr_n_seq(
       "entries",
       entry,
-      abr_seq(abr_regex("^,?"), entry, abr_r("*")),
+      abr_seq(abr_rex(",?"), entry, abr_r("*")),
       abr_r("?")
     );
 
@@ -127,7 +125,7 @@ static void dja_parser_init()
     abr_n_seq(
       "values",
       abr_n("value"),
-      abr_seq(abr_regex("^,?"), abr_n("value"), abr_r("*")),
+      abr_seq(abr_rex(",?"), abr_n("value"), abr_r("*")),
       abr_r("?")
     );
 
@@ -138,7 +136,7 @@ static void dja_parser_init()
     abr_alt(
       string,
       sqstring,
-      abr_n_regex("number", "^-?[0-9]+(\\.[0-9]+)?([eE][+-]?[0-9]+)?"),
+      abr_n_rex("number", "-?[0-9]+(\\.[0-9]+)?([eE][+-]?[0-9]+)?"),
       object,
       array,
       abr_n_string("true", "true"),
@@ -152,7 +150,7 @@ static void dja_parser_init()
 
   // radial
 
-  abr_parser *spaces = abr_regex("^[ \t]*");
+  abr_parser *spaces = abr_rex("[ \t]*");
 
   abr_parser *rad_i = abr_name("rad_i", spaces);
   abr_parser *rad_n = abr_name("rad_n", symbol);
@@ -164,7 +162,7 @@ static void dja_parser_init()
   abr_parser *rad_e =
     abr_n_seq(
       "rad_e",
-      abr_seq(spaces, abr_regex("^,?"), blanks, NULL),
+      abr_seq(spaces, abr_rex(",?"), blanks, NULL),
       abr_n_alt("key", string, sqstring, symbol, NULL),
       spaces,
       abr_string(":"),
@@ -175,7 +173,7 @@ static void dja_parser_init()
     abr_n_rep("rad_as", rad_e, 0, -1);
 
   abr_parser *rad_eol =
-    abr_regex("^[ \t]*(#[^\n\r]*)?");
+    abr_rex("[ \t]*(#[^\n\r]*)?");
 
   abr_parser *rad_l =
     abr_n_seq("rad_l", rad_i, rad_n, rad_a, rad_as, NULL);
@@ -187,7 +185,7 @@ static void dja_parser_init()
     abr_seq(
       rad_line,
       abr_seq(
-        abr_regex("^[\n\r]+"),
+        abr_rex("[\n\r]+"),
         rad_line,
         abr_r("*")),
       NULL);
