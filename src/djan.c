@@ -92,7 +92,7 @@ static void dja_parser_init()
         //"\\\\." "|"
         "\\\\[\"\\/\\\\bfnrt]" "|"
         "\\\\u[0-9a-fA-F]{4}" "|"
-        "[^\"\\]"
+        "[^\"\\\\]"
       ")*\"");
   abr_parser *sqstring =
     abr_n_rex("sqstring", "'(\\\\'|[^'])*'");
@@ -321,6 +321,7 @@ dja_value *dja_parse(char *input)
   // TODO: deal with errors (t->result < 0)
 
   //printf(">%s<\n", input);
+  //puts(abr_parser_to_string(t->parser));
   //puts(abr_tree_to_string_with_leaves(input, t));
 
   dja_value *v = dja_extract_value(input, t);
