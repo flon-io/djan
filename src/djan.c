@@ -156,7 +156,6 @@ static void dja_parser_init()
   abr_parser *rad_n = abr_name("rad_n", symbol);
 
   abr_parser *rad_a =
-    //abr_rep(abr_n_seq("rad_a", spaces, pure_value, NULL), 0, 1);
     abr_n_seq("rad_a", spaces, pure_value, abr_n_r("", "?"));
 
   abr_parser *rad_e =
@@ -179,7 +178,7 @@ static void dja_parser_init()
     abr_n_seq("rad_l", rad_i, rad_n, rad_a, rad_as, NULL);
 
   abr_parser *rad_line =
-    abr_seq(abr_rep(rad_l, 0, 1), rad_eol, NULL);
+    abr_seq(rad_l, abr_q("?"), rad_eol, NULL);
 
   dja_radial_parser =
     abr_seq(
@@ -381,6 +380,8 @@ static void dja_stack_radl(flu_list *values, dja_value *v)
 
 static void dja_parse_radl(char *input, abr_tree *radl, flu_list *values)
 {
+  //printf("%s\n", abr_tree_to_string_with_leaves(input, radl));
+
   abr_tree *radi = abr_tree_lookup(radl, "rad_i");
   abr_tree *radn = abr_tree_lookup(radl, "rad_n");
   abr_tree *rada = abr_tree_lookup(radl, "rad_a");
