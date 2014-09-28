@@ -80,7 +80,7 @@ double dja_to_double(dja_value *v);
 size_t dja_size(dja_value *v);
 dja_value *dja_value_at(dja_value *v, long n);
 dja_value *dja_lookup(dja_value *v, const char *path);
-//char *dja_lookup_string(dja_value *v, const char *path);
+char *dja_lookup_string(dja_value *v, const char *path);
 
 int dja_push(dja_value *array, dja_value *v);
 int dja_set(dja_value *object, const char *key, dja_value *v);

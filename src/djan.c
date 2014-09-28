@@ -637,3 +637,10 @@ dja_value *dja_lookup(dja_value *v, const char *path)
   return vv;
 }
 
+char *dja_lookup_string(dja_value *v, const char *path)
+{
+  dja_value *vv = dja_lookup(v, path);
+
+  return vv ? dja_to_string(vv) : NULL;
+}
+

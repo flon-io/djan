@@ -70,5 +70,18 @@ context "dja_value"
       ensure(dja_lookup(v, "nada") == NULL);
     }
   }
+
+  describe "dja_lookup_string()"
+  {
+    it "returns a copy of the string value when it finds"
+    {
+      v = dja_parse("{ type: car, parts: [ carburator, wheel ] }");
+
+      ensure(dja_lookup_string(v, "type") ===f "car");
+      ensure(dja_lookup_string(v, "parts.0") ===f "carburator");
+      ensure(dja_lookup_string(v, "parts.1") ===f "wheel");
+      ensure(dja_lookup_string(v, "parts.2") == NULL);
+    }
+  }
 }
 
