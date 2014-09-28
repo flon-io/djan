@@ -47,14 +47,14 @@ typedef struct dja_value {
 } dja_value;
 
 dja_value *dja_parse(char *input);
-dja_value *dja_parse_fragment(char *input, size_t offset, size_t length);
+//dja_value *dja_parse_fragment(char *input, size_t offset, size_t length);
 
 dja_value *dja_parse_radial(char *input);
 
-char *dja_dump(dja_value *v);
+//char *dja_dump(dja_value *v);
 char *dja_to_json(dja_value *v);
-char *dja_to_djan(dja_value *v);
-char *dja_to_radial(dja_value *v);
+//char *dja_to_djan(dja_value *v);
+//char *dja_to_radial(dja_value *v);
 
 /*
  * Frees the dja_value resources. If the dja_value has children, they
@@ -78,12 +78,14 @@ int dja_to_int(dja_value *v);
 double dja_to_double(dja_value *v);
 
 size_t dja_size(dja_value *v);
+
 dja_value *dja_value_at(dja_value *v, long n);
+
 dja_value *dja_lookup(dja_value *v, const char *path);
 char *dja_lookup_string(dja_value *v, const char *path);
 
-int dja_push(dja_value *array, dja_value *v);
-int dja_set(dja_value *object, const char *key, dja_value *v);
+//int dja_push(dja_value *array, dja_value *v);
+//int dja_set(dja_value *object, const char *key, dja_value *v);
 
 #endif // DJAN_H
 
