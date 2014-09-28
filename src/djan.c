@@ -190,6 +190,23 @@ static void dja_parser_init()
       NULL);
 }
 
+static abr_parser *dja_path_parser = NULL;
+
+static void dja_path_parser_init()
+{
+  if (dja_path_parser != NULL) return;
+
+  abr_parser *index = abr_n_rex("index", "-?[0-9]+");
+  abr_parser *key = abr_n_rex("key", "[a-zA-Z_][a-zA-Z_0-9]*");
+  abr_parser *node = abr_n_alt("node", index, key, NULL);
+
+  dja_path_parser =
+    abr_seq(
+      node,
+      abr_seq(abr_string("."), node), abr_q("*"),
+      NULL);
+}
+
 // forward declarations
 static dja_value *dja_extract_value(char *input, abr_tree *t);
 
@@ -573,8 +590,50 @@ dja_value *dja_value_at(dja_value *v, long n)
 
 dja_value *dja_lookup(dja_value *v, const char *path)
 {
-  long index = atol(path);
+  dja_path_parser_init();
 
-  return dja_value_at(v, index);
+  abr_tree *t = abr_parse_all(path, 0, dja_path_parser);
+
+  if (t->result != 1) { abr_tree_free(t); return NULL; }
+
+  //printf("path >%s<\n", path);
+  //puts(abr_tree_to_string_with_leaves(path, t));
+
+  dja_value *vv = v;
+
+  flu_list *l = abr_tree_list_named(t, "node");
+
+  for (flu_node *n = l->first; n; n = n->next)
+  {
+    abr_tree *tt = ((abr_tree *)n->item)->child;
+    //puts(abr_tree_to_string_with_leaves(path, tt));
+    char ltype = tt->name[0];
+
+    if (ltype == 'i' && vv->type != 'a') { vv = NULL; break; }
+    if (ltype == 'k' && vv->type != 'o') { vv = NULL; break; }
+
+    char *s = abr_tree_string(path, tt);
+
+    if (ltype == 'i')
+    {
+      vv = dja_value_at(vv, atol(s));
+    }
+    else // if (ltype == 'k')
+    {
+      for (vv = vv->child; vv; vv = vv->sibling)
+      {
+        if (strcmp(vv->key, s) == 0) break;
+      }
+    }
+
+    free(s);
+
+    if (vv == NULL) break;
+  }
+
+  flu_list_free(l);
+  abr_tree_free(t);
+
+  return vv;
 }
 

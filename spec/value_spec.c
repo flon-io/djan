@@ -40,32 +40,34 @@ context "dja_value"
   {
     it "looks up in arrays"
     {
-      dja_value *vv = NULL;
       v = dja_parse("[ 0, 7, 14, 28, 35 ]");
 
-      vv = dja_lookup(v, "0");
-      ensure(dja_to_int(vv) == 0);
-
-      vv = dja_lookup(v, "4");
-      ensure(dja_to_int(vv) == 35);
-
-      vv = dja_lookup(v, "5");
-      ensure(vv == NULL);
+      ensure(dja_to_int(dja_lookup(v, "0")) == 0);
+      ensure(dja_to_int(dja_lookup(v, "4")) == 35);
+      ensure(dja_lookup(v, "5") == NULL);
     }
 
     it "counts from the end of the array when the index is negative"
     {
-      dja_value *vv = NULL;
       v = dja_parse("[ 0, 7, 14, 28, 35 ]");
 
-      vv = dja_lookup(v, "-1");
-      ensure(dja_to_int(vv) == 35);
+      ensure(dja_to_int(dja_lookup(v, "-1")) == 35);
+      ensure(dja_to_int(dja_lookup(v, "-2")) == 28);
+      ensure(dja_lookup(v, "-6") == NULL);
+    }
 
-      vv = dja_lookup(v, "-2");
-      ensure(dja_to_int(vv) == 28);
+    it "looks up in objects"
+    {
+      v = dja_parse("{ type: car, color: blue, ids: [ 123, 456 ] }");
 
-      vv = dja_lookup(v, "-6");
-      ensure(vv == NULL);
+      ensure(dja_string(dja_lookup(v, "type")) ===f "car");
+      ensure(dja_string(dja_lookup(v, "color")) ===f "blue");
+      ensure(dja_to_int(dja_lookup(v, "ids.1")) == 456);
+      ensure(dja_to_int(dja_lookup(v, "ids.-1")) == 456);
+      ensure(dja_to_int(dja_lookup(v, "ids.-2")) == 123);
+      ensure(dja_lookup(v, "ids.-3") == NULL);
+      ensure(dja_lookup(v, "type.name") == NULL);
+      ensure(dja_lookup(v, "nada") == NULL);
     }
   }
 }
