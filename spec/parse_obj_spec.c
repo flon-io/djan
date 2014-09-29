@@ -98,5 +98,14 @@ describe "dja_parse_obj()"
       "}"
     );
   }
+
+  it "parses json objects"
+  {
+    v = dja_parse_obj("{\"name\":\"cinderella\",\"age\":21}");
+
+    expect(v != NULL);
+
+    expect(dja_to_json(v) ===f "{\"name\":\"cinderella\",\"age\":21}");
+  }
 }
 
