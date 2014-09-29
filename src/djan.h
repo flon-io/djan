@@ -51,7 +51,7 @@ dja_value *dja_parse(char *input);
 
 dja_value *dja_parse_radial(char *input);
 
-dja_value *dja_parse_conf(char *input);
+dja_value *dja_parse_obj(char *input);
 
 //char *dja_dump(dja_value *v);
 char *dja_to_json(dja_value *v);

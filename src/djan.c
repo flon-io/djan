@@ -74,8 +74,8 @@ void dja_value_free(dja_value *v)
 // parsing
 
 static abr_parser *dja_parser = NULL;
+static abr_parser *dja_obj_parser = NULL;
 static abr_parser *dja_radial_parser = NULL;
-static abr_parser *dja_conf_parser = NULL;
 
 static void dja_parser_init()
 {
@@ -190,9 +190,9 @@ static void dja_parser_init()
         abr_r("*")),
       NULL);
 
-  // conf
+  // obj
 
-  dja_conf_parser =
+  dja_obj_parser =
     abr_seq(
       abr_rex("[ \t]*(#[^\n\r]*[\n\r]+)?"), abr_q("*"),
       abr_n_seq("object", abr_rex("\\{?"), entries, abr_rex("\\}?"), NULL),
@@ -483,11 +483,11 @@ dja_value *dja_parse_radial(char *input)
   return root;
 }
 
-dja_value *dja_parse_conf(char *input)
+dja_value *dja_parse_obj(char *input)
 {
   dja_parser_init();
 
-  abr_tree *t = abr_parse_all(input, 0, dja_conf_parser);
+  abr_tree *t = abr_parse_all(input, 0, dja_obj_parser);
 
   if (t->result != 1) { abr_tree_free(t); return NULL; }
 
