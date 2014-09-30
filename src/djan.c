@@ -582,7 +582,7 @@ char *dja_to_string(dja_value *v)
   return dja_string(v);
 }
 
-int dja_to_int(dja_value *v)
+long long dja_to_int(dja_value *v)
 {
   if (v->type == 't') return 1;
   if (v->type == 'f') return 0;
@@ -590,7 +590,7 @@ int dja_to_int(dja_value *v)
   return atoi(v->source + v->soff);
 }
 
-double dja_to_double(dja_value *v)
+long double dja_to_double(dja_value *v)
 {
   if (v->type != 'n') return 0.0;
   return atof(v->source + v->soff);

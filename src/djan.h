@@ -76,8 +76,8 @@ char *dja_string(dja_value *v);
  */
 char *dja_to_string(dja_value *v);
 
-int dja_to_int(dja_value *v);
-double dja_to_double(dja_value *v);
+long long dja_to_int(dja_value *v);
+long double dja_to_double(dja_value *v);
 
 size_t dja_size(dja_value *v);
 
