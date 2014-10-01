@@ -50,6 +50,13 @@ context "update"
     }
 
     it "pushes null values"
+    {
+      v = dja_parse("[]");
+      int r = dja_push(v, dja_v("null"));
+
+      expect(r == 1);
+      expect(dja_to_json(v) ===f "[null]");
+    }
   }
 
   describe "dja_set()"
