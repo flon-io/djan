@@ -731,6 +731,8 @@ int dja_splice(dja_value *array, size_t start, size_t count, ...)
 {
   if (array->type != 'a') return 0;
 
+  // determine start and end of removal
+
   size_t off = 0;
   dja_value **link = &array->child;
 
@@ -741,18 +743,17 @@ int dja_splice(dja_value *array, size_t start, size_t count, ...)
   {
     dja_value *c = *link;
 
-    if (c == NULL) { if (lstart != NULL) break; return 0; }
+    if (c == NULL && lstart != NULL) break;
 
     if (lstart == NULL && off == start) { lstart = link; }
-    if (count == 0) { end = *link; break; }
+    if (lstart != NULL && count == 0) { end = *link; break; }
+
+    if (c == NULL) return 0;
 
     ++off;
     link = &(*link)->sibling;
     if (lstart) --count;
   }
-
-  //printf("lstart:  %s\n", dja_to_json(*lstart));
-  //printf("end:     %s\n", dja_to_json(end));
 
   // free old elements
 
@@ -763,7 +764,19 @@ int dja_splice(dja_value *array, size_t start, size_t count, ...)
     c = n;
   }
 
-  // TODO: insert new elements
+  // insert new elements
+
+  va_list ap; va_start(ap, count);
+  while (1)
+  {
+    dja_value *v = va_arg(ap, dja_value *);
+    if (v == NULL) break;
+    *lstart = v;
+    lstart = &v->sibling;
+  }
+  va_end(ap);
+
+  // link back with end of list
 
   *lstart = end;
 

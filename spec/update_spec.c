@@ -157,6 +157,40 @@ context "update"
     }
 
     it "inserts values"
+    {
+      v = dja_v("[]");
+      int r = dja_splice(v, 0, 0, dja_v("one"), dja_v("two"), NULL);
+
+      expect(r == 1);
+      expect(dja_to_json(v) ===f "[\"one\",\"two\"]");
+    }
+
+    it "inserts values (2)"
+    {
+      v = dja_v("[ 3, 4 ]");
+      int r = dja_splice(v, 0, 0, dja_v("one"), dja_v("two"), NULL);
+
+      expect(r == 1);
+      expect(dja_to_json(v) ===f "[\"one\",\"two\",3,4]");
+    }
+
+    it "inserts values (3)"
+    {
+      v = dja_v("[ 0, 1 ]");
+      int r = dja_splice(v, 2, 0, dja_v("two"), dja_v("three"), NULL);
+
+      expect(r == 1);
+      expect(dja_to_json(v) ===f "[0,1,\"two\",\"three\"]");
+    }
+
+    it "removes and inserts values"
+    {
+      v = dja_v("[ 0, 1, 2, 3 ]");
+      int r = dja_splice(v, 1, 2, dja_v("one"), dja_v("two"), NULL);
+
+      expect(r == 1);
+      expect(dja_to_json(v) ===f "[0,\"one\",\"two\",3]");
+    }
 
     it "returns 0 if the start index is too far"
     {
