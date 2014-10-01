@@ -15,10 +15,12 @@ context "update"
   before each
   {
     dja_value *v = NULL;
+    dja_value *vv = NULL;
   }
   after each
   {
     if (v != NULL) dja_value_free(v);
+    if (vv != NULL) dja_value_free(vv);
   }
 
   describe "dja_push()"
@@ -44,7 +46,8 @@ context "update"
     it "returns 0 if the target isn't an array"
     {
       v = dja_parse("{}");
-      int r = dja_push(v, dja_v("\"nada\""));
+      vv = dja_v("false");
+      int r = dja_push(v, vv);
 
       expect(r == 0);
     }
@@ -82,7 +85,8 @@ context "update"
     it "returns 0 if the target isn't an object"
     {
       v = dja_parse("[]");
-      int r = dja_set(v, "a", dja_v("false"));
+      vv = dja_v("false");
+      int r = dja_set(v, "a", vv);
 
       expect(r == 0);
     }
