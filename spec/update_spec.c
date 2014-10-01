@@ -48,15 +48,63 @@ context "update"
 
       expect(r == 0);
     }
+
+    it "pushes null values"
   }
 
   describe "dja_set()"
   {
-    it "works"
+    it "sets a value"
     {
       v = dja_parse("{ a: 0, b: 1, c: 2 }");
+      int r = dja_set(v, "d", dja_v("3"));
 
-      pending();
+      expect(r == 1);
+      expect(dja_to_json(v) ===f "{\"a\":0,\"b\":1,\"c\":2,\"d\":3}");
+    }
+
+    it "sets a value into an empty object"
+    {
+      v = dja_parse("{}");
+      int r = dja_set(v, "e", dja_v("4"));
+
+      expect(r == 1);
+      expect(dja_to_json(v) ===f "{\"e\":4}");
+    }
+
+    it "returns 0 if the target isn't an object"
+    {
+      v = dja_parse("[]");
+      int r = dja_set(v, "a", dja_v("false"));
+
+      expect(r == 0);
+    }
+
+    it "re-sets values"
+    {
+      v = dja_parse("{ a: 0, b: 1, c: 2 }");
+      int r = dja_set(v, "b", dja_v("\"BB\""));
+
+      expect(r == 1);
+      expect(dja_to_json(v) ===f "{\"a\":0,\"b\":\"BB\",\"c\":2}");
+    }
+
+    it "sets null values"
+    {
+      v = dja_parse("{ a: 0, b: 1 }");
+      int r = dja_set(v, "c", dja_v("null"));
+
+      expect(r == 1);
+      expect(dja_to_json(v) ===f "{\"a\":0,\"b\":1,\"c\":null}");
+    }
+
+    it "unsets when v is NULL"
+    {
+      v = dja_parse("{ a: 0, b: 1, c: 2 }");
+      int r = dja_set(v, "b", NULL);
+
+      expect(r == 1);
+      expect(dja_to_json(v) ===f "{\"a\":0,\"c\":2}");
     }
   }
 }

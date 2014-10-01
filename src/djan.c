@@ -684,21 +684,48 @@ int dja_push(dja_value *array, dja_value *v)
 {
   if (array->type != 'a') return 0;
 
-  if (array->child == NULL)
-    array->child = v;
-  else
-    for (dja_value *c = array->child; ; c = c->sibling)
-    {
-      if (c->sibling) continue;
+  if (array->child == NULL) { array->child = v; return 1; }
 
-      c->sibling = v;
-      break;
-    }
-
+  for (dja_value *c = array->child; ; c = c->sibling)
+  {
+    if (c->sibling == NULL) { c->sibling = v; break; }
+  }
   return 1;
 }
 
-//int dja_set(dja_value *object, const char *key, dja_value *v)
-//{
-//}
+int dja_set(dja_value *object, const char *key, dja_value *v)
+{
+  if (object->type != 'o') return 0;
+
+  if (v != NULL)
+  {
+    if (v->key) free(v->key);
+    v->key = strdup(key);
+  }
+
+  for (dja_value **link = &object->child; ; link = &(*link)->sibling)
+  {
+    dja_value *child = *link;
+
+    if (child == NULL) { *link = v; break; }
+
+    if (strcmp(key, child->key) == 0)
+    {
+      if (v == NULL)
+      {
+        *link = child->sibling;
+        dja_value_free(child);
+      }
+      else
+      {
+        *link = v;
+        v->sibling = child->sibling;
+        dja_value_free(child);
+      }
+      break;
+    }
+  }
+
+  return 1;
+}
 
