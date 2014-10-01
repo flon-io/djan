@@ -23,6 +23,8 @@
 // Made in Japan.
 //
 
+// https://github.com/flon-io/djan
+
 #ifndef DJAN_H
 #define DJAN_H
 
