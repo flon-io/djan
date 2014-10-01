@@ -215,7 +215,7 @@ static void dja_path_parser_init()
   dja_path_parser =
     abr_seq(
       node,
-      abr_seq(abr_string("."), node), abr_q("*"),
+      abr_seq(abr_string("."), node, NULL), abr_q("*"),
       NULL);
 }
 
