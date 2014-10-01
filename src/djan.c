@@ -680,3 +680,25 @@ char *dja_lookup_string(dja_value *v, const char *path)
   return vv ? dja_to_string(vv) : NULL;
 }
 
+int dja_push(dja_value *array, dja_value *v)
+{
+  if (array->type != 'a') return 0;
+
+  if (array->child == NULL)
+    array->child = v;
+  else
+    for (dja_value *c = array->child; ; c = c->sibling)
+    {
+      if (c->sibling) continue;
+
+      c->sibling = v;
+      break;
+    }
+
+  return 1;
+}
+
+//int dja_set(dja_value *object, const char *key, dja_value *v)
+//{
+//}
+

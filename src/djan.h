@@ -51,6 +51,8 @@ typedef struct dja_value {
 dja_value *dja_parse(char *input);
 //dja_value *dja_parse_fragment(char *input, size_t offset, size_t length);
 
+#define dja_v(input) dja_parse(input)
+
 dja_value *dja_parse_radial(char *input);
 
 dja_value *dja_parse_obj(char *input);
@@ -88,8 +90,8 @@ dja_value *dja_value_at(dja_value *v, long n);
 dja_value *dja_lookup(dja_value *v, const char *path);
 char *dja_lookup_string(dja_value *v, const char *path);
 
-//int dja_push(dja_value *array, dja_value *v);
-//int dja_set(dja_value *object, const char *key, dja_value *v);
+int dja_push(dja_value *array, dja_value *v);
+int dja_set(dja_value *object, const char *key, dja_value *v);
 
 #endif // DJAN_H
 
