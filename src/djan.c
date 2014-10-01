@@ -39,12 +39,12 @@
 
 
 //
-// dja_value malloc/free
+// fdja_value malloc/free
 
-static dja_value *dja_value_malloc(
+static fdja_value *fdja_value_malloc(
   char type, char *input, size_t off, size_t len)
 {
-  dja_value *v = calloc(1, sizeof(dja_value));
+  fdja_value *v = calloc(1, sizeof(fdja_value));
   v->key = NULL;
   v->type = type;
   v->source = input;
@@ -56,15 +56,15 @@ static dja_value *dja_value_malloc(
   return v;
 }
 
-void dja_value_free(dja_value *v)
+void fdja_value_free(fdja_value *v)
 {
   if (v->key != NULL) free(v->key);
   if (v->slen == 0 && v->source != NULL) free(v->source);
 
-  for (dja_value *c = v->child, *next = NULL; c != NULL; )
+  for (fdja_value *c = v->child, *next = NULL; c != NULL; )
   {
     next = c->sibling;
-    dja_value_free(c);
+    fdja_value_free(c);
     c = next;
   }
 
@@ -75,13 +75,13 @@ void dja_value_free(dja_value *v)
 //
 // parsing
 
-static fabr_parser *dja_parser = NULL;
-static fabr_parser *dja_obj_parser = NULL;
-static fabr_parser *dja_radial_parser = NULL;
+static fabr_parser *fdja_parser = NULL;
+static fabr_parser *fdja_obj_parser = NULL;
+static fabr_parser *fdja_radial_parser = NULL;
 
-static void dja_parser_init()
+static void fdja_parser_init()
 {
-  if (dja_parser != NULL) return;
+  if (fdja_parser != NULL) return;
 
   // djan (JSON & co)
 
@@ -148,7 +148,7 @@ static void dja_parser_init()
       symbol,
       NULL);
 
-  dja_parser =
+  fdja_parser =
     fabr_n_seq("value", blanks, pure_value, blanks, NULL);
 
   // radial
@@ -183,7 +183,7 @@ static void dja_parser_init()
   fabr_parser *rad_line =
     fabr_seq(rad_l, fabr_q("?"), rad_eol, NULL);
 
-  dja_radial_parser =
+  fdja_radial_parser =
     fabr_seq(
       rad_line,
       fabr_seq(
@@ -194,7 +194,7 @@ static void dja_parser_init()
 
   // obj
 
-  dja_obj_parser =
+  fdja_obj_parser =
     fabr_seq(
       fabr_rex("[ \t]*(#[^\n\r]*[\n\r]+)?"), fabr_q("*"),
       fabr_n_seq("object", fabr_rex("\\{?"), entries, fabr_rex("\\}?"), NULL),
@@ -202,17 +202,17 @@ static void dja_parser_init()
       NULL);
 }
 
-static fabr_parser *dja_path_parser = NULL;
+static fabr_parser *fdja_path_parser = NULL;
 
-static void dja_path_parser_init()
+static void fdja_path_parser_init()
 {
-  if (dja_path_parser != NULL) return;
+  if (fdja_path_parser != NULL) return;
 
   fabr_parser *index = fabr_n_rex("index", "-?[0-9]+");
   fabr_parser *key = fabr_n_rex("key", "[a-zA-Z_][a-zA-Z_0-9]*");
   fabr_parser *node = fabr_n_alt("node", index, key, NULL);
 
-  dja_path_parser =
+  fdja_path_parser =
     fabr_seq(
       node,
       fabr_seq(fabr_string("."), node, NULL), fabr_q("*"),
@@ -220,9 +220,9 @@ static void dja_path_parser_init()
 }
 
 // forward declarations
-static dja_value *dja_extract_value(char *input, fabr_tree *t);
+static fdja_value *fdja_extract_value(char *input, fabr_tree *t);
 
-static char *dja_sq_unescape(const char *s, size_t n)
+static char *fdja_sq_unescape(const char *s, size_t n)
 {
   char *r = calloc(n + 1, sizeof(char));
   for (size_t i = 0, j = 0; i < n; i++)
@@ -234,7 +234,7 @@ static char *dja_sq_unescape(const char *s, size_t n)
   return r;
 }
 
-static char *dja_extract_key(char *input, fabr_tree *t)
+static char *fdja_extract_key(char *input, fabr_tree *t)
 {
   //printf("dek()\n%s\n", fabr_tree_to_string(t, input));
 
@@ -245,27 +245,27 @@ static char *dja_extract_key(char *input, fabr_tree *t)
     return flu_n_unescape(input + c->offset + 1, c->length - 2);
 
   if (strcmp(c->name, "sqstring") == 0)
-    return dja_sq_unescape(input + c->offset + 1, c->length - 2);
+    return fdja_sq_unescape(input + c->offset + 1, c->length - 2);
 
   //if (strcmp(c->name, "symbol") == 0)
   return strndup(input + c->offset, c->length);
 }
 
-static dja_value *dja_extract_entries(char *input, fabr_tree *t)
+static fdja_value *fdja_extract_entries(char *input, fabr_tree *t)
 {
   //printf("%s\n", fabr_tree_to_string(t, input));
 
   flu_list *ts = fabr_tree_list_named(t, "entry");
 
-  dja_value *first = NULL;
-  dja_value *child = NULL;
+  fdja_value *first = NULL;
+  fdja_value *child = NULL;
 
   for (flu_node *n = ts->first; n != NULL; n = n->next)
   {
     fabr_tree *tt = (fabr_tree *)n->item;
     //printf("**\n%s\n", fabr_tree_to_string(tt, input));
-    dja_value *v = dja_extract_value(input, fabr_t_child(tt, 4));
-    v->key = dja_extract_key(input, fabr_t_child(tt, 1));
+    fdja_value *v = fdja_extract_value(input, fabr_t_child(tt, 4));
+    v->key = fdja_extract_key(input, fabr_t_child(tt, 1));
     if (first == NULL) first = v;
     if (child != NULL) child->sibling = v;
     child = v;
@@ -276,19 +276,19 @@ static dja_value *dja_extract_entries(char *input, fabr_tree *t)
   return first;
 }
 
-static dja_value *dja_extract_values(char *input, fabr_tree *t)
+static fdja_value *fdja_extract_values(char *input, fabr_tree *t)
 {
   //printf("%s\n", fabr_tree_to_string(t));
 
   flu_list *ts = fabr_tree_list_named(t, "value");
 
-  dja_value *first = NULL;
-  dja_value *child = NULL;
+  fdja_value *first = NULL;
+  fdja_value *child = NULL;
 
   for (flu_node *n = ts->first; n != NULL; n = n->next)
   {
     //printf("** %s\n", fabr_tree_to_string(ts[i]));
-    dja_value *v = dja_extract_value(input, (fabr_tree *)n->item);
+    fdja_value *v = fdja_extract_value(input, (fabr_tree *)n->item);
     if (first == NULL) first = v;
     if (child != NULL) child->sibling = v;
     child = v;
@@ -299,10 +299,10 @@ static dja_value *dja_extract_values(char *input, fabr_tree *t)
   return first;
 }
 
-static dja_value *dja_extract_v(char *input, fabr_tree *t)
+static fdja_value *fdja_extract_v(char *input, fabr_tree *t)
 {
-  //printf("dja_extract_v() %s\n", fabr_tree_to_string(t, input));
-  //printf("dja_extract_v() %s\n", fabr_tree_to_str(t, input));
+  //printf("fdja_extract_v() %s\n", fabr_tree_to_string(t, input));
+  //printf("fdja_extract_v() %s\n", fabr_tree_to_str(t, input));
 
   char ty = '-';
 
@@ -318,74 +318,74 @@ static dja_value *dja_extract_v(char *input, fabr_tree *t)
 
   if (ty == '-') return NULL;
 
-  dja_value *v = dja_value_malloc(ty, input, t->offset, t->length);
+  fdja_value *v = fdja_value_malloc(ty, input, t->offset, t->length);
 
-  if (ty == 'o') v->child = dja_extract_entries(input, fabr_t_child(t, 1));
-  else if (ty == 'a') v->child = dja_extract_values(input, fabr_t_child(t, 1));
+  if (ty == 'o') v->child = fdja_extract_entries(input, fabr_t_child(t, 1));
+  else if (ty == 'a') v->child = fdja_extract_values(input, fabr_t_child(t, 1));
 
   return v;
 }
 
-static dja_value *dja_extract_value(char *input, fabr_tree *t)
+static fdja_value *fdja_extract_value(char *input, fabr_tree *t)
 {
-  //printf("dja_extract_value() %s\n", fabr_tree_to_string(t, input));
-  //printf("dja_extract_value() %s\n", fabr_tree_to_str(t, input));
+  //printf("fdja_extract_value() %s\n", fabr_tree_to_string(t, input));
+  //printf("fdja_extract_value() %s\n", fabr_tree_to_str(t, input));
 
   if (t->result != 1) return NULL;
 
   t = fabr_t_child(t, 1);
 
-  //printf("dja_extract_value() child1 %s\n", fabr_tree_to_str(t, input));
+  //printf("fdja_extract_value() child1 %s\n", fabr_tree_to_str(t, input));
 
   for (fabr_tree *c = t->child; c != NULL; c = c->sibling)
   {
-    if (c->result == 1) return dja_extract_v(input, c);
+    if (c->result == 1) return fdja_extract_v(input, c);
   }
 
   return NULL;
 }
 
-dja_value *dja_parse(char *input)
+fdja_value *fdja_parse(char *input)
 {
-  dja_parser_init();
+  fdja_parser_init();
 
-  fabr_tree *t = fabr_parse_all(input, 0, dja_parser);
+  fabr_tree *t = fabr_parse_all(input, 0, fdja_parser);
 
   //printf(">%s<\n", input);
   //puts(fabr_parser_to_string(t->parser));
   //puts(fabr_tree_to_string(t, input));
 
-  dja_value *v = dja_extract_value(input, t);
+  fdja_value *v = fdja_extract_value(input, t);
   fabr_tree_free(t);
 
   return v;
 }
 
-static void dja_add_radc(dja_value *parent, dja_value *child)
+static void fdja_add_radc(fdja_value *parent, fdja_value *child)
 {
-  parent = dja_value_at(parent, 2);
+  parent = fdja_value_at(parent, 2);
 
   if (parent->child == NULL)
   {
     parent->child = child;
   }
   else {
-    for (dja_value *c = parent->child; ; c = c->sibling)
+    for (fdja_value *c = parent->child; ; c = c->sibling)
     {
       if (c->sibling == NULL) { c->sibling = child; break; }
     }
   }
 }
 
-static void dja_stack_radl(flu_list *values, dja_value *v)
+static void fdja_stack_radl(flu_list *values, fdja_value *v)
 {
   long i = (long)v->soff; // indentation
 
-  dja_value *current = NULL;
+  fdja_value *current = NULL;
   long ci = -1;
   if (values->size > 0)
   {
-    current = (dja_value *)values->first->item;
+    current = (fdja_value *)values->first->item;
     ci = current->soff;
   }
 
@@ -393,24 +393,24 @@ static void dja_stack_radl(flu_list *values, dja_value *v)
   {
     // go closer to the root
     flu_list_shift(values);
-    dja_stack_radl(values, v);
+    fdja_stack_radl(values, v);
   }
   else if (i == ci)
   {
     // replace current
     flu_list_shift(values);
-    dja_add_radc((dja_value *)values->first->item, v);
+    fdja_add_radc((fdja_value *)values->first->item, v);
     flu_list_unshift(values, v);
   }
   else
   {
     // add here
-    if (current != NULL) dja_add_radc(current, v);
+    if (current != NULL) fdja_add_radc(current, v);
     flu_list_unshift(values, v);
   }
 }
 
-static void dja_parse_radl(char *input, fabr_tree *radl, flu_list *values)
+static void fdja_parse_radl(char *input, fabr_tree *radl, flu_list *values)
 {
   //printf("%s\n", fabr_tree_to_string(radl, input));
 
@@ -422,28 +422,28 @@ static void dja_parse_radl(char *input, fabr_tree *radl, flu_list *values)
   size_t i = radi->length; // indentation
 
   // [ "sequence", {}, [] ]
-  dja_value *v = dja_value_malloc('a', NULL, i, 0);
-  dja_value *vname = dja_extract_v(input, radn->child);
-  dja_value *vatts = dja_value_malloc('o', NULL, 0, 0);
-  dja_value *vchildren = dja_value_malloc('a', NULL, 0, 0);
+  fdja_value *v = fdja_value_malloc('a', NULL, i, 0);
+  fdja_value *vname = fdja_extract_v(input, radn->child);
+  fdja_value *vatts = fdja_value_malloc('o', NULL, 0, 0);
+  fdja_value *vchildren = fdja_value_malloc('a', NULL, 0, 0);
 
   // single "_a" attribute
   if (rada != NULL)
   {
-    dja_value *va = dja_extract_value(input, rada);
+    fdja_value *va = fdja_extract_value(input, rada);
     if (va != NULL) va->key = strdup("_a");
     vatts->child = va;
   }
 
   // attributes
-  dja_value **anext = &vatts->child;
+  fdja_value **anext = &vatts->child;
   if (vatts->child != NULL) anext = &vatts->child->sibling;
   flu_list *as = fabr_tree_list_named(radas, "rad_e");
   for (flu_node *n = as->first; n != NULL; n = n->next)
   {
     fabr_tree *ak = fabr_t_child(n->item, 1);
     fabr_tree *av = fabr_t_child(n->item, 4);
-    dja_value *va = dja_extract_value(input, av);
+    fdja_value *va = fdja_extract_value(input, av);
     va->key = fabr_tree_string(input, ak);
     *anext = va;
     anext = &va->sibling;
@@ -454,14 +454,14 @@ static void dja_parse_radl(char *input, fabr_tree *radl, flu_list *values)
   vname->sibling = vatts;
   vatts->sibling = vchildren;
 
-  dja_stack_radl(values, v);
+  fdja_stack_radl(values, v);
 }
 
-dja_value *dja_parse_radial(char *input)
+fdja_value *fdja_parse_radial(char *input)
 {
-  dja_parser_init();
+  fdja_parser_init();
 
-  fabr_tree *t = fabr_parse_all(input, 0, dja_radial_parser);
+  fabr_tree *t = fabr_parse_all(input, 0, fdja_radial_parser);
   // TODO: deal with errors (t->result < 0)
 
   //printf(">%s<\n", input);
@@ -472,24 +472,24 @@ dja_value *dja_parse_radial(char *input)
 
   if (ls->size > 0) for (flu_node *n = ls->first; n != NULL; n = n->next)
   {
-    dja_parse_radl(input, (fabr_tree *)n->item, vs);
+    fdja_parse_radl(input, (fabr_tree *)n->item, vs);
   }
 
   flu_list_free(ls);
   fabr_tree_free(t);
 
-  dja_value *root = NULL;
-  if (vs->size > 0) root = (dja_value *)vs->last->item;
+  fdja_value *root = NULL;
+  if (vs->size > 0) root = (fdja_value *)vs->last->item;
   flu_list_free(vs);
 
   return root;
 }
 
-dja_value *dja_parse_obj(char *input)
+fdja_value *fdja_parse_obj(char *input)
 {
-  dja_parser_init();
+  fdja_parser_init();
 
-  fabr_tree *t = fabr_parse_all(input, 0, dja_obj_parser);
+  fabr_tree *t = fabr_parse_all(input, 0, fdja_obj_parser);
 
   if (t->result != 1) { fabr_tree_free(t); return NULL; }
 
@@ -499,7 +499,7 @@ dja_value *dja_parse_obj(char *input)
 
   fabr_tree *tt = fabr_t_child(t, 1);
 
-  dja_value *v = dja_extract_v(input, tt);
+  fdja_value *v = fdja_extract_v(input, tt);
 
   fabr_tree_free(t);
 
@@ -510,7 +510,7 @@ dja_value *dja_parse_obj(char *input)
 //
 // outputting
 
-static void dja_to_j(flu_sbuffer *b, dja_value *v)
+static void fdja_to_j(flu_sbuffer *b, fdja_value *v)
 {
   if (v->key != NULL)
   {
@@ -519,22 +519,22 @@ static void dja_to_j(flu_sbuffer *b, dja_value *v)
 
   if (v->type == 'q')
   {
-    char *s = dja_to_string(v);
+    char *s = fdja_to_string(v);
     flu_sbprintf(b, "\"%s\"", s);
     free(s);
   }
   else if (v->type == 'y')
   {
-    char *s = dja_string(v);
+    char *s = fdja_string(v);
     flu_sbprintf(b, "\"%s\"", s);
     free(s);
   }
   else if (v->type == 'a')
   {
     flu_sbputc(b, '[');
-    for (dja_value *c = v->child; c != NULL; c = c->sibling)
+    for (fdja_value *c = v->child; c != NULL; c = c->sibling)
     {
-      dja_to_j(b, c);
+      fdja_to_j(b, c);
       if (c->sibling != NULL) flu_sbputc(b, ',');
     }
     flu_sbputc(b, ']');
@@ -542,9 +542,9 @@ static void dja_to_j(flu_sbuffer *b, dja_value *v)
   else if (v->type == 'o')
   {
     flu_sbputc(b, '{');
-    for (dja_value *c = v->child; c != NULL; c = c->sibling)
+    for (fdja_value *c = v->child; c != NULL; c = c->sibling)
     {
-      dja_to_j(b, c);
+      fdja_to_j(b, c);
       if (c->sibling != NULL) flu_sbputc(b, ',');
     }
     flu_sbputc(b, '}');
@@ -553,25 +553,25 @@ static void dja_to_j(flu_sbuffer *b, dja_value *v)
   else flu_sbputs_n(b, v->source + v->soff, v->slen);
 }
 
-char *dja_to_json(dja_value *v)
+char *fdja_to_json(fdja_value *v)
 {
   flu_sbuffer *b = flu_sbuffer_malloc();
-  dja_to_j(b, v);
+  fdja_to_j(b, v);
 
   return flu_sbuffer_to_string(b);
 }
 
 
 //
-// extracting stuff out of dja_value items
+// extracting stuff out of fdja_value items
 
-char *dja_string(dja_value *v)
+char *fdja_string(fdja_value *v)
 {
   if (v->slen == 0) return strdup(v->source + v->soff);
   return strndup(v->source + v->soff, v->slen);
 }
 
-char *dja_to_string(dja_value *v)
+char *fdja_to_string(fdja_value *v)
 {
   if (v->type == 's')
   {
@@ -579,12 +579,12 @@ char *dja_to_string(dja_value *v)
   }
   if (v->type == 'q')
   {
-    return dja_sq_unescape(v->source + v->soff + 1, v->slen - 2);
+    return fdja_sq_unescape(v->source + v->soff + 1, v->slen - 2);
   }
-  return dja_string(v);
+  return fdja_string(v);
 }
 
-long long dja_to_int(dja_value *v)
+long long fdja_to_int(fdja_value *v)
 {
   if (v->type == 't') return 1;
   if (v->type == 'f') return 0;
@@ -592,15 +592,15 @@ long long dja_to_int(dja_value *v)
   return atoi(v->source + v->soff);
 }
 
-long double dja_to_double(dja_value *v)
+long double fdja_to_double(fdja_value *v)
 {
   if (v->type != 'n') return 0.0;
   return atof(v->source + v->soff);
 }
 
-size_t dja_size(dja_value *v)
+size_t fdja_size(fdja_value *v)
 {
-  size_t i = 0; for (dja_value *c = v->child; ; c = c->sibling)
+  size_t i = 0; for (fdja_value *c = v->child; ; c = c->sibling)
   {
     if (c == NULL || i == SIZE_MAX) break;
     i++;
@@ -608,15 +608,15 @@ size_t dja_size(dja_value *v)
   return i;
 }
 
-dja_value *dja_value_at(dja_value *v, long n)
+fdja_value *fdja_value_at(fdja_value *v, long n)
 {
   if (n < 0)
   {
-    n = dja_size(v) + n;
+    n = fdja_size(v) + n;
     if (n < 0) return NULL;
   }
 
-  size_t i = 0; for (dja_value *c = v->child; c != NULL; c = c->sibling)
+  size_t i = 0; for (fdja_value *c = v->child; c != NULL; c = c->sibling)
   {
     if (i++ == n) return c;
   }
@@ -624,18 +624,18 @@ dja_value *dja_value_at(dja_value *v, long n)
   return NULL;
 }
 
-dja_value *dja_lookup(dja_value *v, const char *path)
+fdja_value *fdja_lookup(fdja_value *v, const char *path)
 {
-  dja_path_parser_init();
+  fdja_path_parser_init();
 
-  fabr_tree *t = fabr_parse_all(path, 0, dja_path_parser);
+  fabr_tree *t = fabr_parse_all(path, 0, fdja_path_parser);
 
   if (t->result != 1) { fabr_tree_free(t); return NULL; }
 
   //printf("path >%s<\n", path);
   //puts(fabr_tree_to_string(t, path));
 
-  dja_value *vv = v;
+  fdja_value *vv = v;
 
   flu_list *l = fabr_tree_list_named(t, "node");
 
@@ -652,7 +652,7 @@ dja_value *dja_lookup(dja_value *v, const char *path)
 
     if (ltype == 'i')
     {
-      vv = dja_value_at(vv, atol(s));
+      vv = fdja_value_at(vv, atol(s));
     }
     else // if (ltype == 'k')
     {
@@ -673,25 +673,25 @@ dja_value *dja_lookup(dja_value *v, const char *path)
   return vv;
 }
 
-char *dja_lookup_string(dja_value *v, const char *path)
+char *fdja_lookup_string(fdja_value *v, const char *path)
 {
-  dja_value *vv = dja_lookup(v, path);
+  fdja_value *vv = fdja_lookup(v, path);
 
-  return vv ? dja_to_string(vv) : NULL;
+  return vv ? fdja_to_string(vv) : NULL;
 }
 
-int dja_push(dja_value *array, dja_value *v)
+int fdja_push(fdja_value *array, fdja_value *v)
 {
   if (array->type != 'a') return 0;
 
-  for (dja_value **s = &array->child; ; s = &(*s)->sibling)
+  for (fdja_value **s = &array->child; ; s = &(*s)->sibling)
   {
     if (*s == NULL) { *s = v; break; }
   }
   return 1;
 }
 
-int dja_set(dja_value *object, const char *key, dja_value *v)
+int fdja_set(fdja_value *object, const char *key, fdja_value *v)
 {
   if (object->type != 'o') return 0;
 
@@ -701,9 +701,9 @@ int dja_set(dja_value *object, const char *key, dja_value *v)
     v->key = strdup(key);
   }
 
-  for (dja_value **link = &object->child; ; link = &(*link)->sibling)
+  for (fdja_value **link = &object->child; ; link = &(*link)->sibling)
   {
-    dja_value *child = *link;
+    fdja_value *child = *link;
 
     if (child == NULL) { *link = v; break; }
 
@@ -712,13 +712,13 @@ int dja_set(dja_value *object, const char *key, dja_value *v)
       if (v == NULL)
       {
         *link = child->sibling;
-        dja_value_free(child);
+        fdja_value_free(child);
       }
       else
       {
         *link = v;
         v->sibling = child->sibling;
-        dja_value_free(child);
+        fdja_value_free(child);
       }
       break;
     }
@@ -727,21 +727,21 @@ int dja_set(dja_value *object, const char *key, dja_value *v)
   return 1;
 }
 
-int dja_splice(dja_value *array, size_t start, size_t count, ...)
+int fdja_splice(fdja_value *array, size_t start, size_t count, ...)
 {
   if (array->type != 'a') return 0;
 
   // determine start and end of removal
 
   size_t off = 0;
-  dja_value **link = &array->child;
+  fdja_value **link = &array->child;
 
-  dja_value **lstart = NULL;
-  dja_value *end = NULL;
+  fdja_value **lstart = NULL;
+  fdja_value *end = NULL;
 
   while (1)
   {
-    dja_value *c = *link;
+    fdja_value *c = *link;
 
     if (c == NULL && lstart != NULL) break;
 
@@ -757,10 +757,10 @@ int dja_splice(dja_value *array, size_t start, size_t count, ...)
 
   // free old elements
 
-  for (dja_value *c = *lstart, *n = NULL; c != NULL && c != end; )
+  for (fdja_value *c = *lstart, *n = NULL; c != NULL && c != end; )
   {
     n = c->sibling;
-    dja_value_free(c);
+    fdja_value_free(c);
     c = n;
   }
 
@@ -769,7 +769,7 @@ int dja_splice(dja_value *array, size_t start, size_t count, ...)
   va_list ap; va_start(ap, count);
   while (1)
   {
-    dja_value *v = va_arg(ap, dja_value *);
+    fdja_value *v = va_arg(ap, fdja_value *);
     if (v == NULL) break;
     *lstart = v;
     lstart = &v->sibling;

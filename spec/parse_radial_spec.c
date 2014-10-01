@@ -8,43 +8,43 @@
 #include "djan.h"
 
 
-describe "dja_parse_radial()"
+describe "fdja_parse_radial()"
 {
   before each
   {
-    dja_value *v = NULL;
+    fdja_value *v = NULL;
   }
   after each
   {
-    if (v != NULL) dja_value_free(v);
+    if (v != NULL) fdja_value_free(v);
   }
 
   it "returns NULL when failing to parse"
   {
     // another method for pointing at syntax errors?
 
-    v = dja_parse_radial("123");
+    v = fdja_parse_radial("123");
 
     ensure(v == NULL);
   }
 
   it "parses a single line"
   {
-    v = dja_parse_radial(""
+    v = fdja_parse_radial(""
       "sequence"
     );
 
     ensure(v != NULL);
     ensure(v->type == 'a');
 
-    ensure(dja_to_json(v) ===f ""
+    ensure(fdja_to_json(v) ===f ""
       "[\"sequence\",{},[]]"
     );
   }
 
   it "parses a couple of lines"
   {
-    v = dja_parse_radial(""
+    v = fdja_parse_radial(""
       "sequence\n"
       "  participant 'bravo'"
     );
@@ -52,7 +52,7 @@ describe "dja_parse_radial()"
     ensure(v != NULL);
     ensure(v->type == 'a');
 
-    ensure(dja_to_json(v) ===f ""
+    ensure(fdja_to_json(v) ===f ""
       "[\"sequence\",{},["
         "[\"participant\",{\"_a\":\"bravo\"},[]]"
       "]]"
@@ -61,7 +61,7 @@ describe "dja_parse_radial()"
 
   it "parses a tree of lines"
   {
-    v = dja_parse_radial(""
+    v = fdja_parse_radial(""
       "sequence\n"
       "  participant 'alpha'\n"
       "  concurrence\n"
@@ -72,7 +72,7 @@ describe "dja_parse_radial()"
 
     ensure(v != NULL);
 
-    ensure(dja_to_json(v) ===f ""
+    ensure(fdja_to_json(v) ===f ""
       "[\"sequence\",{},["
         "[\"participant\",{\"_a\":\"alpha\"},[]],"
         "[\"concurrence\",{},["
@@ -86,7 +86,7 @@ describe "dja_parse_radial()"
 
   it "accepts json/djan as first attribute"
   {
-    v = dja_parse_radial(""
+    v = fdja_parse_radial(""
       "iterate [\n"
       "  1 2 3 ]\n"
       "  bravo"
@@ -94,7 +94,7 @@ describe "dja_parse_radial()"
 
     ensure(v != NULL);
 
-    ensure(dja_to_json(v) ===f ""
+    ensure(fdja_to_json(v) ===f ""
       "[\"iterate\",{\"_a\":[1,2,3]},["
         "[\"bravo\",{},[]]"
       "]]"
@@ -103,13 +103,13 @@ describe "dja_parse_radial()"
 
   it "accepts attributes"
   {
-    v = dja_parse_radial(""
+    v = fdja_parse_radial(""
       "participant charly a: 0, b: one c: true, d: [ four ]"
     );
 
     ensure(v != NULL);
 
-    ensure(dja_to_json(v) ===f ""
+    ensure(fdja_to_json(v) ===f ""
       "["
         "\"participant\","
         "{"
@@ -126,7 +126,7 @@ describe "dja_parse_radial()"
 
   it "accepts attributes (and some newlines)"
   {
-    v = dja_parse_radial(""
+    v = fdja_parse_radial(""
       "participant charly,\n"
       "  aa: 0,\n"
       "  bb: one,\n"
@@ -136,7 +136,7 @@ describe "dja_parse_radial()"
 
     ensure(v != NULL);
 
-    ensure(dja_to_json(v) ===f ""
+    ensure(fdja_to_json(v) ===f ""
       "["
         "\"participant\","
         "{"
@@ -153,7 +153,7 @@ describe "dja_parse_radial()"
 
   it "accepts comments in the attributes"
   {
-    v = dja_parse_radial(""
+    v = fdja_parse_radial(""
       "participant charly, # charlie\n"
       "  aa: 0, # zero\n"
       "  bb: one, # one\n"
@@ -163,7 +163,7 @@ describe "dja_parse_radial()"
 
     ensure(v != NULL);
 
-    ensure(dja_to_json(v) ===f ""
+    ensure(fdja_to_json(v) ===f ""
       "["
         "\"participant\","
         "{"
@@ -180,7 +180,7 @@ describe "dja_parse_radial()"
 
   it "accepts comments in the attributes (after the colon)"
   {
-    v = dja_parse_radial(""
+    v = fdja_parse_radial(""
       "participant charly, # charlie\n"
       "  aa:     # zero\n"
       "    0,    # zero indeed\n"
@@ -189,7 +189,7 @@ describe "dja_parse_radial()"
 
     ensure(v != NULL);
 
-    ensure(dja_to_json(v) ===f ""
+    ensure(fdja_to_json(v) ===f ""
       "["
         "\"participant\","
         "{"
@@ -204,7 +204,7 @@ describe "dja_parse_radial()"
 
   it "accepts comments at the end of the radial lines"
   {
-    v = dja_parse_radial(""
+    v = fdja_parse_radial(""
       "sequence\n"
       "  participant toto # blind\n"
       "  participant tutu # deaf"
@@ -212,7 +212,7 @@ describe "dja_parse_radial()"
 
     ensure(v != NULL);
 
-    ensure(dja_to_json(v) ===f ""
+    ensure(fdja_to_json(v) ===f ""
       "[\"sequence\",{},["
         "[\"participant\",{\"_a\":\"toto\"},[]],"
         "[\"participant\",{\"_a\":\"tutu\"},[]]"
@@ -222,7 +222,7 @@ describe "dja_parse_radial()"
 
   it "accepts comments before the radial lines"
   {
-    v = dja_parse_radial(""
+    v = fdja_parse_radial(""
       "# Tue Jul  8 05:50:28 JST 2014\n"
       "sequence\n"
       "  participant toto"
@@ -230,7 +230,7 @@ describe "dja_parse_radial()"
 
     ensure(v != NULL);
 
-    ensure(dja_to_json(v) ===f ""
+    ensure(fdja_to_json(v) ===f ""
       "[\"sequence\",{},["
         "[\"participant\",{\"_a\":\"toto\"},[]]"
       "]]"

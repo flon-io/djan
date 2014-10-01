@@ -8,27 +8,27 @@
 #include "djan.h"
 
 
-describe "dja_parse_obj()"
+describe "fdja_parse_obj()"
 {
   before each
   {
-    dja_value *v = NULL;
+    fdja_value *v = NULL;
   }
   after each
   {
-    if (v != NULL) dja_value_free(v);
+    if (v != NULL) fdja_value_free(v);
   }
 
   it "returns NULL when failing to parse"
   {
-    v = dja_parse_obj("123");
+    v = fdja_parse_obj("123");
 
     ensure(v == NULL);
   }
 
   it "parses"
   {
-    v = dja_parse_obj(""
+    v = fdja_parse_obj(""
       "type: car\n"
       "make: honda\n"
       "parts: [ 123, 456, 789, whiskey ]\n"
@@ -37,7 +37,7 @@ describe "dja_parse_obj()"
 
     ensure(v != NULL);
 
-    ensure(dja_to_json(v) ===f ""
+    ensure(fdja_to_json(v) ===f ""
       "{"
         "\"type\":\"car\","
         "\"make\":\"honda\","
@@ -49,7 +49,7 @@ describe "dja_parse_obj()"
 
   it "parses with brackets"
   {
-    v = dja_parse_obj(""
+    v = fdja_parse_obj(""
       "{\n"
       "  type: car\n"
       "  make: honda\n"
@@ -60,7 +60,7 @@ describe "dja_parse_obj()"
 
     ensure(v != NULL);
 
-    ensure(dja_to_json(v) ===f ""
+    ensure(fdja_to_json(v) ===f ""
       "{"
         "\"type\":\"car\","
         "\"make\":\"honda\","
@@ -72,7 +72,7 @@ describe "dja_parse_obj()"
 
   it "parses with comments"
   {
-    v = dja_parse_obj(""
+    v = fdja_parse_obj(""
       "#\n"
       "# that conf\n"
       "# Sun Sep 28 19:50:14 JST 2014\n"
@@ -89,7 +89,7 @@ describe "dja_parse_obj()"
 
     ensure(v != NULL);
 
-    ensure(dja_to_json(v) ===f ""
+    ensure(fdja_to_json(v) ===f ""
       "{"
         "\"type\":\"car\","
         "\"make\":\"honda\","
@@ -101,11 +101,11 @@ describe "dja_parse_obj()"
 
   it "parses json objects"
   {
-    v = dja_parse_obj("{\"name\":\"cinderella\",\"age\":21}");
+    v = fdja_parse_obj("{\"name\":\"cinderella\",\"age\":21}");
 
     expect(v != NULL);
 
-    expect(dja_to_json(v) ===f "{\"name\":\"cinderella\",\"age\":21}");
+    expect(fdja_to_json(v) ===f "{\"name\":\"cinderella\",\"age\":21}");
   }
 }
 

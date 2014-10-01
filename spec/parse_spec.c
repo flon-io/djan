@@ -8,68 +8,68 @@
 #include "djan.h"
 
 
-describe "dja_parse()"
+describe "fdja_parse()"
 {
   before each
   {
-    dja_value *v = NULL;
+    fdja_value *v = NULL;
   }
   after each
   {
-    if (v != NULL) dja_value_free(v);
+    if (v != NULL) fdja_value_free(v);
   }
 
   context "numbers"
   {
     it "parses \"1\""
     {
-      v = dja_parse("1");
+      v = fdja_parse("1");
 
       ensure(v != NULL);
       ensure(v->type == 'n');
       ensure(v->soff == 0);
       ensure(v->slen == 1);
-      ensure(dja_to_int(v) == 1);
-      ensure(dja_to_json(v) ===f "1");
+      ensure(fdja_to_int(v) == 1);
+      ensure(fdja_to_json(v) ===f "1");
     }
     it "parses \"-1\""
     {
-      v = dja_parse("-1");
+      v = fdja_parse("-1");
 
       ensure(v != NULL);
       ensure(v->type == 'n');
       ensure(v->soff == 0);
       ensure(v->slen == 2);
-      ensure(dja_to_int(v) == -1);
-      ensure(dja_to_json(v) ===f "-1");
+      ensure(fdja_to_int(v) == -1);
+      ensure(fdja_to_json(v) ===f "-1");
     }
 
     it "parses \"0.0\""
     {
-      v = dja_parse("0.0");
+      v = fdja_parse("0.0");
 
       ensure(v != NULL);
       ensure(v->type == 'n');
       ensure(v->soff == 0);
       ensure(v->slen == 3);
-      ensure(dja_to_double(v) == 0.0);
-      ensure(dja_string(v) ===f "0.0");
-      ensure(dja_to_string(v) ===f "0.0");
-      ensure(dja_to_json(v) ===f "0.0");
+      ensure(fdja_to_double(v) == 0.0);
+      ensure(fdja_string(v) ===f "0.0");
+      ensure(fdja_to_string(v) ===f "0.0");
+      ensure(fdja_to_json(v) ===f "0.0");
     }
 
     it "parses \"1.5e2\""
     {
-      v = dja_parse("1.5e2");
+      v = fdja_parse("1.5e2");
 
       ensure(v != NULL);
       ensure(v->type == 'n');
       ensure(v->soff == 0);
       ensure(v->slen == 5);
-      ensure(dja_to_double(v) == 150.0);
-      ensure(dja_string(v) ===f "1.5e2");
-      ensure(dja_to_string(v) ===f "1.5e2");
-      ensure(dja_to_json(v) ===f "1.5e2");
+      ensure(fdja_to_double(v) == 150.0);
+      ensure(fdja_string(v) ===f "1.5e2");
+      ensure(fdja_to_string(v) ===f "1.5e2");
+      ensure(fdja_to_json(v) ===f "1.5e2");
     }
   }
 
@@ -77,47 +77,47 @@ describe "dja_parse()"
   {
     it "parses \"hello\""
     {
-      v = dja_parse("\"hello\"");
+      v = fdja_parse("\"hello\"");
 
       ensure(v != NULL);
       ensure(v->type == 's');
-      ensure(dja_string(v) ===f "\"hello\"");
-      ensure(dja_to_string(v) ===f "hello");
-      ensure(dja_to_json(v) ===f "\"hello\"");
+      ensure(fdja_string(v) ===f "\"hello\"");
+      ensure(fdja_to_string(v) ===f "hello");
+      ensure(fdja_to_json(v) ===f "\"hello\"");
     }
     it "parses \"hello \\\"old bore\\\"\""
     {
-      v = dja_parse("\"hello \\\"old bore\\\"\"");
+      v = fdja_parse("\"hello \\\"old bore\\\"\"");
 
       ensure(v != NULL);
       ensure(v->type == 's');
-      ensure(dja_string(v) ===f "\"hello \\\"old bore\\\"\"");
-      ensure(dja_to_string(v) ===f "hello \"old bore\"");
-      ensure(dja_to_json(v) ===f "\"hello \\\"old bore\\\"\"");
+      ensure(fdja_string(v) ===f "\"hello \\\"old bore\\\"\"");
+      ensure(fdja_to_string(v) ===f "hello \"old bore\"");
+      ensure(fdja_to_json(v) ===f "\"hello \\\"old bore\\\"\"");
     }
     it "parses \\t"
     {
-      v = dja_parse("\"hello\\ttab\"");
+      v = fdja_parse("\"hello\\ttab\"");
 
       ensure(v != NULL);
       ensure(v->type == 's');
-      ensure(dja_string(v) ===f "\"hello\\ttab\"");
-      ensure(dja_to_string(v) ===f "hello\ttab");
-      ensure(dja_to_json(v) ===f "\"hello\\ttab\"");
+      ensure(fdja_string(v) ===f "\"hello\\ttab\"");
+      ensure(fdja_to_string(v) ===f "hello\ttab");
+      ensure(fdja_to_json(v) ===f "\"hello\\ttab\"");
     }
     it "parses unicode escape sequences"
     {
-      v = dja_parse("\"hello \\u0066ool\"");
+      v = fdja_parse("\"hello \\u0066ool\"");
 
       ensure(v != NULL);
       ensure(v->type == 's');
-      ensure(dja_string(v) ===f "\"hello \\u0066ool\"");
-      ensure(dja_to_string(v) ===f "hello fool");
-      ensure(dja_to_json(v) ===f "\"hello \\u0066ool\"");
+      ensure(fdja_string(v) ===f "\"hello \\u0066ool\"");
+      ensure(fdja_to_string(v) ===f "hello fool");
+      ensure(fdja_to_json(v) ===f "\"hello \\u0066ool\"");
     }
     it "doesn't parse unknown escapes"
     {
-      v = dja_parse("\"hello \\z\"");
+      v = fdja_parse("\"hello \\z\"");
 
       ensure(v == NULL);
     }
@@ -125,23 +125,23 @@ describe "dja_parse()"
     {
       it "parses single quotes strings"
       {
-        v = dja_parse("'hello \"world\"'");
+        v = fdja_parse("'hello \"world\"'");
 
         ensure(v != NULL);
         ensure(v->type == 'q');
-        ensure(dja_string(v) ===f "'hello \"world\"'");
-        ensure(dja_to_string(v) ===f "hello \"world\"");
-        ensure(dja_to_json(v) ===f "\"hello \"world\"\"");
+        ensure(fdja_string(v) ===f "'hello \"world\"'");
+        ensure(fdja_to_string(v) ===f "hello \"world\"");
+        ensure(fdja_to_json(v) ===f "\"hello \"world\"\"");
       }
       it "lets a quote being escaped"
       {
-        v = dja_parse("'aujourd\\'hui'");
+        v = fdja_parse("'aujourd\\'hui'");
 
         ensure(v != NULL);
         ensure(v->type == 'q');
-        ensure(dja_string(v) ===f "'aujourd\\'hui'");
-        ensure(dja_to_string(v) ===f "aujourd'hui");
-        ensure(dja_to_json(v) ===f "\"aujourd'hui\"");
+        ensure(fdja_string(v) ===f "'aujourd\\'hui'");
+        ensure(fdja_to_string(v) ===f "aujourd'hui");
+        ensure(fdja_to_json(v) ===f "\"aujourd'hui\"");
       }
     }
   }
@@ -150,24 +150,24 @@ describe "dja_parse()"
   {
     it "parses \"true\""
     {
-      v = dja_parse("true");
+      v = fdja_parse("true");
 
       ensure(v != NULL);
       ensure(v->type == 't');
-      ensure(dja_string(v) ===f "true");
-      ensure(dja_to_int(v) == 1);
-      ensure(dja_to_json(v) ===f "true");
+      ensure(fdja_string(v) ===f "true");
+      ensure(fdja_to_int(v) == 1);
+      ensure(fdja_to_json(v) ===f "true");
     }
 
     it "parses \"false\""
     {
-      v = dja_parse("false");
+      v = fdja_parse("false");
 
       ensure(v != NULL);
       ensure(v->type == 'f');
-      ensure(dja_string(v) ===f "false");
-      ensure(dja_to_int(v) == 0);
-      ensure(dja_to_json(v) ===f "false");
+      ensure(fdja_string(v) ===f "false");
+      ensure(fdja_to_int(v) == 0);
+      ensure(fdja_to_json(v) ===f "false");
     }
   }
 
@@ -175,12 +175,12 @@ describe "dja_parse()"
   {
     it "parses \"null\""
     {
-      v = dja_parse("null");
+      v = fdja_parse("null");
 
       ensure(v != NULL);
       ensure(v->type == '0');
-      ensure(dja_string(v) ===f "null");
-      ensure(dja_to_json(v) ===f "null");
+      ensure(fdja_string(v) ===f "null");
+      ensure(fdja_to_json(v) ===f "null");
     }
   }
 
@@ -188,46 +188,46 @@ describe "dja_parse()"
   {
     it "parses []"
     {
-      v = dja_parse("[]");
+      v = fdja_parse("[]");
 
       ensure(v != NULL);
       ensure(v->type == 'a');
       ensure(v->child == NULL);
-      ensure(dja_to_json(v) ===f "[]");
+      ensure(fdja_to_json(v) ===f "[]");
     }
 
     it "parses [1,2,3]"
     {
-      v = dja_parse("[1,2,3]");
+      v = fdja_parse("[1,2,3]");
 
       ensure(v != NULL);
       ensure(v->type == 'a');
-      ensure(dja_value_at(v, 0) != NULL);
-      ensure(dja_value_at(v, 3) == NULL);
-      ensure(dja_value_at(v, 0)->type == 'n');
-      ensure(dja_value_at(v, 1)->type == 'n');
-      ensure(dja_value_at(v, 2)->type == 'n');
-      ensure(dja_to_int(dja_value_at(v, 0)) == 1);
-      ensure(dja_to_int(dja_value_at(v, 1)) == 2);
-      ensure(dja_to_int(dja_value_at(v, 2)) == 3);
-      ensure(dja_to_json(v) ===f "[1,2,3]");
+      ensure(fdja_value_at(v, 0) != NULL);
+      ensure(fdja_value_at(v, 3) == NULL);
+      ensure(fdja_value_at(v, 0)->type == 'n');
+      ensure(fdja_value_at(v, 1)->type == 'n');
+      ensure(fdja_value_at(v, 2)->type == 'n');
+      ensure(fdja_to_int(fdja_value_at(v, 0)) == 1);
+      ensure(fdja_to_int(fdja_value_at(v, 1)) == 2);
+      ensure(fdja_to_int(fdja_value_at(v, 2)) == 3);
+      ensure(fdja_to_json(v) ===f "[1,2,3]");
     }
 
     it "parses with or without commas"
     {
-      v = dja_parse("[ 10 20,30, 40 50\t51\n52]");
+      v = fdja_parse("[ 10 20,30, 40 50\t51\n52]");
 
       ensure(v != NULL);
       ensure(v->type == 'a');
-      ensure(dja_to_int(dja_value_at(v, 0)) == 10);
-      ensure(dja_to_int(dja_value_at(v, 1)) == 20);
-      ensure(dja_to_int(dja_value_at(v, 2)) == 30);
-      ensure(dja_to_int(dja_value_at(v, 3)) == 40);
-      ensure(dja_to_int(dja_value_at(v, 4)) == 50);
-      ensure(dja_to_int(dja_value_at(v, 5)) == 51);
-      ensure(dja_to_int(dja_value_at(v, 6)) == 52);
-      ensure(dja_value_at(v, 7) == NULL);
-      ensure(dja_to_json(v) ===f "[10,20,30,40,50,51,52]");
+      ensure(fdja_to_int(fdja_value_at(v, 0)) == 10);
+      ensure(fdja_to_int(fdja_value_at(v, 1)) == 20);
+      ensure(fdja_to_int(fdja_value_at(v, 2)) == 30);
+      ensure(fdja_to_int(fdja_value_at(v, 3)) == 40);
+      ensure(fdja_to_int(fdja_value_at(v, 4)) == 50);
+      ensure(fdja_to_int(fdja_value_at(v, 5)) == 51);
+      ensure(fdja_to_int(fdja_value_at(v, 6)) == 52);
+      ensure(fdja_value_at(v, 7) == NULL);
+      ensure(fdja_to_json(v) ===f "[10,20,30,40,50,51,52]");
     }
   }
 
@@ -235,78 +235,78 @@ describe "dja_parse()"
   {
     it "parses {}"
     {
-      v = dja_parse("{}");
+      v = fdja_parse("{}");
 
       ensure(v != NULL);
       ensure(v->type == 'o');
-      ensure(dja_value_at(v, 0) == NULL);
-      ensure(dja_to_json(v) ===f "{}");
+      ensure(fdja_value_at(v, 0) == NULL);
+      ensure(fdja_to_json(v) ===f "{}");
     }
 
     it "parses {\"a\":0,\"bb\":null,\"cc c\":true}"
     {
-      v = dja_parse("{\"a\":0,\"bb\":null,\"cc c\":true}");
+      v = fdja_parse("{\"a\":0,\"bb\":null,\"cc c\":true}");
 
       ensure(v != NULL);
       ensure(v->type == 'o');
-      ensure(dja_value_at(v, 0) != NULL);
-      ensure(dja_value_at(v, 1) != NULL);
-      ensure(dja_value_at(v, 2) != NULL);
-      ensure(dja_value_at(v, 3) == NULL);
-      ensure(dja_value_at(v, 0)->key === "a");
-      ensure(dja_value_at(v, 1)->key === "bb");
-      ensure(dja_value_at(v, 2)->key === "cc c");
-      ensure(dja_value_at(v, 0)->type == 'n');
-      ensure(dja_value_at(v, 1)->type == '0');
-      ensure(dja_value_at(v, 2)->type == 't');
-      ensure(dja_to_int(dja_value_at(v, 0)) == 0);
-      ensure(dja_to_int(dja_value_at(v, 2)) == 1);
-      ensure(dja_to_json(v) ===f "{\"a\":0,\"bb\":null,\"cc c\":true}");
+      ensure(fdja_value_at(v, 0) != NULL);
+      ensure(fdja_value_at(v, 1) != NULL);
+      ensure(fdja_value_at(v, 2) != NULL);
+      ensure(fdja_value_at(v, 3) == NULL);
+      ensure(fdja_value_at(v, 0)->key === "a");
+      ensure(fdja_value_at(v, 1)->key === "bb");
+      ensure(fdja_value_at(v, 2)->key === "cc c");
+      ensure(fdja_value_at(v, 0)->type == 'n');
+      ensure(fdja_value_at(v, 1)->type == '0');
+      ensure(fdja_value_at(v, 2)->type == 't');
+      ensure(fdja_to_int(fdja_value_at(v, 0)) == 0);
+      ensure(fdja_to_int(fdja_value_at(v, 2)) == 1);
+      ensure(fdja_to_json(v) ===f "{\"a\":0,\"bb\":null,\"cc c\":true}");
     }
 
     it "accepts 'symbols' as keys"
     {
-      v = dja_parse("{ a_a: 0, bb_: null, c3:\"three\" }");
+      v = fdja_parse("{ a_a: 0, bb_: null, c3:\"three\" }");
 
       ensure(v != NULL);
       ensure(v->type == 'o');
-      ensure(dja_value_at(v, 0)->key === "a_a");
-      ensure(dja_value_at(v, 1)->key === "bb_");
-      ensure(dja_value_at(v, 2)->key === "c3");
-      ensure(dja_to_int(dja_value_at(v, 0)) == 0);
-      ensure(dja_to_string(dja_value_at(v, 1)) ===f "null");
-      ensure(dja_to_string(dja_value_at(v, 2)) ===f "three");
-      ensure(dja_value_at(v, 3) == NULL);
-      ensure(dja_to_json(v) ===f "{\"a_a\":0,\"bb_\":null,\"c3\":\"three\"}");
+      ensure(fdja_value_at(v, 0)->key === "a_a");
+      ensure(fdja_value_at(v, 1)->key === "bb_");
+      ensure(fdja_value_at(v, 2)->key === "c3");
+      ensure(fdja_to_int(fdja_value_at(v, 0)) == 0);
+      ensure(fdja_to_string(fdja_value_at(v, 1)) ===f "null");
+      ensure(fdja_to_string(fdja_value_at(v, 2)) ===f "three");
+      ensure(fdja_value_at(v, 3) == NULL);
+      ensure(fdja_to_json(v) ===f "{\"a_a\":0,\"bb_\":null,\"c3\":\"three\"}");
     }
     it "accepts 'single quote strings' as keys"
     {
-      v = dja_parse("{ 'a_a': 0, 'bb_': null }");
+      v = fdja_parse("{ 'a_a': 0, 'bb_': null }");
 
       ensure(v != NULL);
       ensure(v->type == 'o');
-      ensure(dja_value_at(v, 0)->key === "a_a");
-      ensure(dja_value_at(v, 1)->key === "bb_");
-      ensure(dja_to_int(dja_value_at(v, 0)) == 0);
-      ensure(dja_to_string(dja_value_at(v, 1)) ===f "null");
-      ensure(dja_value_at(v, 2) == NULL);
-      ensure(dja_to_json(v) ===f "{\"a_a\":0,\"bb_\":null}");
+      ensure(fdja_value_at(v, 0)->key === "a_a");
+      ensure(fdja_value_at(v, 1)->key === "bb_");
+      ensure(fdja_to_int(fdja_value_at(v, 0)) == 0);
+      ensure(fdja_to_string(fdja_value_at(v, 1)) ===f "null");
+      ensure(fdja_value_at(v, 2) == NULL);
+      ensure(fdja_to_json(v) ===f "{\"a_a\":0,\"bb_\":null}");
     }
 
     it "parses with or without commas"
     {
-      v = dja_parse("{ a_a: 0, bb_: null \"c\": true\nd: [ 1, 2 ] }");
+      v = fdja_parse("{ a_a: 0, bb_: null \"c\": true\nd: [ 1, 2 ] }");
 
       ensure(v != NULL);
       ensure(v->type == 'o');
-      ensure(dja_value_at(v, 0)->key === "a_a");
-      ensure(dja_value_at(v, 1)->key === "bb_");
-      ensure(dja_value_at(v, 2)->key === "c");
-      ensure(dja_value_at(v, 3)->key === "d");
-      ensure(dja_value_at(v, 4) == NULL);
-      ensure(dja_value_at(v, 3)->type == 'a');
+      ensure(fdja_value_at(v, 0)->key === "a_a");
+      ensure(fdja_value_at(v, 1)->key === "bb_");
+      ensure(fdja_value_at(v, 2)->key === "c");
+      ensure(fdja_value_at(v, 3)->key === "d");
+      ensure(fdja_value_at(v, 4) == NULL);
+      ensure(fdja_value_at(v, 3)->type == 'a');
 
-      ensure(dja_to_json(v) ===f ""
+      ensure(fdja_to_json(v) ===f ""
         "{\"a_a\":0,\"bb_\":null,\"c\":true,\"d\":[1,2]}");
     }
   }
@@ -315,22 +315,22 @@ describe "dja_parse()"
   {
     it "accepts symbols in lieu of strings"
     {
-      v = dja_parse("sk8park");
+      v = fdja_parse("sk8park");
 
       ensure(v != NULL);
       ensure(v->type == 'y');
-      ensure(dja_string(v) ===f "sk8park");
-      ensure(dja_to_string(v) ===f "sk8park");
-      ensure(dja_to_json(v) ===f "\"sk8park\"");
+      ensure(fdja_string(v) ===f "sk8park");
+      ensure(fdja_to_string(v) ===f "sk8park");
+      ensure(fdja_to_json(v) ===f "\"sk8park\"");
     }
     it "accepts symbols (nested)"
     {
-      v = dja_parse("[ mi6, cia, kgb c64 ]");
+      v = fdja_parse("[ mi6, cia, kgb c64 ]");
 
       ensure(v != NULL);
       ensure(v->type == 'a');
 
-      ensure(dja_to_json(v) ===f "[\"mi6\",\"cia\",\"kgb\",\"c64\"]");
+      ensure(fdja_to_json(v) ===f "[\"mi6\",\"cia\",\"kgb\",\"c64\"]");
     }
   }
 
@@ -338,51 +338,51 @@ describe "dja_parse()"
   {
     it "accepts whitespace around values"
     {
-      v = dja_parse(" 77.0 ");
+      v = fdja_parse(" 77.0 ");
 
       ensure(v != NULL);
       ensure(v->type == 'n');
-      ensure(dja_to_string(v) ===f "77.0");
-      ensure(dja_to_json(v) ===f "77.0");
+      ensure(fdja_to_string(v) ===f "77.0");
+      ensure(fdja_to_json(v) ===f "77.0");
     }
 
     it "accepts whitespace inside of arrays"
     {
-      v = dja_parse(" [1, 2,\n\t3 ] ");
+      v = fdja_parse(" [1, 2,\n\t3 ] ");
 
       ensure(v != NULL);
       ensure(v->type == 'a');
-      ensure(dja_to_int(dja_value_at(v, 0)) == 1);
-      ensure(dja_to_int(dja_value_at(v, 1)) == 2);
-      ensure(dja_to_int(dja_value_at(v, 2)) == 3);
-      ensure(dja_value_at(v, 3) == NULL);
-      ensure(dja_to_json(v) ===f "[1,2,3]");
+      ensure(fdja_to_int(fdja_value_at(v, 0)) == 1);
+      ensure(fdja_to_int(fdja_value_at(v, 1)) == 2);
+      ensure(fdja_to_int(fdja_value_at(v, 2)) == 3);
+      ensure(fdja_value_at(v, 3) == NULL);
+      ensure(fdja_to_json(v) ===f "[1,2,3]");
     }
 
     it "accepts whitespace inside of objects"
     {
-      v = dja_parse("\n{\n\"a\": 0, \"bb\": null, \"cc c\": true\n}\n");
+      v = fdja_parse("\n{\n\"a\": 0, \"bb\": null, \"cc c\": true\n}\n");
 
       ensure(v != NULL);
       ensure(v->type == 'o');
-      ensure(dja_value_at(v, 0) != NULL);
-      ensure(dja_value_at(v, 1) != NULL);
-      ensure(dja_value_at(v, 2) != NULL);
-      ensure(dja_value_at(v, 3) == NULL);
-      ensure(dja_value_at(v, 0)->key === "a");
-      ensure(dja_value_at(v, 1)->key === "bb");
-      ensure(dja_value_at(v, 2)->key === "cc c");
-      ensure(dja_value_at(v, 0)->type == 'n');
-      ensure(dja_value_at(v, 1)->type == '0');
-      ensure(dja_value_at(v, 2)->type == 't');
-      ensure(dja_to_int(dja_value_at(v, 0)) == 0);
-      ensure(dja_to_int(dja_value_at(v, 2)) == 1);
-      ensure(dja_to_json(v) ===f "{\"a\":0,\"bb\":null,\"cc c\":true}");
+      ensure(fdja_value_at(v, 0) != NULL);
+      ensure(fdja_value_at(v, 1) != NULL);
+      ensure(fdja_value_at(v, 2) != NULL);
+      ensure(fdja_value_at(v, 3) == NULL);
+      ensure(fdja_value_at(v, 0)->key === "a");
+      ensure(fdja_value_at(v, 1)->key === "bb");
+      ensure(fdja_value_at(v, 2)->key === "cc c");
+      ensure(fdja_value_at(v, 0)->type == 'n');
+      ensure(fdja_value_at(v, 1)->type == '0');
+      ensure(fdja_value_at(v, 2)->type == 't');
+      ensure(fdja_to_int(fdja_value_at(v, 0)) == 0);
+      ensure(fdja_to_int(fdja_value_at(v, 2)) == 1);
+      ensure(fdja_to_json(v) ===f "{\"a\":0,\"bb\":null,\"cc c\":true}");
     }
 
     it "accepts comments at the end of lines"
     {
-      v = dja_parse(""
+      v = fdja_parse(""
         "{\n"
         "  \"a\": 0,      # alpha delta\n"
         "  \"bb\": null,  # bravo johnny\n"
@@ -391,7 +391,7 @@ describe "dja_parse()"
       );
 
       ensure(v != NULL);
-      ensure(dja_to_json(v) ===f "{\"a\":0,\"bb\":null,\"cc c\":true}");
+      ensure(fdja_to_json(v) ===f "{\"a\":0,\"bb\":null,\"cc c\":true}");
     }
   }
 }
