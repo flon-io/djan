@@ -684,11 +684,9 @@ int dja_push(dja_value *array, dja_value *v)
 {
   if (array->type != 'a') return 0;
 
-  if (array->child == NULL) { array->child = v; return 1; }
-
-  for (dja_value *c = array->child; ; c = c->sibling)
+  for (dja_value **s = &array->child; ; s = &(*s)->sibling)
   {
-    if (c->sibling == NULL) { c->sibling = v; break; }
+    if (*s == NULL) { *s = v; break; }
   }
   return 1;
 }
