@@ -118,5 +118,53 @@ context "update"
       expect(dja_to_json(v) ===f "{\"a\":0,\"c\":2}");
     }
   }
+
+  describe "dja_splice()"
+  {
+    it "returns 0 if the target isn't an array"
+    {
+      v = dja_v("{}");
+      int r = dja_splice(v, 0, 1, NULL);
+
+      expect(r == 0);
+    }
+
+    it "removes values"
+    {
+      v = dja_v("[ 0, 1, 2 ]");
+      int r = dja_splice(v, 0, 1, NULL);
+
+      expect(r == 1);
+      expect(dja_to_json(v) ===f "[1,2]");
+    }
+
+    it "removes values (2)"
+    {
+      v = dja_v("[ 0, 1, 2, 3 ]");
+      int r = dja_splice(v, 1, 2, NULL);
+
+      expect(r == 1);
+      expect(dja_to_json(v) ===f "[0,3]");
+    }
+
+    it "removes values (3)"
+    {
+      v = dja_v("[ 0, 1, 2, 3 ]");
+      int r = dja_splice(v, 1, 10, NULL);
+
+      expect(r == 1);
+      expect(dja_to_json(v) ===f "[0]");
+    }
+
+    it "inserts values"
+
+    it "returns 0 if the start index is too far"
+    {
+      v = dja_v("[ 0, 1 ]");
+      int r = dja_splice(v, 2, 1, NULL);
+
+      expect(r == 0);
+    }
+  }
 }
 

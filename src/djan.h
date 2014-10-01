@@ -93,7 +93,7 @@ char *dja_lookup_string(dja_value *v, const char *path);
 int dja_push(dja_value *array, dja_value *v);
 int dja_set(dja_value *object, const char *key, dja_value *v);
 
-//int dja_splice(dja_value *array, size_t start, size_t count, ...);
+int dja_splice(dja_value *array, size_t start, size_t count, ...);
 
 #endif // DJAN_H
 

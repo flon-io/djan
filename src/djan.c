@@ -729,3 +729,46 @@ int dja_set(dja_value *object, const char *key, dja_value *v)
   return 1;
 }
 
+int dja_splice(dja_value *array, size_t start, size_t count, ...)
+{
+  if (array->type != 'a') return 0;
+
+  size_t off = 0;
+  dja_value **link = &array->child;
+
+  dja_value **lstart = NULL;
+  dja_value *end = NULL;
+
+  while (1)
+  {
+    dja_value *c = *link;
+
+    if (c == NULL) { if (lstart != NULL) break; return 0; }
+
+    if (lstart == NULL && off == start) { lstart = link; }
+    if (count == 0) { end = *link; break; }
+
+    ++off;
+    link = &(*link)->sibling;
+    if (lstart) --count;
+  }
+
+  //printf("lstart:  %s\n", dja_to_json(*lstart));
+  //printf("end:     %s\n", dja_to_json(end));
+
+  // free old elements
+
+  for (dja_value *c = *lstart, *n = NULL; c != NULL && c != end; )
+  {
+    n = c->sibling;
+    dja_value_free(c);
+    c = n;
+  }
+
+  // TODO: insert new elements
+
+  *lstart = end;
+
+  return 1;
+}
+
