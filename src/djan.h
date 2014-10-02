@@ -56,6 +56,7 @@ fdja_value *fdja_parse(char *input);
 fdja_value *fdja_parse_radial(char *input);
 
 fdja_value *fdja_parse_obj(char *input);
+fdja_value *fdja_parse_obj_f(char *path);
 
 //char *fdja_dump(fdja_value *v);
 char *fdja_to_json(fdja_value *v);

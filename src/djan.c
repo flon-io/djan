@@ -506,6 +506,13 @@ fdja_value *fdja_parse_obj(char *input)
   return v;
 }
 
+fdja_value *fdja_parse_obj_f(char *path)
+{
+  char *s = flu_readall(path);
+
+  return s ? fdja_parse_obj(s) : NULL;
+}
+
 
 //
 // outputting

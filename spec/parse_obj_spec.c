@@ -109,3 +109,32 @@ describe "fdja_parse_obj()"
   }
 }
 
+describe "fdja_parse_obj_f()"
+{
+  before each
+  {
+    fdja_value *v = NULL;
+  }
+  after each
+  {
+    if (v) fdja_value_free(v);
+  }
+
+  it "loads json directly out of files"
+  {
+    v = fdja_parse_obj_f("../spec/test0.jon");
+
+    expect(v != NULL);
+    expect(fdja_to_json(v) ===f "{\"hello\":\"world\"}");
+
+    //free(v->source);
+  }
+
+  it "returns NULL in case of problem"
+  {
+    v = fdja_parse_obj_f("_nada_.json");
+
+    expect(v == NULL);
+  }
+}
+
