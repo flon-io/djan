@@ -510,53 +510,53 @@ fdja_value *fdja_parse_obj(char *input)
 //
 // outputting
 
-static void fdja_to_j(flu_sbuffer *b, fdja_value *v)
+static void fdja_to_j(FILE *f, fdja_value *v)
 {
   if (v->key != NULL)
   {
-    flu_sbprintf(b, "\"%s\":", v->key);
+    fprintf(f, "\"%s\":", v->key);
   }
 
   if (v->type == 'q')
   {
     char *s = fdja_to_string(v);
-    flu_sbprintf(b, "\"%s\"", s);
+    fprintf(f, "\"%s\"", s);
     free(s);
   }
   else if (v->type == 'y')
   {
     char *s = fdja_string(v);
-    flu_sbprintf(b, "\"%s\"", s);
+    fprintf(f, "\"%s\"", s);
     free(s);
   }
   else if (v->type == 'a')
   {
-    flu_sbputc(b, '[');
+    fputc('[', f);
     for (fdja_value *c = v->child; c != NULL; c = c->sibling)
     {
-      fdja_to_j(b, c);
-      if (c->sibling != NULL) flu_sbputc(b, ',');
+      fdja_to_j(f, c);
+      if (c->sibling != NULL) fputc(',', f);
     }
-    flu_sbputc(b, ']');
+    fputc(']', f);
   }
   else if (v->type == 'o')
   {
-    flu_sbputc(b, '{');
+    fputc('{', f);
     for (fdja_value *c = v->child; c != NULL; c = c->sibling)
     {
-      fdja_to_j(b, c);
-      if (c->sibling != NULL) flu_sbputc(b, ',');
+      fdja_to_j(f, c);
+      if (c->sibling != NULL) fputc(',', f);
     }
-    flu_sbputc(b, '}');
+    fputc('}', f);
   }
-  else if (v->slen == 0) flu_sbputs(b, v->source + v->soff);
-  else flu_sbputs_n(b, v->source + v->soff, v->slen);
+  else if (v->slen == 0) fputs(v->source + v->soff, f);
+  else fwrite(v->source + v->soff, sizeof(char), v->slen, f);
 }
 
 char *fdja_to_json(fdja_value *v)
 {
   flu_sbuffer *b = flu_sbuffer_malloc();
-  fdja_to_j(b, v);
+  fdja_to_j(b->stream, v);
 
   return flu_sbuffer_to_string(b);
 }
