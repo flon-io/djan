@@ -125,6 +125,7 @@ describe "fdja_parse_obj_f()"
     v = fdja_parse_obj_f("../spec/test0.jon");
 
     expect(v != NULL);
+    expect(v->slen == 0);
     expect(fdja_to_json(v) ===f "{\"hello\":\"world\"}");
 
     //free(v->source);

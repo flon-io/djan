@@ -510,7 +510,12 @@ fdja_value *fdja_parse_obj_f(char *path)
 {
   char *s = flu_readall(path);
 
-  return s ? fdja_parse_obj(s) : NULL;
+  if (s == NULL) return NULL;
+
+  fdja_value *v = fdja_parse_obj(s);
+  v->slen = 0; // so that the root value "owns" the source
+
+  return v;
 }
 
 
