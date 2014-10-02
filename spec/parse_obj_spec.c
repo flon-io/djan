@@ -122,7 +122,7 @@ describe "fdja_parse_obj_f()"
 
   it "loads json directly out of files"
   {
-    v = fdja_parse_obj_f("../spec/test0.jon");
+    v = fdja_parse_obj_f("../spec/_test0.jon");
 
     expect(v != NULL);
     expect(v->slen == 0);
