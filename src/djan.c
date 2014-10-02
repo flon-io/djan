@@ -506,7 +506,7 @@ fdja_value *fdja_parse_obj(char *input)
   return v;
 }
 
-fdja_value *fdja_parse_obj_f(char *path)
+fdja_value *fdja_parse_obj_f(const char *path)
 {
   char *s = flu_readall(path);
 
