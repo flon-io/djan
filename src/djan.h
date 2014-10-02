@@ -58,10 +58,11 @@ fdja_value *fdja_parse_radial(char *input);
 fdja_value *fdja_parse_obj(char *input);
 fdja_value *fdja_parse_obj_f(char *path);
 
-//char *fdja_dump(fdja_value *v);
 char *fdja_to_json(fdja_value *v);
 //char *fdja_to_djan(fdja_value *v);
 //char *fdja_to_radial(fdja_value *v);
+
+//int fdja_to_json_f(fdja_value *v, const char *path);
 
 /*
  * Frees the fdja_value resources. If the fdja_value has children, they
@@ -95,6 +96,9 @@ int fdja_push(fdja_value *array, fdja_value *v);
 int fdja_set(fdja_value *object, const char *key, fdja_value *v);
 
 int fdja_splice(fdja_value *array, size_t start, size_t count, ...);
+
+//int fdja_pset(fdja_value *start, const char *path, fdja_value *v);
+  // pset(v, "cars.-1", v1) to push in cars array
 
 #endif // DJAN_H
 
