@@ -236,5 +236,23 @@ describe "fdja_parse_radial()"
       "]]"
     );
   }
+
+  it "accepts word as rad name"
+  {
+    v = fdja_parse_radial(""
+      "sequence\n"
+      "  git://github.com/flon-io/tst x b: 0\n"
+      //"  git://github.com/flon-io/tst x y a: 0, b: 1\n"
+      //"  git://github.com/flon-io/tst a: 0, b: 1\n"
+    );
+
+    ensure(v != NULL);
+
+    ensure(fdja_to_json(v) ===f ""
+      "[\"sequence\",{},["
+        "[\"git://github.com/flon-io/tst\",{\"_a\":\"x\",\"b\":0},[]]"
+      "]]"
+    );
+  }
 }
 

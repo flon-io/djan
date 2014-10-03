@@ -161,10 +161,12 @@ static void fdja_parser_init()
 
   // radial
 
+  fabr_parser *word = fabr_n_rex("symbol", "[a-zA-Z_][^ \t\n\r]*");
+
   fabr_parser *spaces = fabr_rex("[ \t]*");
 
   fabr_parser *rad_i = fabr_name("rad_i", spaces);
-  fabr_parser *rad_n = fabr_name("rad_n", symbol);
+  fabr_parser *rad_n = fabr_name("rad_n", word);
 
   fabr_parser *rad_a =
     fabr_n_seq("rad_a", spaces, pure_value, fabr_n_r("", "?"));

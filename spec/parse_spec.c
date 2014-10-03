@@ -313,6 +313,7 @@ describe "fdja_parse()"
       ensure(fdja_value_at(v, 3) == NULL);
       ensure(fdja_to_json(v) ===f "{\"a_a\":0,\"bb_\":null,\"c3\":\"three\"}");
     }
+
     it "accepts 'single quote strings' as keys"
     {
       v = fdja_parse("{ 'a_a': 0, 'bb_': null }");
