@@ -28,6 +28,14 @@ context "fdja_value"
       expect(fdja_to_json(v) ===f ""
         "{\"type\":\"car\",\"make\":\"mitsubishi\",\"id\":2}");
     }
+
+    it "doesn't print the key when printing an entry on its own"
+    {
+      v = fdja_v("{ type: car, make: mitsubishi, id: 2 }");
+      fdja_value *vv = fdja_lookup(v, "type");
+
+      expect(fdja_to_json(vv) ===f "\"car\"");
+    }
   }
 
   describe "fdja_to_djan()"
@@ -53,6 +61,14 @@ context "fdja_value"
           "\"suppliers,\": []"
         " }"
       );
+    }
+
+    it "doesn't print the key when the entry is on its own"
+    {
+      v = fdja_v("{ type: car, make: mitsubishi, id: 2 }");
+      fdja_value *vv = fdja_lookup(v, "type");
+
+      expect(fdja_to_djan(vv) ===f "car");
     }
   }
 }
