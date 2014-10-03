@@ -54,7 +54,7 @@ describe "fdja_parse_radial()"
 
     ensure(fdja_to_json(v) ===f ""
       "[\"sequence\",{},["
-        "[\"participant\",{\"_a\":\"bravo\"},[]]"
+        "[\"participant\",{\"_0\":\"bravo\"},[]]"
       "]]"
     );
   }
@@ -74,12 +74,12 @@ describe "fdja_parse_radial()"
 
     ensure(fdja_to_json(v) ===f ""
       "[\"sequence\",{},["
-        "[\"participant\",{\"_a\":\"alpha\"},[]],"
+        "[\"participant\",{\"_0\":\"alpha\"},[]],"
         "[\"concurrence\",{},["
-          "[\"participant\",{\"_a\":\"bravo\"},[]],"
-          "[\"participant\",{\"_a\":\"charly\"},[]]"
+          "[\"participant\",{\"_0\":\"bravo\"},[]],"
+          "[\"participant\",{\"_0\":\"charly\"},[]]"
         "]],"
-        "[\"participant\",{\"_a\":\"delta\"},[]]"
+        "[\"participant\",{\"_0\":\"delta\"},[]]"
       "]]"
     );
   }
@@ -95,7 +95,7 @@ describe "fdja_parse_radial()"
     ensure(v != NULL);
 
     ensure(fdja_to_json(v) ===f ""
-      "[\"iterate\",{\"_a\":[1,2,3]},["
+      "[\"iterate\",{\"_0\":[1,2,3]},["
         "[\"bravo\",{},[]]"
       "]]"
     );
@@ -113,7 +113,7 @@ describe "fdja_parse_radial()"
       "["
         "\"participant\","
         "{"
-          "\"_a\":\"charly\","
+          "\"_0\":\"charly\","
           "\"a\":0,"
           "\"b\":\"one\","
           "\"c\":true,"
@@ -140,7 +140,7 @@ describe "fdja_parse_radial()"
       "["
         "\"participant\","
         "{"
-          "\"_a\":\"charly\","
+          "\"_0\":\"charly\","
           "\"aa\":0,"
           "\"bb\":\"one\","
           "\"cc\":true,"
@@ -167,7 +167,7 @@ describe "fdja_parse_radial()"
       "["
         "\"participant\","
         "{"
-          "\"_a\":\"charly\","
+          "\"_0\":\"charly\","
           "\"aa\":0,"
           "\"bb\":\"one\","
           "\"cc\":true,"
@@ -193,13 +193,23 @@ describe "fdja_parse_radial()"
       "["
         "\"participant\","
         "{"
-          "\"_a\":\"charly\","
+          "\"_0\":\"charly\","
           "\"aa\":0,"
           "\"bb\":\"one\""
         "},"
         "[]"
       "]"
     );
+  }
+
+  it "accepts unkeyed attributes"
+  {
+    v = fdja_parse_radial("nada aa bb d: 2, e: 3");
+
+    ensure(v != NULL);
+
+    ensure(fdja_to_json(v) ===f ""
+      "[\"nada\",{\"_0\":\"aa\",\"_1\":\"bb\",\"d\":2,\"e\":3},[]]");
   }
 
   it "accepts comments at the end of the radial lines"
@@ -214,8 +224,8 @@ describe "fdja_parse_radial()"
 
     ensure(fdja_to_json(v) ===f ""
       "[\"sequence\",{},["
-        "[\"participant\",{\"_a\":\"toto\"},[]],"
-        "[\"participant\",{\"_a\":\"tutu\"},[]]"
+        "[\"participant\",{\"_0\":\"toto\"},[]],"
+        "[\"participant\",{\"_0\":\"tutu\"},[]]"
       "]]"
     );
   }
@@ -232,7 +242,7 @@ describe "fdja_parse_radial()"
 
     ensure(fdja_to_json(v) ===f ""
       "[\"sequence\",{},["
-        "[\"participant\",{\"_a\":\"toto\"},[]]"
+        "[\"participant\",{\"_0\":\"toto\"},[]]"
       "]]"
     );
   }
@@ -250,7 +260,7 @@ describe "fdja_parse_radial()"
 
     ensure(fdja_to_json(v) ===f ""
       "[\"sequence\",{},["
-        "[\"git://github.com/flon-io/tst\",{\"_a\":\"x\",\"b\":0},[]]"
+        "[\"git://github.com/flon-io/tst\",{\"_0\":\"x\",\"b\":0},[]]"
       "]]"
     );
   }
