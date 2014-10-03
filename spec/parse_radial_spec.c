@@ -23,7 +23,7 @@ describe "fdja_parse_radial()"
   {
     // another method for pointing at syntax errors?
 
-    v = fdja_parse_radial("123");
+    v = fdja_parse_radial("12[3");
 
     ensure(v == NULL);
   }
@@ -247,7 +247,7 @@ describe "fdja_parse_radial()"
     );
   }
 
-  it "accepts word as rad name"
+  it "accepts words as rad names
   {
     v = fdja_parse_radial(""
       "sequence\n"

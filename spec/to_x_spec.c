@@ -40,17 +40,17 @@ context "fdja_value"
           "\"make/brand\": mitsubishi, "
           "id: 2, "
           "ok: true"
-          "suppliers: [ ]"
+          "\"suppliers,\": [ ]"
         "}"
       );
 
       expect(fdja_to_djan(v) ===f ""
         "{ "
           "type: car, "
-          "\"make/brand\": mitsubishi, "
+          "make/brand: mitsubishi, "
           "id: 2, "
           "ok: true, "
-          "suppliers: []"
+          "\"suppliers,\": []"
         " }"
       );
     }

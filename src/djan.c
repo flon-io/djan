@@ -101,7 +101,7 @@ static void fdja_parser_init()
     fabr_n_rex("sqstring", "'(\\\\'|[^'])*'");
 
   fabr_parser *symbol =
-    fabr_n_rex("symbol", "[a-zA-Z_][a-zA-Z_0-9]*");
+    fabr_n_rex("symbol", "[^ \t\n\r:,\\[\\]\\{\\}#]+");
 
   fabr_parser *entry =
     fabr_n_seq(
@@ -161,8 +161,7 @@ static void fdja_parser_init()
 
   // radial
 
-  fabr_parser *word = fabr_n_rex("symbol", "[a-zA-Z_][^ \t\n\r]*");
-
+  fabr_parser *word = fabr_n_rex("symbol", "[^ \t\n\r,\\[\\]\\{\\}#]+");
   fabr_parser *spaces = fabr_rex("[ \t]*");
 
   fabr_parser *rad_i = fabr_name("rad_i", spaces);
