@@ -750,11 +750,11 @@ fdja_value *fdja_lookup(fdja_value *v, const char *path)
   return vv;
 }
 
-char *fdja_lookup_string(fdja_value *v, const char *path)
+char *fdja_lookup_string(fdja_value *v, const char *path, char *def)
 {
   fdja_value *vv = fdja_lookup(v, path);
 
-  return vv ? fdja_to_string(vv) : NULL;
+  return vv ? fdja_to_string(vv) : def;
 }
 
 long long fdja_lookup_int(fdja_value *v, const char *path, long long def)

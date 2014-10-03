@@ -77,10 +77,18 @@ context "fdja_value"
     {
       v = fdja_parse("{ type: car, parts: [ carburator, wheel ] }");
 
-      expect(fdja_lookup_string(v, "type") ===f "car");
-      expect(fdja_lookup_string(v, "parts.0") ===f "carburator");
-      expect(fdja_lookup_string(v, "parts.1") ===f "wheel");
-      expect(fdja_lookup_string(v, "parts.2") == NULL);
+      expect(fdja_lookup_string(v, "type", NULL) ===f "car");
+      expect(fdja_lookup_string(v, "parts.0", NULL) ===f "carburator");
+      expect(fdja_lookup_string(v, "parts.1", NULL) ===f "wheel");
+      expect(fdja_lookup_string(v, "parts.2", NULL) == NULL);
+    }
+
+    it "returns the default when key is not found"
+    {
+      v = fdja_parse("{}");
+
+      expect(fdja_lookup_string(v, "type", NULL) === NULL);
+      expect(fdja_lookup_string(v, "type", "nada") === "nada");
     }
   }
 
