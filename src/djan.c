@@ -177,8 +177,7 @@ static void fdja_parser_init()
         fabr_n_alt("key", string, sqstring, symbol, NULL),
         spaces, fabr_str(":"), blanks,
         NULL), fabr_q("?"),
-      fabr_n_seq(
-        "val", spaces, pure_value, NULL),
+      fabr_name("val", pure_value),
       NULL);
 
   fabr_parser *rad_eol =
@@ -283,7 +282,7 @@ static fdja_value *fdja_extract_entries(char *input, fabr_tree *t)
 
 static fdja_value *fdja_extract_values(char *input, fabr_tree *t)
 {
-  //printf("%s\n", fabr_tree_to_string(t));
+  //printf("%s\n", fabr_tree_to_string(t, input));
 
   flu_list *ts = fabr_tree_list_named(t, "value");
 
@@ -338,11 +337,12 @@ static fdja_value *fdja_extract_value(char *input, fabr_tree *t)
 
   if (t->result != 1) return NULL;
 
-  t = fabr_t_child(t, 1);
+  fabr_tree *tt = fabr_t_child(t, 1);
+  if (tt == NULL) tt = t->child;
 
-  //printf("fdja_extract_value() child1 %s\n", fabr_tree_to_str(t, input));
+  //printf("fdja_extract_value() child1 %s\n", fabr_tree_to_str(tt, input));
 
-  for (fabr_tree *c = t->child; c != NULL; c = c->sibling)
+  for (fabr_tree *c = tt->child; c != NULL; c = c->sibling)
   {
     if (c->result == 1) return fdja_extract_v(input, c);
   }
