@@ -29,5 +29,31 @@ context "fdja_value"
         "{\"type\":\"car\",\"make\":\"mitsubishi\",\"id\":2}");
     }
   }
+
+  describe "fdja_to_djan()"
+  {
+    it "turns a fdja_value to a djan string"
+    {
+      v = fdja_v(
+        "{"
+          "type: car, "
+          "\"make/brand\": mitsubishi, "
+          "id: 2, "
+          "ok: true"
+          "suppliers: [ ]"
+        "}"
+      );
+
+      expect(fdja_to_djan(v) ===f ""
+        "{ "
+          "type: car, "
+          "\"make/brand\": mitsubishi, "
+          "id: 2, "
+          "ok: true, "
+          "suppliers: []"
+        " }"
+      );
+    }
+  }
 }
 
