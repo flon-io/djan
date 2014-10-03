@@ -77,10 +77,67 @@ context "fdja_value"
     {
       v = fdja_parse("{ type: car, parts: [ carburator, wheel ] }");
 
-      ensure(fdja_lookup_string(v, "type") ===f "car");
-      ensure(fdja_lookup_string(v, "parts.0") ===f "carburator");
-      ensure(fdja_lookup_string(v, "parts.1") ===f "wheel");
-      ensure(fdja_lookup_string(v, "parts.2") == NULL);
+      expect(fdja_lookup_string(v, "type") ===f "car");
+      expect(fdja_lookup_string(v, "parts.0") ===f "carburator");
+      expect(fdja_lookup_string(v, "parts.1") ===f "wheel");
+      expect(fdja_lookup_string(v, "parts.2") == NULL);
+    }
+  }
+
+  describe "fdja_lookup_int()"
+  {
+    before each
+    {
+      v = fdja_v("{ a: 1234 }");
+    }
+
+    it "returns an int"
+    {
+      expect(fdja_lookup_int(v, "a", 0) == 1234);
+    }
+
+    it "returns the default value if it doesn't find"
+    {
+      expect(fdja_lookup_int(v, "z", 0) == 0);
+    }
+  }
+  describe "fdja_lookup_bool()"
+  {
+    before each
+    {
+      v = fdja_v(""
+        "{"
+          "t0: true, t1: TRUE, t2: yes,"
+          "f0: false, f1: FALSE, f2: no,"
+          "x: nada"
+        "}");
+    }
+
+    it "0, 1 or the default"
+    {
+      expect(fdja_lookup_bool(v, "t0", -1) == 1);
+      expect(fdja_lookup_bool(v, "t1", -1) == 1);
+      expect(fdja_lookup_bool(v, "t2", -1) == 1);
+      expect(fdja_lookup_bool(v, "f0", -1) == 0);
+      expect(fdja_lookup_bool(v, "f1", -1) == 0);
+      expect(fdja_lookup_bool(v, "f2", -1) == 0);
+      expect(fdja_lookup_bool(v, "x", -1) == -1);
+      expect(fdja_lookup_bool(v, "z", -1) == -1);
+    }
+  }
+  describe "fdja_lookup_boolean()"
+  {
+    before each
+    {
+      v = fdja_v("{ a: true, b: false, c: nada }");
+    }
+
+    it "returns 0, 1 or the default"
+    {
+      expect(fdja_lookup_boolean(v, "a", -1) == 1);
+      expect(fdja_lookup_boolean(v, "b", -1) == 0);
+      expect(fdja_lookup_boolean(v, "c", -1) == -1);
+      expect(fdja_lookup_boolean(v, "d", -1) == -1);
     }
   }
 }
