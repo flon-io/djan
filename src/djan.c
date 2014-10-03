@@ -77,12 +77,11 @@ void fdja_value_free(fdja_value *v)
 
 static fabr_parser *fdja_parser = NULL;
 static fabr_parser *fdja_obj_parser = NULL;
+static fabr_parser *fdja_symbol_parser = NULL;
 static fabr_parser *fdja_radial_parser = NULL;
 
 static void fdja_parser_init()
 {
-  if (fdja_parser != NULL) return;
-
   // djan (JSON & co)
 
   fabr_parser *blanks = // blanks and comments
@@ -117,23 +116,27 @@ static void fdja_parser_init()
     fabr_n_seq(
       "entries",
       entry,
-      fabr_seq(fabr_rex(",?"), entry, fabr_r("*")),
+      fabr_seq(fabr_rex(",?"), entry, fabr_q("?"), fabr_r("*")),
       fabr_r("?")
     );
 
   fabr_parser *object =
-    fabr_n_seq("object", fabr_string("{"), entries, fabr_string("}"), NULL);
+    fabr_n_seq(
+      "object",
+      fabr_rex("\\{[ \t\n\r]*"), entries, fabr_rex("[ \t\n\r]*}"), NULL);
 
   fabr_parser *values =
     fabr_n_seq(
       "values",
       fabr_n("value"),
-      fabr_seq(fabr_rex(",?"), fabr_n("value"), fabr_r("*")),
+      fabr_seq(fabr_rex(",?"), fabr_n("value"), fabr_q("?"), fabr_r("*")),
       fabr_r("?")
     );
 
   fabr_parser *array =
-    fabr_n_seq("array", fabr_string("["), values, fabr_string("]"), NULL);
+    fabr_n_seq(
+      "array",
+      fabr_rex("\\[[ \t\n\r]*"), values, fabr_rex("[ \t\n\r]*]"), NULL);
 
   fabr_parser *pure_value =
     fabr_alt(
@@ -150,6 +153,10 @@ static void fdja_parser_init()
 
   fdja_parser =
     fabr_n_seq("value", blanks, pure_value, blanks, NULL);
+
+  // symbol
+
+  fdja_symbol_parser = symbol;
 
   // radial
 
@@ -206,8 +213,6 @@ static fabr_parser *fdja_path_parser = NULL;
 
 static void fdja_path_parser_init()
 {
-  if (fdja_path_parser != NULL) return;
-
   fabr_parser *index = fabr_n_rex("index", "-?[0-9]+");
   fabr_parser *key = fabr_n_rex("key", "[a-zA-Z_][a-zA-Z_0-9]*");
   fabr_parser *node = fabr_n_alt("node", index, key, NULL);
@@ -347,7 +352,7 @@ static fdja_value *fdja_extract_value(char *input, fabr_tree *t)
 
 fdja_value *fdja_parse(char *input)
 {
-  fdja_parser_init();
+  if (fdja_parser == NULL) fdja_parser_init();
 
   fabr_tree *t = fabr_parse_all(input, 0, fdja_parser);
 
@@ -459,7 +464,7 @@ static void fdja_parse_radl(char *input, fabr_tree *radl, flu_list *values)
 
 fdja_value *fdja_parse_radial(char *input)
 {
-  fdja_parser_init();
+  if (fdja_parser == NULL) fdja_parser_init();
 
   fabr_tree *t = fabr_parse_all(input, 0, fdja_radial_parser);
   // TODO: deal with errors (t->result < 0)
@@ -487,7 +492,7 @@ fdja_value *fdja_parse_radial(char *input)
 
 fdja_value *fdja_parse_obj(char *input)
 {
-  fdja_parser_init();
+  if (fdja_parser == NULL) fdja_parser_init();
 
   fabr_tree *t = fabr_parse_all(input, 0, fdja_obj_parser);
 
@@ -573,6 +578,65 @@ char *fdja_to_json(fdja_value *v)
   return flu_sbuffer_to_string(b);
 }
 
+static int fdja_is_symbol(char *s)
+{
+  if (fdja_parser == NULL) fdja_parser_init();
+
+  return fabr_match(s, fdja_symbol_parser);
+}
+
+static void fdja_s_to_d(FILE *f, char *s, int do_free)
+{
+  if (fdja_is_symbol(s)) fputs(s, f); else fprintf(f, "\"%s\"", s);
+  if (do_free) free(s);
+}
+
+static void fdja_to_d(FILE *f, fdja_value *v)
+{
+  if (v->key) { fdja_s_to_d(f, v->key, 0); fputs(": ", f); }
+
+  if (v->type == 'q' || v->type == 's')
+  {
+    fdja_s_to_d(f, fdja_to_string(v), 1);
+  }
+  else if (v->type == 'y')
+  {
+    char *s = fdja_string(v); fputs(s, f); free(s);
+  }
+  else if (v->type == 'a')
+  {
+    fputc('[', f);
+    for (fdja_value *c = v->child; c != NULL; c = c->sibling)
+    {
+      fputc(' ', f); fdja_to_d(f, c);
+      if (c->sibling) fputc(',', f);
+    }
+    if (v->child) fputc(' ', f);
+    fputc(']', f);
+  }
+  else if (v->type == 'o')
+  {
+    fputc('{', f);
+    for (fdja_value *c = v->child; c != NULL; c = c->sibling)
+    {
+      fputc(' ', f); fdja_to_d(f, c);
+      if (c->sibling != NULL) fputc(',', f);
+    }
+    if (v->child) fputc(' ', f);
+    fputc('}', f);
+  }
+  else if (v->slen == 0) fputs(v->source + v->soff, f);
+  else fwrite(v->source + v->soff, sizeof(char), v->slen, f);
+}
+
+char *fdja_to_djan(fdja_value *v)
+{
+  flu_sbuffer *b = flu_sbuffer_malloc();
+  fdja_to_d(b->stream, v);
+
+  return flu_sbuffer_to_string(b);
+}
+
 
 //
 // extracting stuff out of fdja_value items
@@ -638,7 +702,7 @@ fdja_value *fdja_value_at(fdja_value *v, long n)
 
 fdja_value *fdja_lookup(fdja_value *v, const char *path)
 {
-  fdja_path_parser_init();
+  if (fdja_path_parser == NULL) fdja_path_parser_init();
 
   fabr_tree *t = fabr_parse_all(path, 0, fdja_path_parser);
 

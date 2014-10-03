@@ -196,6 +196,16 @@ describe "fdja_parse()"
       ensure(fdja_to_json(v) ===f "[]");
     }
 
+    it "parses [ ]"
+    {
+      v = fdja_parse("[ ]");
+
+      ensure(v != NULL);
+      ensure(v->type == 'a');
+      ensure(v->child == NULL);
+      ensure(fdja_to_json(v) ===f "[]");
+    }
+
     it "parses [1,2,3]"
     {
       v = fdja_parse("[1,2,3]");
@@ -228,6 +238,30 @@ describe "fdja_parse()"
       ensure(fdja_to_int(fdja_value_at(v, 6)) == 52);
       ensure(fdja_value_at(v, 7) == NULL);
       ensure(fdja_to_json(v) ===f "[10,20,30,40,50,51,52]");
+    }
+
+    it "parses [1,2,]"
+    {
+      v = fdja_parse("[1,2,]");
+
+      expect(v != NULL);
+      expect(fdja_to_json(v) ===f "[1,2]");
+    }
+
+    it "parses [1,,3]"
+    {
+      v = fdja_parse("[1,,3]");
+
+      expect(v != NULL);
+      expect(fdja_to_json(v) ===f "[1,3]");
+    }
+
+    it "parses [<lf>]"
+    {
+      v = fdja_parse("[\n]");
+
+      expect(v != NULL);
+      expect(fdja_to_json(v) ===f "[]");
     }
   }
 
@@ -308,6 +342,30 @@ describe "fdja_parse()"
 
       ensure(fdja_to_json(v) ===f ""
         "{\"a_a\":0,\"bb_\":null,\"c\":true,\"d\":[1,2]}");
+    }
+
+    it "parses {a:0,b:1,}"
+    {
+      v = fdja_parse("{a:0,b:1,}");
+
+      expect(v != NULL);
+      expect(fdja_to_json(v) ===f "{\"a\":0,\"b\":1}");
+    }
+
+    it "parses {a:0,,c:2}"
+    {
+      v = fdja_parse("{a:0,,c:2}");
+
+      expect(v != NULL);
+      expect(fdja_to_json(v) ===f "{\"a\":0,\"c\":2}");
+    }
+
+    it "parses {<lf>}"
+    {
+      v = fdja_parse("{\n}");
+
+      expect(v != NULL);
+      expect(fdja_to_json(v) ===f "{}");
     }
   }
 
