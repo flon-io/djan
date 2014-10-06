@@ -199,6 +199,23 @@ context "update"
 
       expect(r == 0);
     }
+
+    it "understands negative indexes"
+    {
+      v = fdja_v("[ 0, 1, 2 ]");
+      int r = fdja_splice(v, -2, 2, fdja_v("one"), NULL);
+
+      expect(r == 1);
+      expect(fdja_to_json(v) ===f "[0,\"one\"]");
+    }
+
+    it "doesn't accept very negative indexes"
+    {
+      v = fdja_v("[ 0, 1, 2 ]");
+      int r = fdja_splice(v, -4, 2, fdja_v("one"), NULL);
+
+      expect(r == 0);
+    }
   }
 
   describe "fdja_pset()"

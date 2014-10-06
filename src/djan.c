@@ -825,9 +825,16 @@ int fdja_set(fdja_value *object, const char *key, fdja_value *v)
   return 1;
 }
 
-int fdja_splice(fdja_value *array, size_t start, size_t count, ...)
+int fdja_splice(fdja_value *array, long long start, size_t count, ...)
 {
   if (array->type != 'a') return 0;
+
+  if (start < 0)
+  {
+    size_t len = fdja_size(array);
+    start = len + start;
+    if (start < 0) return 0;
+  }
 
   // determine start and end of removal
 
