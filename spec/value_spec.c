@@ -109,6 +109,7 @@ context "fdja_value"
       expect(fdja_lookup_int(v, "z", 0) == 0);
     }
   }
+
   describe "fdja_lookup_bool()"
   {
     before each
@@ -133,6 +134,7 @@ context "fdja_value"
       expect(fdja_lookup_bool(v, "z", -1) == -1);
     }
   }
+
   describe "fdja_lookup_boolean()"
   {
     before each
@@ -146,6 +148,22 @@ context "fdja_value"
       expect(fdja_lookup_boolean(v, "b", -1) == 0);
       expect(fdja_lookup_boolean(v, "c", -1) == -1);
       expect(fdja_lookup_boolean(v, "d", -1) == -1);
+    }
+  }
+
+  describe "fdja_s()"
+  {
+    it "wraps a string in a fdja_value"
+    {
+      v = fdja_s("hello world");
+
+      expect(v->key == NULL);
+      expect(v->type == 's');
+      expect(v->soff == 0);
+      expect(v->slen == 11);
+      expect(strcmp(v->source, "hello world") == 0);
+      expect(v->child == NULL);
+      expect(v->sibling == NULL);
     }
   }
 }

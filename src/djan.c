@@ -365,6 +365,11 @@ fdja_value *fdja_parse(char *input)
   return v;
 }
 
+fdja_value *fdja_s(char *s)
+{
+  return fdja_value_malloc('s', s, 0, strlen(s));
+}
+
 static void fdja_add_radc(fdja_value *parent, fdja_value *child)
 {
   parent = fdja_value_at(parent, 2);
