@@ -898,6 +898,8 @@ int fdja_pset(fdja_value *start, const char *path, fdja_value *v)
   char *pat = strndup(path, lastdot - path);
 
   fdja_value *target = fdja_lookup(start, pat);
+  free(pat);
+
   if (target == NULL) return 0;
 
   if (target->type == 'o')
