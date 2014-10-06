@@ -49,7 +49,7 @@ typedef struct fdja_value {
 } fdja_value;
 
 fdja_value *fdja_parse(char *input);
-//fdja_value *fdja_parse_fragment(char *input, size_t offset, size_t length);
+//fdja_value *fdja_parse_f(const char *path, ...);
 
 #define fdja_v(input) fdja_parse(input)
 //fdja_value *fdja_v(char *format, ...);
@@ -59,11 +59,14 @@ fdja_value *fdja_parse(char *input);
 fdja_value *fdja_s(char *format, ...);
 
 fdja_value *fdja_parse_radial(char *input);
+//fdja_value *fdja_parse_radial_f(const char *path, ...);
 
 fdja_value *fdja_parse_obj(char *input);
 fdja_value *fdja_parse_obj_f(const char *path);
+//fdja_value *fdja_parse_obj_f(const char *path, ...);
 
 #define fdja_o(input) fdja_parse_obj(input)
+//fdja_value *fdja_c(const char *input, ...);
 
 //fdja_value *fdja_a(fdja_value *v0, ...);
 //fdja_value *fdja_o(char *k0, fdja_value *v0, ...);
@@ -72,7 +75,7 @@ char *fdja_to_json(fdja_value *v);
 char *fdja_to_djan(fdja_value *v);
 //char *fdja_to_radial(fdja_value *v);
 
-//int fdja_to_json_f(fdja_value *v, const char *path);
+//int fdja_to_json_f(fdja_value *v, const char *path, ...);
 
 /*
  * Frees the fdja_value resources. If the fdja_value has children, they
