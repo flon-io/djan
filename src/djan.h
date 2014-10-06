@@ -52,6 +52,7 @@ fdja_value *fdja_parse(char *input);
 //fdja_value *fdja_parse_fragment(char *input, size_t offset, size_t length);
 
 #define fdja_v(input) fdja_parse(input)
+//fdja_value *fdja_v(char *format, ...);
 
 /* Wraps a string in a fdja_value.
  */
@@ -63,6 +64,9 @@ fdja_value *fdja_parse_obj(char *input);
 fdja_value *fdja_parse_obj_f(const char *path);
 
 #define fdja_o(input) fdja_parse_obj(input)
+
+//fdja_value *fdja_a(fdja_value *v0, ...);
+//fdja_value *fdja_o(char *k0, fdja_value *v0, ...);
 
 char *fdja_to_json(fdja_value *v);
 char *fdja_to_djan(fdja_value *v);
