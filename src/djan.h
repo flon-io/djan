@@ -55,7 +55,7 @@ fdja_value *fdja_parse(char *input);
 
 /* Wraps a string in a fdja_value.
  */
-fdja_value *fdja_s(char *s);
+fdja_value *fdja_s(char *format, ...);
 
 fdja_value *fdja_parse_radial(char *input);
 

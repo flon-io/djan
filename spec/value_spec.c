@@ -158,12 +158,27 @@ context "fdja_value"
       v = fdja_s("hello world");
 
       expect(v->key == NULL);
-      expect(v->type == 's');
+      expect(v->type == 'y');
       expect(v->soff == 0);
-      expect(v->slen == 11);
-      expect(strcmp(v->source, "hello world") == 0);
+      expect(v->slen == 0);
+      expect(v->source === "hello world");
       expect(v->child == NULL);
       expect(v->sibling == NULL);
+      expect(fdja_to_json(v) ===f "\"hello world\"");
+    }
+
+    it "accepts arguments"
+    {
+      v = fdja_s("hello %s", "world");
+
+      expect(v->key == NULL);
+      expect(v->type == 'y');
+      expect(v->soff == 0);
+      expect(v->slen == 0);
+      expect(v->source === "hello world");
+      expect(v->child == NULL);
+      expect(v->sibling == NULL);
+      expect(fdja_to_json(v) ===f "\"hello world\"");
     }
   }
 }
