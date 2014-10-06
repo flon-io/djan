@@ -200,5 +200,62 @@ context "update"
       expect(r == 0);
     }
   }
+
+  describe "fdja_pset()"
+  {
+    it "sets here if the path is immediate"
+    {
+      v = fdja_parse("{ a: 0, b: 1, c: 2 }");
+      int r = fdja_pset(v, "b", fdja_v("\"B\""));
+      //int r = fdja_pset(v, "b", fdja_s("B"));
+
+      expect(r == 1);
+      expect(fdja_to_json(v) ===f "{\"a\":0,\"b\":\"B\",\"c\":2}");
+    }
+
+    it "sets in an object"
+    {
+      v = fdja_parse("{ a: {} }");
+      int r = fdja_pset(v, "a.a", fdja_v("2"));
+
+      expect(r == 1);
+      expect(fdja_to_json(v) ===f "{\"a\":{\"a\":2}}");
+    }
+
+    it "sets in arrays"
+    {
+      v = fdja_parse("{ a: [ 0 ] }");
+      int r = fdja_pset(v, "a.0", fdja_v("1"));
+
+      expect(r == 1);
+      expect(fdja_to_json(v) ===f "{\"a\":[1]}");
+    }
+
+    it "returns 0 when outside of array reach"
+    {
+      v = fdja_parse("{ a: [ 0 ] }");
+      int r = fdja_pset(v, "a.1", fdja_v("1"));
+
+      expect(r == 0);
+    }
+
+    it "appends to the array when index is ']'"
+    {
+      v = fdja_parse("{ a: [ 0 ] }");
+      int r = fdja_pset(v, "a.]", fdja_v("1"));
+
+      expect(r == 1);
+      expect(fdja_to_json(v) ===f "{\"a\":[0,1]}");
+    }
+
+    it "understands negative indexes"
+    {
+      v = fdja_parse("{ a: [ 0, 1 ] }");
+      int r = fdja_pset(v, "a.-1", fdja_v("-1"));
+
+      expect(r == 1);
+      expect(fdja_to_json(v) ===f "{\"a\":[0,-1]}");
+    }
+  }
 }
 
