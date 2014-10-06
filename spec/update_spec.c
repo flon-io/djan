@@ -212,7 +212,7 @@ context "update"
     it "doesn't accept very negative indexes"
     {
       v = fdja_v("[ 0, 1, 2 ]");
-      int r = fdja_splice(v, -4, 2, fdja_v("one"), NULL);
+      int r = fdja_splice(v, -4, 2, NULL);
 
       expect(r == 0);
     }
@@ -251,7 +251,7 @@ context "update"
     it "returns 0 when outside of array reach"
     {
       v = fdja_parse("{ a: [ 0 ] }");
-      int r = fdja_pset(v, "a.1", fdja_v("1"));
+      int r = fdja_pset(v, "a.1", NULL);
 
       expect(r == 0);
     }
