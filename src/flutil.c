@@ -260,6 +260,21 @@ char *flu_freadall(FILE *in)
   return flu_sbuffer_to_string(b);
 }
 
+char *flu_writeall(const char *path, ...)
+{
+  va_list ap; va_start(ap, path);
+  char *spath = flu_svprintf(path, ap);
+  char *format = va_arg(ap, char *);
+
+  FILE *f = fopen(spath, "w");
+  vfprintf(f, format, ap);
+  fclose(f);
+
+  va_end(ap);
+
+  return spath;
+}
+
 
 //
 // flu_list
