@@ -1,0 +1,10 @@
+
+#
+# some kind of test radial file
+#
+# Tue Oct  7 14:10:11 JST 2014
+#
+
+define sendmail
+  mail to: $(user.email) subject: notification
+

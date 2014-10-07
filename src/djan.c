@@ -385,7 +385,7 @@ fdja_value *fdja_v(char *format, ...)
   char *s = flu_svprintf(format, ap);
   va_end(ap);
 
-  fdja_value *v =  fdja_parse(s);
+  fdja_value *v = fdja_parse(s);
   v->slen = 0;
 
   return v;
@@ -514,6 +514,20 @@ fdja_value *fdja_parse_radial(char *input)
   flu_list_free(vs);
 
   return root;
+}
+
+fdja_value *fdja_parse_radial_f(const char *path, ...)
+{
+  va_list ap; va_start(ap, path);
+  char *s = flu_vreadall(path, ap);
+  va_end(ap);
+
+  if (s == NULL) return NULL;
+
+  fdja_value *v = fdja_parse_radial(s);
+  if (v != NULL) v->slen = 0;
+
+  return v;
 }
 
 fdja_value *fdja_parse_obj(char *input)
