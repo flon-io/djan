@@ -365,6 +365,20 @@ fdja_value *fdja_parse(char *input)
   return v;
 }
 
+fdja_value *fdja_parse_f(const char *path, ...)
+{
+  va_list ap; va_start(ap, path);
+  char *s = flu_vreadall(path, ap);
+  va_end(ap);
+
+  if (s == NULL) return NULL;
+
+  fdja_value *v = fdja_parse_obj(s);
+  if (v) v->slen = 0; // so that the root value "owns" the source
+
+  return v;
+}
+
 fdja_value *fdja_v(char *format, ...)
 {
   va_list ap; va_start(ap, format);
