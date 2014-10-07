@@ -274,5 +274,18 @@ context "update"
       expect(fdja_to_json(v) ===f "{\"a\":[0,-1]}");
     }
   }
+
+  describe "fdja_psetf()"
+  {
+    it "sets"
+    {
+      v = fdja_dparse("{ a: {} }");
+
+      int r = fdja_psetf(v, "a.type-%i", 0, "%s-car", "blue");
+
+      expect(r == 1);
+      expect(fdja_to_json(v) ===f "{\"a\":{\"type-0\":\"blue-car\"}}");
+    }
+  }
 }
 
