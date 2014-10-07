@@ -365,6 +365,18 @@ fdja_value *fdja_parse(char *input)
   return v;
 }
 
+fdja_value *fdja_v(char *format, ...)
+{
+  va_list ap; va_start(ap, format);
+  char *s = flu_svprintf(format, ap);
+  va_end(ap);
+
+  fdja_value *v =  fdja_parse(s);
+  v->slen = 0;
+
+  return v;
+}
+
 fdja_value *fdja_s(char *format, ...)
 {
   va_list ap; va_start(ap, format);

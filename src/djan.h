@@ -51,8 +51,7 @@ typedef struct fdja_value {
 fdja_value *fdja_parse(char *input);
 //fdja_value *fdja_parse_f(const char *path, ...);
 
-#define fdja_v(input) fdja_parse(input)
-//fdja_value *fdja_v(char *format, ...);
+fdja_value *fdja_v(char *format, ...);
 
 /* Wraps a string in a fdja_value.
  */

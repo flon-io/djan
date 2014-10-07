@@ -28,6 +28,14 @@ context "fdja_v, fdja_s, ..."
       expect(fdja_to_json(v) ===f ""
         "{\"type\":\"car\",\"make\":\"mitsubishi\",\"id\":2}");
     }
+
+    it "behaves like printf"
+    {
+      v = fdja_v("{ type: %s, make: %s, id: %i }", "car", "nissan", 3);
+
+      expect(fdja_to_json(v) ===f ""
+        "{\"type\":\"car\",\"make\":\"nissan\",\"id\":3}");
+    }
   }
 
   describe "fdja_s()"
