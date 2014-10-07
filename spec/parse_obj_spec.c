@@ -30,7 +30,7 @@ context "parsing obj"
 
     it "parses"
     {
-      v = fdja_parse_obj(""
+      v = fdja_dparse_obj(""
         "type: car\n"
         "make: honda\n"
         "parts: [ 123, 456, 789, whiskey ]\n"
@@ -51,7 +51,7 @@ context "parsing obj"
 
     it "parses with brackets"
     {
-      v = fdja_parse_obj(""
+      v = fdja_dparse_obj(""
         "{\n"
         "  type: car\n"
         "  make: honda\n"
@@ -74,7 +74,7 @@ context "parsing obj"
 
     it "parses with comments"
     {
-      v = fdja_parse_obj(""
+      v = fdja_dparse_obj(""
         "#\n"
         "# that conf\n"
         "# Sun Sep 28 19:50:14 JST 2014\n"
@@ -103,7 +103,7 @@ context "parsing obj"
 
     it "parses json objects"
     {
-      v = fdja_parse_obj("{\"name\":\"cinderella\",\"age\":21}");
+      v = fdja_dparse_obj("{\"name\":\"cinderella\",\"age\":21}");
 
       expect(v != NULL);
 

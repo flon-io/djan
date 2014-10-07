@@ -529,7 +529,7 @@ fdja_value *fdja_parse_radial_f(const char *path, ...)
   if (s == NULL) return NULL;
 
   fdja_value *v = fdja_parse_radial(s);
-  if (v != NULL) v->slen = 0;
+  if (v) v->slen = 0;
 
   return v;
 }
@@ -549,10 +549,16 @@ fdja_value *fdja_parse_obj(char *input)
   fabr_tree *tt = fabr_t_child(t, 1);
 
   fdja_value *v = fdja_extract_v(input, tt);
+  if (v) v->slen = 0;
 
   fabr_tree_free(t);
 
   return v;
+}
+
+fdja_value *fdja_dparse_obj(char *input)
+{
+  return fdja_parse_obj(strdup(input));
 }
 
 fdja_value *fdja_parse_obj_f(const char *path, ...)
