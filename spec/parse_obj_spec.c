@@ -118,7 +118,7 @@ context "parsing obj"
       v = fdja_parse_obj_f("../spec/_test0.jon");
 
       expect(v != NULL);
-      expect(v->slen == 0);
+      expect(v->slen > 0);
       expect(fdja_to_json(v) ===f "{\"hello\":\"world\"}");
 
       //free(v->source);

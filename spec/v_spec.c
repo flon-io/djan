@@ -47,8 +47,9 @@ context "fdja_v, fdja_s, ..."
       expect(v->key == NULL);
       expect(v->type == 'y');
       expect(v->soff == 0);
-      expect(v->slen == 0);
+      expect(v->slen == 11);
       expect(v->source === "hello world");
+      expect(v->sowner == 1);
       expect(v->child == NULL);
       expect(v->sibling == NULL);
       expect(fdja_to_json(v) ===f "\"hello world\"");
@@ -61,8 +62,9 @@ context "fdja_v, fdja_s, ..."
       expect(v->key == NULL);
       expect(v->type == 'y');
       expect(v->soff == 0);
-      expect(v->slen == 0);
+      expect(v->slen == 11);
       expect(v->source === "hello world");
+      expect(v->sowner == 1);
       expect(v->child == NULL);
       expect(v->sibling == NULL);
       expect(fdja_to_json(v) ===f "\"hello world\"");

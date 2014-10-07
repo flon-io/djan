@@ -30,7 +30,7 @@ context "parsing"
         ensure(v != NULL);
         ensure(v->type == 'n');
         ensure(v->soff == 0);
-        ensure(v->slen == 0);
+        ensure(v->slen > 0);
         ensure(fdja_to_int(v) == 1);
         ensure(fdja_to_json(v) ===f "1");
       }
@@ -41,7 +41,7 @@ context "parsing"
         ensure(v != NULL);
         ensure(v->type == 'n');
         ensure(v->soff == 0);
-        ensure(v->slen == 0);
+        ensure(v->slen > 0);
         ensure(fdja_to_int(v) == -1);
         ensure(fdja_to_json(v) ===f "-1");
       }
@@ -53,7 +53,7 @@ context "parsing"
         ensure(v != NULL);
         ensure(v->type == 'n');
         ensure(v->soff == 0);
-        ensure(v->slen == 0);
+        ensure(v->slen > 0);
         ensure(fdja_to_double(v) == 0.0);
         ensure(fdja_string(v) ===f "0.0");
         ensure(fdja_to_string(v) ===f "0.0");
@@ -67,7 +67,7 @@ context "parsing"
         ensure(v != NULL);
         ensure(v->type == 'n');
         ensure(v->soff == 0);
-        ensure(v->slen == 0);
+        ensure(v->slen > 0);
         ensure(fdja_to_double(v) == 150.0);
         ensure(fdja_string(v) ===f "1.5e2");
         ensure(fdja_to_string(v) ===f "1.5e2");

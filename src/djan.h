@@ -43,7 +43,8 @@ typedef struct fdja_value {
   char type; // or short type; ?
   char *source;
   size_t soff;
-  size_t slen; // if slen == 0, the source string is "owned" bv the value
+  size_t slen;
+  short sowner; // if 1 then this fdja_value "owns" the source (has to free it)
   struct fdja_value *sibling;
   struct fdja_value *child;
 } fdja_value;
