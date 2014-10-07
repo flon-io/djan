@@ -49,6 +49,7 @@ typedef struct fdja_value {
 } fdja_value;
 
 fdja_value *fdja_parse(char *input);
+fdja_value *fdja_dparse(char *input);
 fdja_value *fdja_parse_f(const char *path, ...);
 
 fdja_value *fdja_v(char *format, ...);

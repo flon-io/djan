@@ -25,35 +25,35 @@ context "parsing"
     {
       it "parses \"1\""
       {
-        v = fdja_parse("1");
+        v = fdja_dparse("1");
 
         ensure(v != NULL);
         ensure(v->type == 'n');
         ensure(v->soff == 0);
-        ensure(v->slen == 1);
+        ensure(v->slen == 0);
         ensure(fdja_to_int(v) == 1);
         ensure(fdja_to_json(v) ===f "1");
       }
       it "parses \"-1\""
       {
-        v = fdja_parse("-1");
+        v = fdja_dparse("-1");
 
         ensure(v != NULL);
         ensure(v->type == 'n');
         ensure(v->soff == 0);
-        ensure(v->slen == 2);
+        ensure(v->slen == 0);
         ensure(fdja_to_int(v) == -1);
         ensure(fdja_to_json(v) ===f "-1");
       }
 
       it "parses \"0.0\""
       {
-        v = fdja_parse("0.0");
+        v = fdja_dparse("0.0");
 
         ensure(v != NULL);
         ensure(v->type == 'n');
         ensure(v->soff == 0);
-        ensure(v->slen == 3);
+        ensure(v->slen == 0);
         ensure(fdja_to_double(v) == 0.0);
         ensure(fdja_string(v) ===f "0.0");
         ensure(fdja_to_string(v) ===f "0.0");
@@ -62,12 +62,12 @@ context "parsing"
 
       it "parses \"1.5e2\""
       {
-        v = fdja_parse("1.5e2");
+        v = fdja_dparse("1.5e2");
 
         ensure(v != NULL);
         ensure(v->type == 'n');
         ensure(v->soff == 0);
-        ensure(v->slen == 5);
+        ensure(v->slen == 0);
         ensure(fdja_to_double(v) == 150.0);
         ensure(fdja_string(v) ===f "1.5e2");
         ensure(fdja_to_string(v) ===f "1.5e2");
@@ -79,7 +79,7 @@ context "parsing"
     {
       it "parses \"hello\""
       {
-        v = fdja_parse("\"hello\"");
+        v = fdja_dparse("\"hello\"");
 
         ensure(v != NULL);
         ensure(v->type == 's');
@@ -89,7 +89,7 @@ context "parsing"
       }
       it "parses \"hello \\\"old bore\\\"\""
       {
-        v = fdja_parse("\"hello \\\"old bore\\\"\"");
+        v = fdja_dparse("\"hello \\\"old bore\\\"\"");
 
         ensure(v != NULL);
         ensure(v->type == 's');
@@ -99,7 +99,7 @@ context "parsing"
       }
       it "parses \\t"
       {
-        v = fdja_parse("\"hello\\ttab\"");
+        v = fdja_dparse("\"hello\\ttab\"");
 
         ensure(v != NULL);
         ensure(v->type == 's');
@@ -109,7 +109,7 @@ context "parsing"
       }
       it "parses unicode escape sequences"
       {
-        v = fdja_parse("\"hello \\u0066ool\"");
+        v = fdja_dparse("\"hello \\u0066ool\"");
 
         ensure(v != NULL);
         ensure(v->type == 's');
@@ -120,6 +120,7 @@ context "parsing"
       it "doesn't parse unknown escapes"
       {
         v = fdja_parse("\"hello \\z\"");
+          // no need for a dparse here...
 
         ensure(v == NULL);
       }
@@ -127,7 +128,7 @@ context "parsing"
       {
         it "parses single quotes strings"
         {
-          v = fdja_parse("'hello \"world\"'");
+          v = fdja_dparse("'hello \"world\"'");
 
           ensure(v != NULL);
           ensure(v->type == 'q');
@@ -137,7 +138,7 @@ context "parsing"
         }
         it "lets a quote being escaped"
         {
-          v = fdja_parse("'aujourd\\'hui'");
+          v = fdja_dparse("'aujourd\\'hui'");
 
           ensure(v != NULL);
           ensure(v->type == 'q');
@@ -152,7 +153,7 @@ context "parsing"
     {
       it "parses \"true\""
       {
-        v = fdja_parse("true");
+        v = fdja_dparse("true");
 
         ensure(v != NULL);
         ensure(v->type == 't');
@@ -163,7 +164,7 @@ context "parsing"
 
       it "parses \"false\""
       {
-        v = fdja_parse("false");
+        v = fdja_dparse("false");
 
         ensure(v != NULL);
         ensure(v->type == 'f');
@@ -177,7 +178,7 @@ context "parsing"
     {
       it "parses \"null\""
       {
-        v = fdja_parse("null");
+        v = fdja_dparse("null");
 
         ensure(v != NULL);
         ensure(v->type == '0');
@@ -190,7 +191,7 @@ context "parsing"
     {
       it "parses []"
       {
-        v = fdja_parse("[]");
+        v = fdja_dparse("[]");
 
         ensure(v != NULL);
         ensure(v->type == 'a');
@@ -200,7 +201,7 @@ context "parsing"
 
       it "parses [ ]"
       {
-        v = fdja_parse("[ ]");
+        v = fdja_dparse("[ ]");
 
         ensure(v != NULL);
         ensure(v->type == 'a');
@@ -210,7 +211,7 @@ context "parsing"
 
       it "parses [1,2,3]"
       {
-        v = fdja_parse("[1,2,3]");
+        v = fdja_dparse("[1,2,3]");
 
         ensure(v != NULL);
         ensure(v->type == 'a');
@@ -227,7 +228,7 @@ context "parsing"
 
       it "parses with or without commas"
       {
-        v = fdja_parse("[ 10 20,30, 40 50\t51\n52]");
+        v = fdja_dparse("[ 10 20,30, 40 50\t51\n52]");
 
         ensure(v != NULL);
         ensure(v->type == 'a');
@@ -244,7 +245,7 @@ context "parsing"
 
       it "parses [1,2,]"
       {
-        v = fdja_parse("[1,2,]");
+        v = fdja_dparse("[1,2,]");
 
         expect(v != NULL);
         expect(fdja_to_json(v) ===f "[1,2]");
@@ -252,7 +253,7 @@ context "parsing"
 
       it "parses [1,,3]"
       {
-        v = fdja_parse("[1,,3]");
+        v = fdja_dparse("[1,,3]");
 
         expect(v != NULL);
         expect(fdja_to_json(v) ===f "[1,3]");
@@ -260,7 +261,7 @@ context "parsing"
 
       it "parses [<lf>]"
       {
-        v = fdja_parse("[\n]");
+        v = fdja_dparse("[\n]");
 
         expect(v != NULL);
         expect(fdja_to_json(v) ===f "[]");
@@ -271,7 +272,7 @@ context "parsing"
     {
       it "parses {}"
       {
-        v = fdja_parse("{}");
+        v = fdja_dparse("{}");
 
         ensure(v != NULL);
         ensure(v->type == 'o');
@@ -281,7 +282,7 @@ context "parsing"
 
       it "parses {\"a\":0,\"bb\":null,\"cc c\":true}"
       {
-        v = fdja_parse("{\"a\":0,\"bb\":null,\"cc c\":true}");
+        v = fdja_dparse("{\"a\":0,\"bb\":null,\"cc c\":true}");
 
         ensure(v != NULL);
         ensure(v->type == 'o');
@@ -302,7 +303,7 @@ context "parsing"
 
       it "accepts 'symbols' as keys"
       {
-        v = fdja_parse("{ a_a: 0, bb_: null, c3:\"three\" }");
+        v = fdja_dparse("{ a_a: 0, bb_: null, c3:\"three\" }");
 
         ensure(v != NULL);
         ensure(v->type == 'o');
@@ -318,7 +319,7 @@ context "parsing"
 
       it "accepts 'single quote strings' as keys"
       {
-        v = fdja_parse("{ 'a_a': 0, 'bb_': null }");
+        v = fdja_dparse("{ 'a_a': 0, 'bb_': null }");
 
         ensure(v != NULL);
         ensure(v->type == 'o');
@@ -332,7 +333,7 @@ context "parsing"
 
       it "parses with or without commas"
       {
-        v = fdja_parse("{ a_a: 0, bb_: null \"c\": true\nd: [ 1, 2 ] }");
+        v = fdja_dparse("{ a_a: 0, bb_: null \"c\": true\nd: [ 1, 2 ] }");
 
         ensure(v != NULL);
         ensure(v->type == 'o');
@@ -349,7 +350,7 @@ context "parsing"
 
       it "parses {a:0,b:1,}"
       {
-        v = fdja_parse("{a:0,b:1,}");
+        v = fdja_dparse("{a:0,b:1,}");
 
         expect(v != NULL);
         expect(fdja_to_json(v) ===f "{\"a\":0,\"b\":1}");
@@ -357,7 +358,7 @@ context "parsing"
 
       it "parses {a:0,,c:2}"
       {
-        v = fdja_parse("{a:0,,c:2}");
+        v = fdja_dparse("{a:0,,c:2}");
 
         expect(v != NULL);
         expect(fdja_to_json(v) ===f "{\"a\":0,\"c\":2}");
@@ -365,7 +366,7 @@ context "parsing"
 
       it "parses {<lf>}"
       {
-        v = fdja_parse("{\n}");
+        v = fdja_dparse("{\n}");
 
         expect(v != NULL);
         expect(fdja_to_json(v) ===f "{}");
@@ -376,7 +377,7 @@ context "parsing"
     {
       it "accepts symbols in lieu of strings"
       {
-        v = fdja_parse("sk8park");
+        v = fdja_dparse("sk8park");
 
         ensure(v != NULL);
         ensure(v->type == 'y');
@@ -386,7 +387,7 @@ context "parsing"
       }
       it "accepts symbols (nested)"
       {
-        v = fdja_parse("[ mi6, cia, kgb c64 ]");
+        v = fdja_dparse("[ mi6, cia, kgb c64 ]");
 
         ensure(v != NULL);
         ensure(v->type == 'a');
@@ -399,7 +400,7 @@ context "parsing"
     {
       it "accepts whitespace around values"
       {
-        v = fdja_parse(" 77.0 ");
+        v = fdja_dparse(" 77.0 ");
 
         ensure(v != NULL);
         ensure(v->type == 'n');
@@ -409,7 +410,7 @@ context "parsing"
 
       it "accepts whitespace inside of arrays"
       {
-        v = fdja_parse(" [1, 2,\n\t3 ] ");
+        v = fdja_dparse(" [1, 2,\n\t3 ] ");
 
         ensure(v != NULL);
         ensure(v->type == 'a');
@@ -422,7 +423,7 @@ context "parsing"
 
       it "accepts whitespace inside of objects"
       {
-        v = fdja_parse("\n{\n\"a\": 0, \"bb\": null, \"cc c\": true\n}\n");
+        v = fdja_dparse("\n{\n\"a\": 0, \"bb\": null, \"cc c\": true\n}\n");
 
         ensure(v != NULL);
         ensure(v->type == 'o');
@@ -443,7 +444,7 @@ context "parsing"
 
       it "accepts comments at the end of lines"
       {
-        v = fdja_parse(""
+        v = fdja_dparse(""
           "{\n"
           "  \"a\": 0,      # alpha delta\n"
           "  \"bb\": null,  # bravo johnny\n"

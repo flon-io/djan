@@ -362,7 +362,14 @@ fdja_value *fdja_parse(char *input)
   fdja_value *v = fdja_extract_value(input, t);
   fabr_tree_free(t);
 
+  if (v) v->slen = 0; // so that the value owns the source
+
   return v;
+}
+
+fdja_value *fdja_dparse(char *input)
+{
+  return fdja_parse(strdup(input));
 }
 
 fdja_value *fdja_parse_f(const char *path, ...)
@@ -373,7 +380,7 @@ fdja_value *fdja_parse_f(const char *path, ...)
 
   if (s == NULL) return NULL;
 
-  fdja_value *v = fdja_parse_obj(s);
+  fdja_value *v = fdja_parse_obj(s); // FIXME???
   if (v) v->slen = 0; // so that the root value "owns" the source
 
   return v;
@@ -386,7 +393,7 @@ fdja_value *fdja_v(char *format, ...)
   va_end(ap);
 
   fdja_value *v = fdja_parse(s);
-  v->slen = 0;
+  if (v) v->slen = 0;
 
   return v;
 }
@@ -720,14 +727,15 @@ char *fdja_string(fdja_value *v)
 
 char *fdja_to_string(fdja_value *v)
 {
-  if (v->type == 's')
+  if (v->type == 's' || v->type == 'q')
   {
-    return flu_n_unescape(v->source + v->soff + 1, v->slen - 2);
+    char *start = v->source + v->soff + 1;
+    size_t len = (v->slen > 0 ? v->slen : strlen(v->source + v->soff)) - 2;
+
+    if (v->type == 'q') return fdja_sq_unescape(start, len);
+    return flu_n_unescape(start, len);
   }
-  if (v->type == 'q')
-  {
-    return fdja_sq_unescape(v->source + v->soff + 1, v->slen - 2);
-  }
+
   return fdja_string(v);
 }
 

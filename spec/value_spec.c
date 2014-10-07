@@ -23,14 +23,14 @@ context "fdja_value"
   {
     it "returns how many children a value has"
     {
-      v = fdja_parse("[ 0, 7, 14, 28, 35 ]");
+      v = fdja_dparse("[ 0, 7, 14, 28, 35 ]");
 
       ensure(fdja_size(v) == 5);
     }
 
     it "returns 0 for an atom"
     {
-      v = fdja_parse("true");
+      v = fdja_dparse("true");
 
       ensure(fdja_size(v) == 0);
     }
@@ -40,7 +40,7 @@ context "fdja_value"
   {
     it "looks up in arrays"
     {
-      v = fdja_parse("[ 0, 7, 14, 28, 35 ]");
+      v = fdja_dparse("[ 0, 7, 14, 28, 35 ]");
 
       ensure(fdja_to_int(fdja_lookup(v, "0")) == 0);
       ensure(fdja_to_int(fdja_lookup(v, "4")) == 35);
@@ -49,7 +49,7 @@ context "fdja_value"
 
     it "counts from the end of the array when the index is negative"
     {
-      v = fdja_parse("[ 0, 7, 14, 28, 35 ]");
+      v = fdja_dparse("[ 0, 7, 14, 28, 35 ]");
 
       ensure(fdja_to_int(fdja_lookup(v, "-1")) == 35);
       ensure(fdja_to_int(fdja_lookup(v, "-2")) == 28);
@@ -58,7 +58,7 @@ context "fdja_value"
 
     it "looks up in objects"
     {
-      v = fdja_parse("{ type: car, color: blue, ids: [ 123, 456 ] }");
+      v = fdja_dparse("{ type: car, color: blue, ids: [ 123, 456 ] }");
 
       ensure(fdja_string(fdja_lookup(v, "type")) ===f "car");
       ensure(fdja_string(fdja_lookup(v, "color")) ===f "blue");
@@ -75,7 +75,7 @@ context "fdja_value"
   {
     it "returns a copy of the string value when it finds"
     {
-      v = fdja_parse("{ type: car, parts: [ carburator, wheel ] }");
+      v = fdja_dparse("{ type: car, parts: [ carburator, wheel ] }");
 
       expect(fdja_lookup_string(v, "type", NULL) ===f "car");
       expect(fdja_lookup_string(v, "parts.0", NULL) ===f "carburator");
@@ -85,7 +85,7 @@ context "fdja_value"
 
     it "returns the default when key is not found"
     {
-      v = fdja_parse("{}");
+      v = fdja_dparse("{}");
 
       expect(fdja_lookup_string(v, "type", NULL) === NULL);
       expect(fdja_lookup_string(v, "type", "nada") === "nada");
