@@ -517,7 +517,17 @@ fdja_value *fdja_parse_radial(char *input)
   if (vs->size > 0) root = (fdja_value *)vs->last->item;
   flu_list_free(vs);
 
+  if (root == NULL) return NULL;
+
+  root->source = input;
+  root->slen = 0;
+
   return root;
+}
+
+fdja_value *fdja_dparse_radial(char *input)
+{
+  return fdja_parse_radial(strdup(input));
 }
 
 fdja_value *fdja_parse_radial_f(const char *path, ...)

@@ -32,7 +32,7 @@ context "parsing radial"
 
     it "parses a single line"
     {
-      v = fdja_parse_radial(
+      v = fdja_dparse_radial(
         "sequence"
       );
 
@@ -46,7 +46,7 @@ context "parsing radial"
 
     it "parses a couple of lines"
     {
-      v = fdja_parse_radial(
+      v = fdja_dparse_radial(
         "sequence\n"
         "  participant 'bravo'"
       );
@@ -63,7 +63,7 @@ context "parsing radial"
 
     it "parses a tree of lines"
     {
-      v = fdja_parse_radial(
+      v = fdja_dparse_radial(
         "sequence\n"
         "  participant 'alpha'\n"
         "  concurrence\n"
@@ -88,7 +88,7 @@ context "parsing radial"
 
     it "accepts json/djan as first attribute"
     {
-      v = fdja_parse_radial(
+      v = fdja_dparse_radial(
         "iterate [\n"
         "  1 2 3 ]\n"
         "  bravo"
@@ -105,7 +105,7 @@ context "parsing radial"
 
     it "accepts attributes"
     {
-      v = fdja_parse_radial(
+      v = fdja_dparse_radial(
         "participant charly a: 0, b: one c: true, d: [ four ]"
       );
 
@@ -128,7 +128,7 @@ context "parsing radial"
 
     it "accepts attributes (and some newlines)"
     {
-      v = fdja_parse_radial(
+      v = fdja_dparse_radial(
         "participant charly,\n"
         "  aa: 0,\n"
         "  bb: one,\n"
@@ -155,7 +155,7 @@ context "parsing radial"
 
     it "accepts comments in the attributes"
     {
-      v = fdja_parse_radial(
+      v = fdja_dparse_radial(
         "participant charly, # charlie\n"
         "  aa: 0, # zero\n"
         "  bb: one, # one\n"
@@ -182,7 +182,7 @@ context "parsing radial"
 
     it "accepts comments in the attributes (after the colon)"
     {
-      v = fdja_parse_radial(
+      v = fdja_dparse_radial(
         "participant charly, # charlie\n"
         "  aa:     # zero\n"
         "    0,    # zero indeed\n"
@@ -206,7 +206,7 @@ context "parsing radial"
 
     it "accepts unkeyed attributes"
     {
-      v = fdja_parse_radial("nada aa bb d: 2, e: 3");
+      v = fdja_dparse_radial("nada aa bb d: 2, e: 3");
 
       ensure(v != NULL);
 
@@ -216,7 +216,7 @@ context "parsing radial"
 
     it "accepts comments at the end of the radial lines"
     {
-      v = fdja_parse_radial(
+      v = fdja_dparse_radial(
         "sequence\n"
         "  participant toto # blind\n"
         "  participant tutu # deaf"
@@ -234,7 +234,7 @@ context "parsing radial"
 
     it "accepts comments before the radial lines"
     {
-      v = fdja_parse_radial(
+      v = fdja_dparse_radial(
         "# Tue Jul  8 05:50:28 JST 2014\n"
         "sequence\n"
         "  participant toto"
@@ -251,7 +251,7 @@ context "parsing radial"
 
     it "accepts words as rad names"
     {
-      v = fdja_parse_radial(
+      v = fdja_dparse_radial(
         "sequence\n"
         "  git://github.com/flon-io/tst x b: 0\n"
         //"  git://github.com/flon-io/tst x y a: 0, b: 1\n"
