@@ -5,10 +5,11 @@
 // Thu Oct  2 20:54:34 JST 2014
 //
 
+#include "flutil.h"
 #include "djan.h"
 
 
-context "fdja_value"
+context "to_x"
 {
   before each
   {
@@ -35,6 +36,36 @@ context "fdja_value"
       fdja_value *vv = fdja_lookup(v, "type");
 
       expect(fdja_to_json(vv) ===f "\"car\"");
+    }
+  }
+
+  describe "fdja_to_json_f()"
+  {
+    it "writes a value to a file"
+    {
+      v = fdja_v("{ type: car, make: subaru, id: 3 }");
+
+      int r = fdja_to_json_f(v, "./to_json_f.json");
+
+      expect(r == 1);
+      char *s = flu_readall("./to_json_f.json");
+
+      expect(s ===f ""
+        "{\"type\":\"car\",\"make\":\"subaru\",\"id\":3}");
+
+      expect(unlink("./to_json_f.json") == 0);
+    }
+
+    it "composes filenames"
+    {
+      v = fdja_v("{ type: car, make: daihatsu, id: 4 }");
+
+      fdja_to_json_f(v, "./to_json_f_%i.json", 2);
+
+      expect(flu_readall("./to_json_f_2.json") ===f ""
+        "{\"type\":\"car\",\"make\":\"daihatsu\",\"id\":4}");
+
+      expect(unlink("./to_json_f_2.json") == 0);
     }
   }
 

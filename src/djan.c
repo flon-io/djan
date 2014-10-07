@@ -632,6 +632,23 @@ char *fdja_to_json(fdja_value *v)
   return flu_sbuffer_to_string(b);
 }
 
+int fdja_to_json_f(fdja_value *v, const char *path, ...)
+{
+  va_list ap; va_start(ap, path);
+  char *spath = flu_svprintf(path, ap);
+  va_end(ap);
+
+  FILE *f = fopen(spath, "w");
+
+  free(spath);
+
+  if (f == NULL) return 0;
+
+  fdja_to_j(f, v, 0);
+
+  return (fclose(f) == 0);
+}
+
 static int fdja_is_symbol(char *s)
 {
   if (fdja_parser == NULL) fdja_parser_init();
