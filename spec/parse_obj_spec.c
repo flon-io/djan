@@ -131,9 +131,16 @@ context "parsing obj"
       expect(fdja_to_json(v) ===f "{\"hello\":\"world\"}");
     }
 
-    it "returns NULL in case of problem"
+    it "returns NULL when it doesn't find the file"
     {
       v = fdja_parse_obj_f("_nada_.json");
+
+      expect(v == NULL);
+    }
+
+    it "returns NULL when it fails to read"
+    {
+      v = fdja_parse_obj_f("../spec/_test3.bad");
 
       expect(v == NULL);
     }

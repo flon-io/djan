@@ -475,6 +475,13 @@ context "parsing"
       expect(fdja_lookup_int(v, "id", -1) == 12345);
       expect(fdja_lookup_string(v, "type", NULL) ===f "test");
     }
+
+    it "returns NULL when it fails to read"
+    {
+      v = fdja_parse_f("../spec/_test3.bad");
+
+      expect(v == NULL);
+    }
   }
 }
 

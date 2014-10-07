@@ -289,6 +289,13 @@ context "parsing radial"
 
       expect(fdja_lookup_string(v, "2.0.1.to", NULL) ===f "$(user.email)");
     }
+
+    it "returns NULL when it fails to read"
+    {
+      v = fdja_parse_radial_f("../spec/_test3.bad");
+
+      expect(v == NULL);
+    }
   }
 }
 
