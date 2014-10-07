@@ -72,6 +72,27 @@ context "fdja_v, fdja_s, ..."
   describe "fdja_c()"
   {
     it "parses loose objects (confs)"
+    {
+      v = fdja_c(
+        "host: tsubaki\n"
+        "whitelist: [ crane, turtle ]\n"
+      );
+
+      expect(fdja_to_json(v) ===f ""
+        "{\"host\":\"tsubaki\",\"whitelist\":[\"crane\",\"turtle\"]}");
+    }
+
+    it "behave like printf"
+    {
+      v = fdja_c(
+        "host: %s\n"
+        "whitelist: [ %s ]\n",
+        "heliopolis", "crane"
+      );
+
+      expect(fdja_to_json(v) ===f ""
+        "{\"host\":\"heliopolis\",\"whitelist\":[\"crane\"]}");
+    }
   }
 }
 

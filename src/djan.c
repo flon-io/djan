@@ -535,6 +535,18 @@ fdja_value *fdja_parse_obj_f(const char *path)
   return v;
 }
 
+fdja_value *fdja_c(char *format, ...)
+{
+  va_list ap; va_start(ap, format);
+  char *s = flu_svprintf(format, ap);
+  va_end(ap);
+
+  fdja_value *v = fdja_parse_obj(s);
+  v->slen = 0;
+
+  return v;
+}
+
 
 //
 // outputting
