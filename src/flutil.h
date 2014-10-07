@@ -150,10 +150,10 @@ char *flu_readall(const char *path, ...);
 char *flu_freadall(FILE *in);
 
 /* Writes a file to disk.
- * Returns the file path. Returns NULL in case of error.
+ * Returns 1 when successful.
  * Useful when setting up test files
  */
-char *flu_writeall(const char *path, ...);
+int flu_writeall(const char *path, ...);
 
 
 //
