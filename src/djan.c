@@ -380,10 +380,7 @@ fdja_value *fdja_parse_f(const char *path, ...)
 
   if (s == NULL) return NULL;
 
-  fdja_value *v = fdja_parse_obj(s); // FIXME???
-  if (v) v->slen = 0; // so that the root value "owns" the source
-
-  return v;
+  return fdja_parse(s);
 }
 
 fdja_value *fdja_v(char *format, ...)
