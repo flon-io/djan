@@ -127,6 +127,7 @@ static void fabr_t_to_s(
   }
 
   char *stringc = color ? "[1;33m" : "";
+  char *clearc = color ? "[0;0m" : "";
 
   char *name = "null";
   char *note = "null";
@@ -146,7 +147,7 @@ static void fabr_t_to_s(
   if (children != 1 && (input == NULL || t->result != 1 || t->child))
   {
     size_t cc = 0; for (fabr_tree *c = t->child; c; c = c->sibling) ++cc;
-    flu_sbprintf(b, "%zu ]", cc);
+    flu_sbprintf(b, "%zu ]%s", cc, clearc);
     return;
   }
 
@@ -154,12 +155,12 @@ static void fabr_t_to_s(
   {
     if (input == NULL || t->result != 1)
     {
-      flu_sbprintf(b, "[] ]");
+      flu_sbprintf(b, "[] ]%s", clearc);
     }
     else
     {
       char *s = flu_n_escape(input + t->offset, t->length);
-      flu_sbprintf(b, "\"%s%s%s\" ]", stringc, s, resultc);
+      flu_sbprintf(b, "\"%s%s%s\" ]%s", stringc, s, resultc, clearc);
       free(s);
     }
     return;
@@ -176,9 +177,7 @@ static void fabr_t_to_s(
 
   flu_sbputc(b, '\n');
   for (int i = 0; i < indent; i++) flu_sbprintf(b, "  ");
-  flu_sbprintf(b, "%s] ]", resultc);
-
-  if (color) flu_sbprintf(b, "[0;0m"); // clear
+  flu_sbprintf(b, "%s] ]%s", resultc, clearc);
 }
 
 char *fabr_tree_to_string(fabr_tree *t, const char *input, short color)
@@ -1136,12 +1135,18 @@ char *fabr_error_message(fabr_tree *t)
 
 fabr_tree *fabr_tree_lookup(fabr_tree *t, const char *name)
 {
-  if (t->name != NULL && strcmp(t->name, name) == 0) return t;
+  return fabr_subtree_lookup(&((fabr_tree){ .child = t }), name);
+}
 
+fabr_tree *fabr_subtree_lookup(fabr_tree *t, const char *name)
+{
   for (fabr_tree *c = t->child; c != NULL; c = c->sibling)
   {
-    fabr_tree *r = fabr_tree_lookup(c, name);
-    if (r != NULL) return r;
+    if (name == NULL && c->name != NULL) return c;
+    if (name && c->name && strcmp(c->name, name) == 0) return c;
+
+    fabr_tree *r = fabr_subtree_lookup(c, name);
+    if (r) return r;
   }
 
   return NULL;
