@@ -80,6 +80,8 @@ context "to_x"
           "id: 2, "
           "ok: true"
           "\"suppliers,\": [ ]"
+          "stuff: nada"
+          "'branding': fail"
         "}"
       );
 
@@ -89,7 +91,9 @@ context "to_x"
           "make/brand: mitsubishi, "
           "id: 2, "
           "ok: true, "
-          "\"suppliers,\": []"
+          "\"suppliers,\": [], "
+          "stuff: nada, "
+          "branding: fail"
         " }"
       );
     }

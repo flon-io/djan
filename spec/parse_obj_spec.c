@@ -122,7 +122,7 @@ context "parsing obj"
 
       ensure(v != NULL);
 
-      puts(fdja_to_json(v));
+      //puts(fdja_to_json(v));
       ensure(fdja_lookup_string(v, "id", NULL) ===f "20141015.1320.fujutseli");
     }
   }

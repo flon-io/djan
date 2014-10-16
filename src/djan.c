@@ -102,7 +102,7 @@ static void fdja_parser_init()
     fabr_n_rex("sqstring", "'(\\\\'|[^'])*'");
 
   fabr_parser *symbol =
-    fabr_n_rex("symbol", "[^ \t\n\r:,\\[\\]\\{\\}#]+");
+    fabr_n_rex("symbol", "[^ \t\n\r\"':,\\[\\]\\{\\}#]+");
 
   fabr_parser *entry =
     fabr_n_seq(
@@ -141,7 +141,7 @@ static void fdja_parser_init()
       fabr_rex("\\[[ \t\n\r]*"), values, fabr_rex("[ \t\n\r]*]"), NULL);
 
   fabr_parser *pure_value =
-    fabr_alt(
+    fabr_altg(
       string,
       sqstring,
       fabr_n_rex("number", "-?[0-9]+(\\.[0-9]+)?([eE][+-]?[0-9]+)?"),
@@ -358,7 +358,7 @@ fdja_value *fdja_parse(char *input)
 
   //printf(">%s<\n", input);
   //puts("[1;30m"); puts(fabr_parser_to_string(t->parser)); puts("[0;0m");
-  //puts(fabr_tree_to_string(t, input));
+  //puts(fabr_tree_to_string(t, input, 1));
 
   fdja_value *v = fdja_extract_value(input, t);
   fabr_tree_free(t);
@@ -555,7 +555,7 @@ fdja_value *fdja_parse_obj(char *input)
 
   //printf(">%s<\n", input);
   //puts("[1;30m"); puts(fabr_parser_to_string(t->parser)); puts("[0;0m");
-  //puts(fabr_tree_to_string(t, input));
+  //puts(fabr_tree_to_string(t, input, 1));
 
   if (t->result != 1) { fabr_tree_free(t); return NULL; }
 
@@ -723,6 +723,8 @@ static void fdja_to_d(FILE *f, fdja_value *v, size_t depth)
 
 char *fdja_to_djan(fdja_value *v)
 {
+  if (v == NULL) return NULL;
+
   flu_sbuffer *b = flu_sbuffer_malloc();
   fdja_to_d(b->stream, v, 0);
 
