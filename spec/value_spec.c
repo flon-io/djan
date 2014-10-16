@@ -150,5 +150,49 @@ context "fdja_value"
       expect(fdja_lookup_boolean(v, "d", -1) == -1);
     }
   }
+
+  describe "fdja_clone()"
+  {
+    before each
+    {
+      fdja_value *v2 = NULL;
+    }
+    after each
+    {
+      if (v2) fdja_value_free(v2);
+    }
+
+    it "copies entirely a fdja_value"
+    {
+      v = fdja_v("{\"a\":true,\"b\":[1,2,\"trois\"],\"c\":\"nada\"}");
+
+      v2 = fdja_clone(v);
+
+      expect(v2 != NULL);
+      expect(v->source != v2->source);
+      expect(v->source === v2->source);
+      expect(v2->sowner == 1);
+    }
+
+    it "copies entirely a fdja_value (not owner)"
+    {
+      v = fdja_v("{\"a\":true,\"b\":[1,2,\"trois\"],\"c\":\"nada\"}");
+
+      fdja_value *v1 = fdja_lookup(v, "b");
+
+      v2 = fdja_clone(v1);
+
+      expect(v2 != NULL);
+      //expect(v1->source != v2->source); // pointless
+      expect(fdja_to_json(v1) ===f v2->source);
+      expect(v1->sowner == 0);
+      expect(v2->sowner == 1);
+    }
+
+    it "returns NULL if the input is NULL"
+    {
+      expect(fdja_clone(NULL) == NULL);
+    }
+  }
 }
 
