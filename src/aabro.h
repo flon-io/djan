@@ -25,8 +25,8 @@
 
 // https://github.com/flon-io/aabro
 
-#ifndef AABRO_H
-#define AABRO_H
+#ifndef FLON_AABRO_H
+#define FLON_AABRO_H
 
 #include "flutil.h"
 
@@ -75,14 +75,14 @@ void fabr_tree_free(fabr_tree *t);
  * leaves. If the input is given, the parsed strings are displayed at
  * the leaves.
  */
-char *fabr_tree_to_string(fabr_tree *t, const char *input);
+char *fabr_tree_to_string(fabr_tree *t, const char *input, short color);
 
 /* Returns a string representation (JSON) of the fabr_tree.
  * The children are not displayed. If the tree is a leaf and the input
  * is not NULL, the parsed string is displayed, else the children count
  * is displayed.
  */
-char *fabr_tree_to_str(fabr_tree *t, const char *input);
+char *fabr_tree_to_str(fabr_tree *t, const char *input, short color);
 
 /* Returns a copy of the string behind the fabr_tree.
  * Returns an empty string if the tree is not a successful one.
@@ -109,9 +109,11 @@ fabr_parser *fabr_rex(const char *s);
 
 fabr_parser *fabr_rep(fabr_parser *p, ssize_t min, ssize_t max);
 fabr_parser *fabr_alt(fabr_parser *p, ...);
+fabr_parser *fabr_altg(fabr_parser *p, ...);
 fabr_parser *fabr_seq(fabr_parser *p, ...);
 
 fabr_parser *fabr_n_alt(const char *name, fabr_parser *p, ...);
+fabr_parser *fabr_n_altg(const char *name, fabr_parser *p, ...);
 fabr_parser *fabr_n_range(const char *name, const char *range);
 fabr_parser *fabr_n_rex(const char *name, const char *s);
 
@@ -210,5 +212,5 @@ fabr_parser *fabr_p_child(fabr_parser *p, size_t index);
  */
 fabr_tree *fabr_t_child(fabr_tree *t, size_t index);
 
-#endif // AABRO_H
+#endif // FLON_AABRO_H
 

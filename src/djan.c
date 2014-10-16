@@ -357,7 +357,7 @@ fdja_value *fdja_parse(char *input)
   fabr_tree *t = fabr_parse_all(input, 0, fdja_parser);
 
   //printf(">%s<\n", input);
-  //puts(fabr_parser_to_string(t->parser));
+  //puts("[1;30m"); puts(fabr_parser_to_string(t->parser)); puts("[0;0m");
   //puts(fabr_tree_to_string(t, input));
 
   fdja_value *v = fdja_extract_value(input, t);
@@ -553,11 +553,11 @@ fdja_value *fdja_parse_obj(char *input)
 
   fabr_tree *t = fabr_parse_all(input, 0, fdja_obj_parser);
 
-  if (t->result != 1) { fabr_tree_free(t); return NULL; }
-
   //printf(">%s<\n", input);
-  //puts(fabr_parser_to_string(t->parser));
+  //puts("[1;30m"); puts(fabr_parser_to_string(t->parser)); puts("[0;0m");
   //puts(fabr_tree_to_string(t, input));
+
+  if (t->result != 1) { fabr_tree_free(t); return NULL; }
 
   fabr_tree *tt = fabr_t_child(t, 1);
 

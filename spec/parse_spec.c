@@ -385,6 +385,7 @@ context "parsing"
         ensure(fdja_to_string(v) ===f "sk8park");
         ensure(fdja_to_json(v) ===f "\"sk8park\"");
       }
+
       it "accepts symbols (nested)"
       {
         v = fdja_dparse("[ mi6, cia, kgb c64 ]");
@@ -393,6 +394,38 @@ context "parsing"
         ensure(v->type == 'a');
 
         ensure(fdja_to_json(v) ===f "[\"mi6\",\"cia\",\"kgb\",\"c64\"]");
+      }
+
+      it "defaults to symbols (leaf)"
+      {
+        v = fdja_dparse("123.456.abc");
+
+        ensure(v != NULL);
+        ensure(fdja_to_json(v) ===f "\"123.456.abc\"");
+      }
+
+      it "defaults to symbols (in array)"
+      {
+        v = fdja_dparse("[ 123.456.789 ]");
+
+        ensure(v != NULL);
+        ensure(fdja_to_json(v) ===f "[\"123.456.789\"]");
+      }
+
+      it "defaults to symbols (object key)"
+      {
+        v = fdja_dparse("{ 123.456.abc: true }");
+
+        ensure(v != NULL);
+        ensure(fdja_to_json(v) ===f "{\"123.456.abc\":true}");
+      }
+
+      it "defaults to symbols (object value)"
+      {
+        v = fdja_dparse("{ smurf: 123.456.789 }");
+
+        ensure(v != NULL);
+        ensure(fdja_to_json(v) ===f "{\"smurf\":\"123.456.789\"}");
       }
     }
 

@@ -109,6 +109,22 @@ context "parsing obj"
 
       expect(fdja_to_json(v) ===f "{\"name\":\"cinderella\",\"age\":21}");
     }
+
+    it "parses"
+    {
+      v = fdja_dparse_obj(""
+        "execute: [ invoke, { _0: stamp, color: blue }, [] ]\n"
+        "id: 20141015.1320.fujutseli\n"
+        "payload: {\n"
+        "hello: world\n"
+        "}\n"
+      );
+
+      ensure(v != NULL);
+
+      puts(fdja_to_json(v));
+      ensure(fdja_lookup_string(v, "id", NULL) ===f "20141015.1320.fujutseli");
+    }
   }
 
   describe "fdja_parse_obj_f()"
