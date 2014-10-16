@@ -142,14 +142,16 @@ static void fdja_parser_init()
 
   fabr_parser *pure_value =
     fabr_altg(
-      string,
-      sqstring,
-      fabr_n_rex("number", "-?[0-9]+(\\.[0-9]+)?([eE][+-]?[0-9]+)?"),
-      object,
-      array,
-      fabr_n_string("true", "true"),
-      fabr_n_string("false", "false"),
-      fabr_n_string("null", "null"),
+      fabr_alt(
+        string,
+        sqstring,
+        fabr_n_rex("number", "-?[0-9]+(\\.[0-9]+)?([eE][+-]?[0-9]+)?"),
+        object,
+        array,
+        fabr_n_string("true", "true"),
+        fabr_n_string("false", "false"),
+        fabr_n_string("null", "null"),
+        NULL),
       symbol,
       NULL);
 
@@ -305,8 +307,10 @@ static fdja_value *fdja_extract_values(char *input, fabr_tree *t)
 
 static fdja_value *fdja_extract_v(char *input, fabr_tree *t)
 {
-  //printf("fdja_extract_v() %s\n", fabr_tree_to_string(t, input));
-  //printf("fdja_extract_v() %s\n", fabr_tree_to_str(t, input));
+  if (t == NULL) return NULL;
+
+  //printf("fdja_extract_v() %s\n", fabr_tree_to_string(t, input, 1));
+  //printf("fdja_extract_v() %s\n", fabr_tree_to_str(t, input, 1));
 
   char ty = '-';
 
@@ -332,22 +336,12 @@ static fdja_value *fdja_extract_v(char *input, fabr_tree *t)
 
 static fdja_value *fdja_extract_value(char *input, fabr_tree *t)
 {
-  //printf("fdja_extract_value() %s\n", fabr_tree_to_string(t, input));
-  //printf("fdja_extract_value() %s\n", fabr_tree_to_str(t, input));
+  //printf("fdja_extract_value() %s\n", fabr_tree_to_string(t, input, 1));
+  //printf("fdja_extract_value() %s\n", fabr_tree_to_str(t, input, 1));
 
   if (t->result != 1) return NULL;
 
-  fabr_tree *tt = fabr_t_child(t, 1);
-  if (tt == NULL) tt = t->child;
-
-  //printf("fdja_extract_value() child1 %s\n", fabr_tree_to_str(tt, input));
-
-  for (fabr_tree *c = tt->child; c != NULL; c = c->sibling)
-  {
-    if (c->result == 1) return fdja_extract_v(input, c);
-  }
-
-  return NULL;
+  return fdja_extract_v(input, fabr_subtree_lookup(t, NULL));
 }
 
 fdja_value *fdja_parse(char *input)
@@ -477,8 +471,8 @@ static void fdja_parse_radl(char *input, fabr_tree *radl, flu_list *values)
   size_t j = 0;
   for (flu_node *n = as->first; n != NULL; n = n->next)
   {
-    fabr_tree *ak = fabr_tree_lookup(n->item, "key");
-    fabr_tree *av = fabr_tree_lookup(n->item, "val");
+    fabr_tree *ak = fabr_subtree_lookup(n->item, "key");
+    fabr_tree *av = fabr_subtree_lookup(n->item, "val");
     fdja_value *va = fdja_extract_value(input, av);
     va->key = ak ? fabr_tree_string(input, ak) : flu_sprintf("_%zu", j);
     *anext = va;
