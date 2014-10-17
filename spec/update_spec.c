@@ -286,6 +286,16 @@ context "update"
       expect(r == 1);
       expect(fdja_to_json(v) ===f "{\"a\":{\"type-0\":\"blue-car\"}}");
     }
+
+    it "returns 0 when it cannot set"
+    {
+      v = fdja_dparse("{ a: [] }");
+
+      int r = fdja_psetf(v, "a.type-%i", 0, "%s-car", "red");
+
+      expect(r == 0);
+      expect(fdja_to_json(v) ===f "{\"a\":[]}");
+    }
   }
 }
 

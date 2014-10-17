@@ -1048,9 +1048,10 @@ int fdja_psetf(fdja_value *start, const char *path, ...)
   va_end(ap);
 
   fdja_value *v = fdja_parse(s);
-  if (v == NULL) return 0;
+  int r = v ? fdja_pset(start, p, v) : 0;
 
-  int r = fdja_pset(start, p, v);
+  if (r == 0 && v != NULL) fdja_free(v);
+
   free(p);
 
   return r;
