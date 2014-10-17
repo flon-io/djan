@@ -194,5 +194,16 @@ context "fdja_value"
       expect(fdja_clone(NULL) == NULL);
     }
   }
+
+  describe "fdja_free()"
+  {
+    it "is an alias to fdja_value_free()"
+    {
+      fdja_value *vv = fdja_v("{}");
+      fdja_free(vv);
+
+      // Valgrind to the rescue...
+    }
+  }
 }
 

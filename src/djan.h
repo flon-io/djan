@@ -85,6 +85,7 @@ int fdja_to_json_f(fdja_value *v, const char *path, ...);
  * will be freed as well.
  */
 void fdja_value_free(fdja_value *v);
+#define fdja_free(v) fdja_value_free(v)
 
 /*
  * Returns a copy of the string representation of the fdja_value.
