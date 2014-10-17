@@ -69,32 +69,55 @@ context "fdja_value"
       ensure(fdja_lookup(v, "type.name") == NULL);
       ensure(fdja_lookup(v, "nada") == NULL);
     }
+
+    it "composes its path"
+    {
+      v = fdja_dparse("{ type: car, color: blue, ids: [ 123, 456 ] }");
+
+      ensure(fdja_to_int(fdja_lookup(v, "%s.1", "ids")) == 456);
+    }
   }
 
   describe "fdja_lookup_c()"
   {
+    before each
+    {
+      fdja_value *vv = NULL;
+    }
+    after each
+    {
+      if (vv) fdja_free(vv);
+    }
+
     it "lookups a value and returns a clone of it"
     {
       v = fdja_dparse("{ type: car, color: blue, ids: [ 123, 456 ] }");
 
-      fdja_value *vv = fdja_lookup_c(v, "ids");
+      vv = fdja_lookup_c(v, "ids");
 
       expect(vv != NULL);
       expect(vv->sowner == 1);
       expect(vv->source === "[123,456]");
       expect(vv->soff == 0);
       expect(vv->slen == 9);
-
-      fdja_free(vv);
     }
 
     it "returns NULL if it doesn't find the value"
     {
       v = fdja_dparse("{ type: car, color: blue, ids: [ 123, 456 ] }");
 
-      fdja_value *vv = fdja_lookup_c(v, "nada");
+      vv = fdja_lookup_c(v, "nada");
 
       expect(vv == NULL);
+    }
+
+    it "composes its path"
+    {
+      v = fdja_dparse("{ type: car, color: blue, ids: [ 123, 456 ] }");
+
+      vv = fdja_lookup_c(v, "ids.%i", -1);
+
+      ensure(fdja_to_int(vv) == 456);
     }
   }
 

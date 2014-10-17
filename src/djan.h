@@ -29,6 +29,8 @@
 #define DJAN_H
 
 #include <stddef.h>
+#include <stdarg.h>
+
 
 // 's' string
 // 'n' number
@@ -106,8 +108,9 @@ size_t fdja_size(fdja_value *v);
 
 fdja_value *fdja_value_at(fdja_value *v, long n);
 
-fdja_value *fdja_lookup(fdja_value *v, const char *path);
-fdja_value *fdja_lookup_c(fdja_value *v, const char *path);
+fdja_value *fdja_vlookup(fdja_value *v, const char *path, va_list ap);
+fdja_value *fdja_lookup(fdja_value *v, const char *path, ...);
+fdja_value *fdja_lookup_c(fdja_value *v, const char *path, ...);
 
 char *fdja_lookup_string(fdja_value *v, const char *path, char *def);
 long long fdja_lookup_int(fdja_value *v, const char *path, long long def);
