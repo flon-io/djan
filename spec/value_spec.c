@@ -71,6 +71,33 @@ context "fdja_value"
     }
   }
 
+  describe "fdja_lookup_c()"
+  {
+    it "lookups a value and returns a clone of it"
+    {
+      v = fdja_dparse("{ type: car, color: blue, ids: [ 123, 456 ] }");
+
+      fdja_value *vv = fdja_lookup_c(v, "ids");
+
+      expect(vv != NULL);
+      expect(vv->sowner == 1);
+      expect(vv->source === "[123,456]");
+      expect(vv->soff == 0);
+      expect(vv->slen == 9);
+
+      fdja_free(vv);
+    }
+
+    it "returns NULL if it doesn't find the value"
+    {
+      v = fdja_dparse("{ type: car, color: blue, ids: [ 123, 456 ] }");
+
+      fdja_value *vv = fdja_lookup_c(v, "nada");
+
+      expect(vv == NULL);
+    }
+  }
+
   describe "fdja_lookup_string()"
   {
     it "returns a copy of the string value when it finds"

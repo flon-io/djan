@@ -842,6 +842,13 @@ fdja_value *fdja_lookup(fdja_value *v, const char *path)
   return vv;
 }
 
+fdja_value *fdja_lookup_c(fdja_value *v, const char *path)
+{
+  fdja_value *vv = fdja_lookup(v, path);
+
+  return vv ? fdja_clone(vv) : NULL;
+}
+
 char *fdja_lookup_string(fdja_value *v, const char *path, char *def)
 {
   fdja_value *vv = fdja_lookup(v, path);
