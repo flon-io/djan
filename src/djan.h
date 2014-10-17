@@ -126,8 +126,9 @@ int fdja_merge(fdja_value *dst, fdja_value *src);
 
 int fdja_splice(fdja_value *array, long long start, size_t count, ...);
 
-int fdja_pset(fdja_value *start, const char *path, fdja_value *v);
+int fdja_pset(fdja_value *start, const char *path, ...);
   // pset(v, "cars.-1", v1) to push in cars array
+  // pset(v, "cars.%i", -1, v1) too
 
 int fdja_psetf(fdja_value *start, const char *path, ...);
 

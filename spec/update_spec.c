@@ -297,6 +297,15 @@ context "update"
       expect(r == 1);
       expect(fdja_to_json(v) ===f "{\"a\":[0,-1]}");
     }
+
+    it "composes its path"
+    {
+      v = fdja_dparse("{ a: [ 0, 1 ] }");
+      int r = fdja_pset(v, "a.%i", 0, fdja_v("zero"));
+
+      expect(r == 1);
+      expect(fdja_to_json(v) ===f "{\"a\":[\"zero\",1]}");
+    }
   }
 
   describe "fdja_psetf()"
