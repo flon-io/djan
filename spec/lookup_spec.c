@@ -59,6 +59,13 @@ context "fdja_lookup..."
 
       ensure(fdja_to_int(fdja_lookup(v, "%s.1", "ids")) == 456);
     }
+
+    it "is aliased to fdja_l()"
+    {
+      v = fdja_dparse("{ type: car, color: blue, ids: [ 123, 456 ] }");
+
+      ensure(fdja_to_int(fdja_l(v, "%s.1", "ids")) == 456);
+    }
   }
 
   describe "fdja_lookup_c()"
@@ -102,6 +109,15 @@ context "fdja_lookup..."
 
       ensure(fdja_to_int(vv) == 456);
     }
+
+    it "is aliased to fdja_lc()"
+    {
+      v = fdja_dparse("{ type: car, color: blue, ids: [ 123, 456 ] }");
+
+      vv = fdja_lc(v, "ids.%i", -1);
+
+      ensure(fdja_to_int(vv) == 456);
+    }
   }
 
   describe "fdja_lookup_string()"
@@ -132,6 +148,13 @@ context "fdja_lookup..."
       expect(fdja_lookup_string(v, "parts.%i", 2, NULL) == NULL);
       expect(fdja_lookup_string(v, "parts.%i", 2, "none") === "none");
     }
+
+    it "is aliased to fdja_ls()"
+    {
+      v = fdja_dparse("{ type: car, parts: [ carburator, wheel ] }");
+
+      expect(fdja_ls(v, "parts.%i", 1, NULL) ===f "wheel");
+    }
   }
 
   describe "fdja_lookup_int()"
@@ -156,6 +179,13 @@ context "fdja_lookup..."
 
       expect(fdja_lookup_int(v, "a.%s", "b", 0) == 77);
       expect(fdja_lookup_int(v, "a.%s", "c", 0) == 0);
+    }
+
+    it "is aliased to fdja_li()"
+    {
+      v = fdja_v("{ a: { b: 77 } }");
+
+      expect(fdja_li(v, "a.%s", "b", 0) == 77);
     }
   }
 
@@ -187,6 +217,12 @@ context "fdja_lookup..."
     {
       expect(fdja_lookup_bool(v, "%s", "t0", -1) == 1);
       expect(fdja_lookup_bool(v, "%s", "z", -1) == -1);
+    }
+
+    it "is aliased to fdja_lb()"
+    {
+      expect(fdja_lb(v, "%s", "t0", -1) == 1);
+      expect(fdja_lb(v, "%s", "z", -1) == -1);
     }
   }
 
