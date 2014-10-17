@@ -122,6 +122,8 @@ int fdja_lookup_bool(fdja_value *v, const char *path, ...);
 int fdja_push(fdja_value *array, fdja_value *v);
 int fdja_set(fdja_value *object, const char *key, fdja_value *v);
 
+int fdja_merge(fdja_value *dst, fdja_value *src);
+
 int fdja_splice(fdja_value *array, long long start, size_t count, ...);
 
 int fdja_pset(fdja_value *start, const char *path, fdja_value *v);

@@ -959,6 +959,27 @@ int fdja_set(fdja_value *object, const char *key, fdja_value *v)
   return 1;
 }
 
+int fdja_merge(fdja_value *dst, fdja_value *src)
+{
+  if (dst->type != 'o' || src->type != 'o') return 0;
+
+  fdja_value *last = dst->child;
+  while (last && last->sibling) { last = last->sibling; }
+
+  for (fdja_value *c = src->child; c != NULL; c = c->sibling)
+  {
+    fdja_value *cc = fdja_clone(c);
+    cc->key = strdup(c->key);
+
+    if (last) last->sibling = cc;
+    else dst->child = cc;
+
+    last = cc;
+  }
+
+  return 1;
+}
+
 int fdja_splice(fdja_value *array, long long start, size_t count, ...)
 {
   if (array->type != 'a') return 0;

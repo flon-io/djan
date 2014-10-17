@@ -119,6 +119,30 @@ context "update"
     }
   }
 
+  describe "fdja_merge()"
+  {
+    it "merges two objects"
+    {
+      v = fdja_v("{ a: 0 }");
+      vv = fdja_v("{ b : 1}");
+
+      int r = fdja_merge(v, vv);
+
+      expect(r == 1);
+      expect(fdja_to_json(v) ===f "{\"a\":0,\"b\":1}");
+      expect(fdja_to_json(vv) ===f "{\"b\":1}");
+    }
+
+    it "returns 0 if one of the arg is not an object"
+    {
+      v = fdja_v("{ a: 0 }");
+      vv = fdja_v("[]");
+
+      expect(fdja_merge(v, vv) == 0);
+      expect(fdja_merge(vv, v) == 0);
+    }
+  }
+
   describe "fdja_splice()"
   {
     it "returns 0 if the target isn't an array"
