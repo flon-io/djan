@@ -863,41 +863,52 @@ fdja_value *fdja_lookup_c(fdja_value *v, const char *path, ...)
   return r ? fdja_clone(r) : NULL;
 }
 
-char *fdja_lookup_string(fdja_value *v, const char *path, char *def)
+char *fdja_lookup_string(fdja_value *v, const char *path, ...)
 {
-  fdja_value *vv = fdja_lookup(v, path);
+  va_list ap; va_start(ap, path);
+  fdja_value *r = fdja_vlookup(v, path, ap);
+  char *def = va_arg(ap, char *);
+  va_end(ap);
 
-  return vv ? fdja_to_string(vv) : def;
+  return r ? fdja_to_string(r) : def;
 }
 
-long long fdja_lookup_int(fdja_value *v, const char *path, long long def)
+long long fdja_lookup_int(fdja_value *v, const char *path, ...)
 {
-  fdja_value *vv = fdja_lookup(v, path);
+  va_list ap; va_start(ap, path);
+  fdja_value *r = fdja_vlookup(v, path, ap);
+  long long def = va_arg(ap, long long);
+  va_end(ap);
 
-  return vv ? fdja_to_int(vv) : def;
+  return r ? fdja_to_int(r) : def;
 }
 
-int fdja_lookup_boolean(fdja_value *v, const char *path, int def)
+int fdja_lookup_boolean(fdja_value *v, const char *path, ...)
 {
-  fdja_value *vv = fdja_lookup(v, path);
+  va_list ap; va_start(ap, path);
+  fdja_value *r = fdja_vlookup(v, path, ap);
+  int def = va_arg(ap, int);
+  va_end(ap);
 
-  if (vv == NULL) return def;
-  if (vv->type == 't') return 1;
-  if (vv->type == 'f') return 0;
+  if (r == NULL) return def;
+  if (r->type == 't') return 1;
+  if (r->type == 'f') return 0;
   return def;
 }
 
-int fdja_lookup_bool(fdja_value *v, const char *path, int def)
+int fdja_lookup_bool(fdja_value *v, const char *path, ...)
 {
-  fdja_value *vv = fdja_lookup(v, path);
+  va_list ap; va_start(ap, path);
+  fdja_value *r = fdja_vlookup(v, path, ap);
+  int def = va_arg(ap, int);
+  va_end(ap);
 
-  if (vv == NULL) return def;
-
-  char *s = vv->source + vv->soff;
-  if (strncasecmp(s, "true", vv->slen) == 0) return 1;
-  if (strncasecmp(s, "yes", vv->slen) == 0) return 1;
-  if (strncasecmp(s, "false", vv->slen) == 0) return 0;
-  if (strncasecmp(s, "no", vv->slen) == 0) return 0;
+  if (r == NULL) return def;
+  char *s = r->source + r->soff;
+  if (strncasecmp(s, "true", r->slen) == 0) return 1;
+  if (strncasecmp(s, "yes", r->slen) == 0) return 1;
+  if (strncasecmp(s, "false", r->slen) == 0) return 0;
+  if (strncasecmp(s, "no", r->slen) == 0) return 0;
   return def;
 }
 

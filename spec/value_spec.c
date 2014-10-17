@@ -140,23 +140,39 @@ context "fdja_value"
       expect(fdja_lookup_string(v, "type", NULL) === NULL);
       expect(fdja_lookup_string(v, "type", "nada") === "nada");
     }
+
+    it "composes its path"
+    {
+      v = fdja_dparse("{ type: car, parts: [ carburator, wheel ] }");
+
+      expect(fdja_lookup_string(v, "parts.%i", 1, NULL) ===f "wheel");
+      expect(fdja_lookup_string(v, "parts.%i", 2, NULL) == NULL);
+      expect(fdja_lookup_string(v, "parts.%i", 2, "none") === "none");
+    }
   }
 
   describe "fdja_lookup_int()"
   {
-    before each
-    {
-      v = fdja_v("{ a: 1234 }");
-    }
-
     it "returns an int"
     {
+      v = fdja_v("{ a: 1234 }");
+
       expect(fdja_lookup_int(v, "a", 0) == 1234);
     }
 
     it "returns the default value if it doesn't find"
     {
+      v = fdja_v("{ a: 1234 }");
+
       expect(fdja_lookup_int(v, "z", 0) == 0);
+    }
+
+    it "composes its path"
+    {
+      v = fdja_v("{ a: { b: 77 } }");
+
+      expect(fdja_lookup_int(v, "a.%s", "b", 0) == 77);
+      expect(fdja_lookup_int(v, "a.%s", "c", 0) == 0);
     }
   }
 
@@ -183,6 +199,12 @@ context "fdja_value"
       expect(fdja_lookup_bool(v, "x", -1) == -1);
       expect(fdja_lookup_bool(v, "z", -1) == -1);
     }
+
+    it "composes its path"
+    {
+      expect(fdja_lookup_bool(v, "%s", "t0", -1) == 1);
+      expect(fdja_lookup_bool(v, "%s", "z", -1) == -1);
+    }
   }
 
   describe "fdja_lookup_boolean()"
@@ -198,6 +220,14 @@ context "fdja_value"
       expect(fdja_lookup_boolean(v, "b", -1) == 0);
       expect(fdja_lookup_boolean(v, "c", -1) == -1);
       expect(fdja_lookup_boolean(v, "d", -1) == -1);
+    }
+
+    it "composes its path"
+    {
+      expect(fdja_lookup_boolean(v, "%s", "a", -1) == 1);
+      expect(fdja_lookup_boolean(v, "%s", "b", -1) == 0);
+      expect(fdja_lookup_boolean(v, "%s", "c", -1) == -1);
+      expect(fdja_lookup_boolean(v, "%s", "d", -1) == -1);
     }
   }
 
