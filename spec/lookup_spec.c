@@ -158,6 +158,34 @@ context "fdja_lookup..."
     }
   }
 
+  describe "fdja_lookup_string_dup_default()"
+  {
+    it "looks up"
+    {
+      v = fdja_dparse("{ type: car, parts: [ carburator, wheel ] }");
+
+      expect(fdja_lsd(v, "parts.%i", 1, NULL) ===f "wheel");
+    }
+
+    it "returns a dup of the default it has to return the default"
+    {
+      v = fdja_dparse("{ type: car, parts: [ carburator, wheel ] }");
+
+      char *r = fdja_lsd(v, "parts.%i", 2, "gastank");
+
+      expect(r === "gastank");
+
+      free(r); // no crash
+    }
+
+    it "doesn't dup NULL"
+    {
+      v = fdja_dparse("{ type: car, parts: [ carburator, wheel ] }");
+
+      expect(fdja_lsd(v, "parts.%i", 2, NULL) == NULL);
+    }
+  }
+
   describe "fdja_lookup_int()"
   {
     it "returns an int"
