@@ -41,10 +41,11 @@ context "fdja_lookup..."
 
     it "looks up in objects"
     {
-      v = fdja_dparse("{ type: car, color: blue, ids: [ 123, 456 ] }");
+      v = fdja_dparse("{ type: car, color: blue, ids: [ 123, 456 ], 0: nemo }");
 
       ensure(fdja_string(fdja_lookup(v, "type")) ===f "car");
       ensure(fdja_string(fdja_lookup(v, "color")) ===f "blue");
+      ensure(fdja_string(fdja_lookup(v, "0")) ===f "nemo");
       ensure(fdja_to_int(fdja_lookup(v, "ids.1")) == 456);
       ensure(fdja_to_int(fdja_lookup(v, "ids.-1")) == 456);
       ensure(fdja_to_int(fdja_lookup(v, "ids.-2")) == 123);
