@@ -944,6 +944,15 @@ int fdja_lookup_bool(fdja_value *v, const char *path, ...)
   return def;
 }
 
+char *fdja_lj(fdja_value *v, const char *path, ...)
+{
+  va_list ap; va_start(ap, path);
+  fdja_value *r = fdja_vlookup(v, path, ap);
+  va_end(ap);
+
+  return r ? fdja_to_json(r) : NULL;
+}
+
 int fdja_push(fdja_value *array, fdja_value *v)
 {
   if (array->type != 'a') return 0;

@@ -121,6 +121,24 @@ context "fdja_lookup..."
     }
   }
 
+  describe "fdja_lj()"
+  {
+    it "lookups a value and returns it turned into JSON"
+    {
+      v = fdja_dparse("{ type: car, color: blue, ids: [ 123, 456 ] }");
+
+      expect(fdja_lj(v, "ids") ===F fdja_vj("[ 123, 456 ]"));
+      expect(fdja_lj(v, "color") ===F fdja_vj("\"blue\""));
+    }
+
+    it "returns NULL if it doesn't find"
+    {
+      v = fdja_dparse("{ type: car, color: blue, ids: [ 123, 456 ] }");
+
+      expect(fdja_lj(v, "nada") == NULL);
+    }
+  }
+
   describe "fdja_lookup_string()"
   {
     it "returns a copy of the string value when it finds"
