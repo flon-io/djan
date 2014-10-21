@@ -3,7 +3,7 @@ NAME=djan
 
 default: $(NAME).o
 
-.DEFAULT spec clean:
+.DEFAULT spec clean bin:
 	$(MAKE) -C tmp/ $@ NAME=$(NAME)
 
 # copy up-to-date version of dep libs into src/
@@ -13,5 +13,5 @@ upgrade:
 
 cs: clean spec
 
-.PHONY: spec clean upgrade cs
+.PHONY: spec clean upgrade cs bin
 

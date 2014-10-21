@@ -10,8 +10,9 @@ ifeq ($(RODZO),)
   RODZO=../../rodzo/bin/rodzo
 endif
 
-NAMES=$(patsubst $(VPATH)/%.c, ./%.o, $(wildcard $(VPATH)/*.c))
+#NAMES=$(patsubst $(VPATH)/%.c, ./%.o, $(wildcard $(VPATH)/*.c))
   # since wildcard doesn't care about VPATH...
+NAMES=flutil.o aabro.o djan.o
 
 
 s.c: ../spec/*_spec.c
@@ -29,6 +30,11 @@ vspec: s
 
 dspec: s
 	gdb ./s
+
+todjan: $(NAMES)
+
+bin: todjan
+	mv todjan ../bin/
 
 clean:
 	rm -f *.o

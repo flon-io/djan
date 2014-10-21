@@ -4,3 +4,4 @@ tmp/*.o
 tmp/*.so
 tmp/s
 *.swp
+bin/*
