@@ -24,10 +24,10 @@ context "to_x"
   {
     it "turns a fdja_value to a json string"
     {
-      v = fdja_v("{ type: car, make: mitsubishi, id: 2 }");
+      v = fdja_v("{ type: car, make: mitsubishi, id: 2, l: [] }");
 
       expect(fdja_to_json(v) ===f ""
-        "{\"type\":\"car\",\"make\":\"mitsubishi\",\"id\":2}");
+        "{\"type\":\"car\",\"make\":\"mitsubishi\",\"id\":2,\"l\":[]}");
     }
 
     it "doesn't print the key when printing an entry on its own"
@@ -83,6 +83,7 @@ context "to_x"
           "stuff: nada"
           "'branding': fail,"
           "x: \"4\""
+          "list: []"
         "}"
       );
 
@@ -95,7 +96,8 @@ context "to_x"
           "\"suppliers,\": [], "
           "stuff: nada, "
           "branding: fail, "
-          "x: \"4\""
+          "x: \"4\", "
+          "list: []"
         " }"
       );
     }
@@ -120,6 +122,7 @@ context "to_x"
           "id: 2, "
           "ok: true"
           "\"suppliers,\": [ alpha, bravo, charly, \"4\", 3 ]"
+          "list: []"
           "stuff: nada"
           "'branding': fail"
         "}"
@@ -138,6 +141,7 @@ context "to_x"
         "    \"4\"\n"
         "    3\n"
         "  ]\n"
+        "  list: []\n"
         "  stuff: nada\n"
         "  branding: fail\n"
         "}"
