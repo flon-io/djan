@@ -609,6 +609,8 @@ fdja_value *fdja_c(char *format, ...)
 
   fdja_value *v = fdja_parse_obj(s);
 
+  if (v == NULL) free(s);
+
   return v;
 }
 

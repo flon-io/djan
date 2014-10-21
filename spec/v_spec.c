@@ -109,6 +109,11 @@ context "fdja_v, fdja_s, ..."
       expect(fdja_to_json(v) ===f ""
         "{\"host\":\"heliopolis\",\"whitelist\":[\"crane\"]}");
     }
+
+    it "returns NULL when it cannot parse"
+    {
+      expect(fdja_c("host: nada {") == NULL);
+    }
   }
 }
 
