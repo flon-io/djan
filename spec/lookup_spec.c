@@ -67,6 +67,13 @@ context "fdja_lookup..."
 
       ensure(fdja_to_int(fdja_l(v, "%s.1", "ids")) == 456);
     }
+
+    it "is ok with keys that begin with a digit"
+    {
+      v = fdja_dparse("{ nodes: { 0_0: nada } }");
+
+      ensure(fdja_lj(v, "nodes.0_0") ===F fdja_vj("nada"));
+    }
   }
 
   describe "fdja_lookup_c()"

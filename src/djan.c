@@ -221,7 +221,7 @@ static void fdja_path_parser_init()
 {
   fabr_parser *index = fabr_n_rex("index", "-?[0-9]+");
   fabr_parser *key = fabr_n_rex("key", "[a-zA-Z_0-9]+");
-  fabr_parser *node = fabr_n_alt("node", index, key, NULL);
+  fabr_parser *node = fabr_n_altg("node", index, key, NULL);
 
   fdja_path_parser =
     fabr_seq(
@@ -864,11 +864,14 @@ fdja_value *fdja_vlookup(fdja_value *v, const char *path, va_list ap)
 
   char *p = flu_svprintf(path, ap);
 
+  //printf("p >%s<\n", p);
+  //fabr_tree *tt = fabr_parse_f(p, 0, fdja_path_parser, 0);
+  //puts(fabr_tree_to_string(tt, p, 1));
+
   fabr_tree *t = fabr_parse_all(p, 0, fdja_path_parser);
 
   if (t->result != 1) { fabr_tree_free(t); free(p); return NULL; }
 
-  //printf("p >%s<\n", p);
   //puts(fabr_tree_to_string(t, p, 1));
 
   fdja_value *vv = v;
