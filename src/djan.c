@@ -391,6 +391,24 @@ fdja_value *fdja_v(char *format, ...)
   return fdja_parse(s);
 }
 
+char *fdja_vj(char *format, ...)
+{
+  va_list ap; va_start(ap, format);
+  char *s = flu_svprintf(format, ap);
+  va_end(ap);
+
+  fdja_value *v = fdja_parse(s);
+
+  if (v == NULL) { free(s); return NULL; }
+
+  char *r = fdja_to_json(v);
+
+  fdja_free(v);
+  //free(s);
+
+  return r;
+}
+
 fdja_value *fdja_s(char *format, ...)
 {
   va_list ap; va_start(ap, format);

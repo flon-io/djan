@@ -38,6 +38,20 @@ context "fdja_v, fdja_s, ..."
     }
   }
 
+  describe "fdja_vj()"
+  {
+    it "takes a json string and returns a json string"
+    {
+      expect(fdja_vj("{ type: car, make: honda }") ===f ""
+        "{\"type\":\"car\",\"make\":\"honda\"}");
+    }
+
+    it "returns NULL if it cannot parse"
+    {
+      expect(fdja_vj("type: car, make: honda }") == NULL);
+    }
+  }
+
   describe "fdja_s()"
   {
     it "wraps a string in a fdja_value"
