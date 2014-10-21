@@ -763,9 +763,11 @@ static void fdja_to_pd(FILE *f, fdja_value *v, size_t depth)
   }
   else if (v->type == 'a' || v->type == 'o')
   {
-    if (v->child == NULL)
+    char *d = fdja_to_djan(v); size_t dl = strlen(d);
+
+    if (dl < 3 || depth * 2 + dl < 80)
     {
-      if (v->type == 'a') fputs("[]", f); else fputs("{}", f);
+      fputs(d, f);
     }
     else
     {
@@ -776,6 +778,7 @@ static void fdja_to_pd(FILE *f, fdja_value *v, size_t depth)
       }
       fputs(indent, f); if (v->type == 'a') fputc(']', f); else fputc('}', f);
     }
+    free(d);
   }
   else fwrite(v->source + v->soff, sizeof(char), v->slen, f);
 
