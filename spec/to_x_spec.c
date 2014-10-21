@@ -124,7 +124,8 @@ context "to_x"
           "\"suppliers,\": [ alpha, bravo, charly, \"4\", 3 ]"
           "list: []"
           "stuff: nada"
-          "'branding': fail"
+          "'branding': fail "
+          "0: ok"
         "}"
       );
 
@@ -138,6 +139,7 @@ context "to_x"
         "  list: []\n"
         "  stuff: nada\n"
         "  branding: fail\n"
+        "  0: ok\n"
         "}"
       );
     }

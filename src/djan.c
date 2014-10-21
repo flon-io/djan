@@ -699,11 +699,25 @@ static int fdja_is_symbol(char *s)
 {
   if (fdja_parser == NULL) fdja_parser_init();
 
-  return
-    fabr_match(s, fdja_symbol_parser) && ! fabr_match(s, fdja_number_parser);
+  return fabr_match(s, fdja_symbol_parser);
 }
 
-static void fdja_s_to_d(FILE *f, char *s, int do_free)
+static int fdja_is_number(char *s)
+{
+  if (fdja_parser == NULL) fdja_parser_init();
+
+  return fabr_match(s, fdja_number_parser);
+}
+
+static void fdja_v_to_d(FILE *f, char *s, int do_free)
+{
+  if (fdja_is_symbol(s) && ! fdja_is_number(s)) fputs(s, f);
+  else fprintf(f, "\"%s\"", s);
+
+  if (do_free) free(s);
+}
+
+static void fdja_k_to_d(FILE *f, char *s, int do_free)
 {
   if (fdja_is_symbol(s)) fputs(s, f); else fprintf(f, "\"%s\"", s);
   if (do_free) free(s);
@@ -711,11 +725,11 @@ static void fdja_s_to_d(FILE *f, char *s, int do_free)
 
 static void fdja_to_d(FILE *f, fdja_value *v, size_t depth)
 {
-  if (v->key && depth > 0) { fdja_s_to_d(f, v->key, 0); fputs(": ", f); }
+  if (v->key && depth > 0) { fdja_k_to_d(f, v->key, 0); fputs(": ", f); }
 
   if (v->type == 'q' || v->type == 's')
   {
-    fdja_s_to_d(f, fdja_to_string(v), 1);
+    fdja_v_to_d(f, fdja_to_string(v), 1);
   }
   else if (v->type == 'y')
   {
@@ -751,11 +765,11 @@ static void fdja_to_pd(FILE *f, fdja_value *v, size_t depth)
 
   fputs(indent, f);
 
-  if (v->key && depth > 0) { fdja_s_to_d(f, v->key, 0); fputs(": ", f); }
+  if (v->key && depth > 0) { fdja_k_to_d(f, v->key, 0); fputs(": ", f); }
 
   if (v->type == 'q' || v->type == 's')
   {
-    fdja_s_to_d(f, fdja_to_string(v), 1);
+    fdja_v_to_d(f, fdja_to_string(v), 1);
   }
   else if (v->type == 'y')
   {
