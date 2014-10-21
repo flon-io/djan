@@ -81,7 +81,8 @@ context "to_x"
           "ok: true"
           "\"suppliers,\": [ ]"
           "stuff: nada"
-          "'branding': fail"
+          "'branding': fail,"
+          "x: \"4\""
         "}"
       );
 
@@ -93,7 +94,8 @@ context "to_x"
           "ok: true, "
           "\"suppliers,\": [], "
           "stuff: nada, "
-          "branding: fail"
+          "branding: fail, "
+          "x: \"4\""
         " }"
       );
     }
@@ -104,6 +106,42 @@ context "to_x"
       fdja_value *vv = fdja_lookup(v, "type");
 
       expect(fdja_to_djan(vv) ===f "car");
+    }
+  }
+
+  describe "fdja_to_pretty_djan()"
+  {
+    it "turns a fdja_value to a pretty djan string"
+    {
+      v = fdja_v(
+        "{"
+          "type: car, "
+          "\"make/brand\": mitsubishi, "
+          "id: 2, "
+          "ok: true"
+          "\"suppliers,\": [ alpha, bravo, charly, \"4\", 3 ]"
+          "stuff: nada"
+          "'branding': fail"
+        "}"
+      );
+
+      expect(fdja_to_pretty_djan(v) ===f ""
+        "{\n"
+        "  type: car\n"
+        "  make/brand: mitsubishi\n"
+        "  id: 2\n"
+        "  ok: true\n"
+        "  \"suppliers,\": [\n"
+        "    alpha\n"
+        "    bravo\n"
+        "    charly\n"
+        "    \"4\"\n"
+        "    3\n"
+        "  ]\n"
+        "  stuff: nada\n"
+        "  branding: fail\n"
+        "}"
+      );
     }
   }
 }

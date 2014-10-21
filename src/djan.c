@@ -79,6 +79,7 @@ void fdja_value_free(fdja_value *v)
 
 static fabr_parser *fdja_parser = NULL;
 static fabr_parser *fdja_obj_parser = NULL;
+static fabr_parser *fdja_number_parser = NULL;
 static fabr_parser *fdja_symbol_parser = NULL;
 static fabr_parser *fdja_radial_parser = NULL;
 
@@ -100,6 +101,9 @@ static void fdja_parser_init()
       ")*\"");
   fabr_parser *sqstring =
     fabr_n_rex("sqstring", "'(\\\\'|[^'])*'");
+
+  fabr_parser *number =
+    fabr_n_rex("number", "-?[0-9]+(\\.[0-9]+)?([eE][+-]?[0-9]+)?");
 
   fabr_parser *symbol =
     fabr_n_rex("symbol", "[^ \t\n\r\"':,\\[\\]\\{\\}#]+");
@@ -145,7 +149,7 @@ static void fdja_parser_init()
       fabr_alt(
         string,
         sqstring,
-        fabr_n_rex("number", "-?[0-9]+(\\.[0-9]+)?([eE][+-]?[0-9]+)?"),
+        number,
         object,
         array,
         fabr_n_string("true", "true"),
@@ -158,8 +162,9 @@ static void fdja_parser_init()
   fdja_parser =
     fabr_n_seq("value", blanks, pure_value, blanks, NULL);
 
-  // symbol
+  // number & symbol
 
+  fdja_number_parser = number;
   fdja_symbol_parser = symbol;
 
   // radial
@@ -694,7 +699,8 @@ static int fdja_is_symbol(char *s)
 {
   if (fdja_parser == NULL) fdja_parser_init();
 
-  return fabr_match(s, fdja_symbol_parser);
+  return
+    fabr_match(s, fdja_symbol_parser) && ! fabr_match(s, fdja_number_parser);
 }
 
 static void fdja_s_to_d(FILE *f, char *s, int do_free)
@@ -715,27 +721,16 @@ static void fdja_to_d(FILE *f, fdja_value *v, size_t depth)
   {
     char *s = fdja_string(v); fputs(s, f); free(s);
   }
-  else if (v->type == 'a')
+  else if (v->type == 'a' || v->type == 'o')
   {
-    fputc('[', f);
+    if (v->type == 'a') fputc('[', f); else fputc('{', f);
     for (fdja_value *c = v->child; c != NULL; c = c->sibling)
     {
       fputc(' ', f); fdja_to_d(f, c, depth + 1);
       if (c->sibling) fputc(',', f);
     }
     if (v->child) fputc(' ', f);
-    fputc(']', f);
-  }
-  else if (v->type == 'o')
-  {
-    fputc('{', f);
-    for (fdja_value *c = v->child; c != NULL; c = c->sibling)
-    {
-      fputc(' ', f); fdja_to_d(f, c, depth + 1);
-      if (c->sibling != NULL) fputc(',', f);
-    }
-    if (v->child) fputc(' ', f);
-    fputc('}', f);
+    if (v->type == 'a') fputc(']', f); else fputc('}', f);
   }
   else fwrite(v->source + v->soff, sizeof(char), v->slen, f);
 }
@@ -746,6 +741,53 @@ char *fdja_to_djan(fdja_value *v)
 
   flu_sbuffer *b = flu_sbuffer_malloc();
   fdja_to_d(b->stream, v, 0);
+
+  return flu_sbuffer_to_string(b);
+}
+
+static void fdja_to_pd(FILE *f, fdja_value *v, size_t depth)
+{
+  char *indent = flu_sprintf("%*s", depth * 2, "");
+
+  fputs(indent, f);
+
+  if (v->key && depth > 0) { fdja_s_to_d(f, v->key, 0); fputs(": ", f); }
+
+  if (v->type == 'q' || v->type == 's')
+  {
+    fdja_s_to_d(f, fdja_to_string(v), 1);
+  }
+  else if (v->type == 'y')
+  {
+    char *s = fdja_string(v); fputs(s, f); free(s);
+  }
+  else if (v->type == 'a' || v->type == 'o')
+  {
+    if (v->child == NULL)
+    {
+      if (v->type == 'a') fputs("[]", f); else fputs("{}", f);
+    }
+    else
+    {
+      if (v->type == 'a') fputs("[\n", f); else fputs("{\n", f);
+      for (fdja_value *c = v->child; c != NULL; c = c->sibling)
+      {
+        fdja_to_pd(f, c, depth + 1); fputc('\n', f);
+      }
+      fputs(indent, f); if (v->type == 'a') fputc(']', f); else fputc('}', f);
+    }
+  }
+  else fwrite(v->source + v->soff, sizeof(char), v->slen, f);
+
+  free(indent);
+}
+
+char *fdja_to_pretty_djan(fdja_value *v)
+{
+  if (v == NULL) return NULL;
+
+  flu_sbuffer *b = flu_sbuffer_malloc();
+  fdja_to_pd(b->stream, v, 0);
 
   return flu_sbuffer_to_string(b);
 }
