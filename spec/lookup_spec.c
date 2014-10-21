@@ -74,6 +74,13 @@ context "fdja_lookup..."
 
       ensure(fdja_lj(v, "nodes.0_0") ===F fdja_vj("nada"));
     }
+
+    it "accepts keys as long as they don't contain tabs, dots or newlines"
+    {
+      v = fdja_dparse("{ \"group a\": { 0_0-f: sruf } }");
+
+      ensure(fdja_lj(v, "group a.0_0-f") ===F fdja_vj("sruf"));
+    }
   }
 
   describe "fdja_lookup_c()"
