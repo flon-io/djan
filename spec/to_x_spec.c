@@ -166,6 +166,11 @@ context "to_x"
       );
 
       //char *s = fdja_to_djan(v, 1); puts(s); free(s);
+      //char *s = fdja_tod(v); puts(s); free(s);
+
+      char *s = fdja_tod(v);
+      expect(strstr(s, "0;33m") != NULL);
+      free(s);
     }
   }
 }
