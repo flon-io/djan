@@ -69,7 +69,7 @@ context "to_x"
     }
   }
 
-  describe "fdja_to_djan()"
+  describe "fdja_to_djan() oneline"
   {
     it "turns a fdja_value to a djan string"
     {
@@ -87,7 +87,7 @@ context "to_x"
         "}"
       );
 
-      expect(fdja_to_djan(v) ===f ""
+      expect(fdja_to_djan(v, FDJA_F_ONELINE) ===f ""
         "{ "
           "type: car, "
           "make/brand: mitsubishi, "
@@ -107,11 +107,11 @@ context "to_x"
       v = fdja_v("{ type: car, make: mitsubishi, id: 2 }");
       fdja_value *vv = fdja_lookup(v, "type");
 
-      expect(fdja_to_djan(vv) ===f "car");
+      expect(fdja_to_djan(vv, FDJA_F_ONELINE) ===f "car");
     }
   }
 
-  describe "fdja_to_pretty_djan()"
+  describe "fdja_to_djan() multiline"
   {
     it "turns a fdja_value to a pretty djan string"
     {
@@ -129,7 +129,7 @@ context "to_x"
         "}"
       );
 
-      expect(fdja_to_pretty_djan(v) ===f ""
+      expect(fdja_to_djan(v, 0) ===f ""
         "{\n"
         "  type: car\n"
         "  make/brand: mitsubishi\n"
@@ -142,6 +142,30 @@ context "to_x"
         "  0: ok\n"
         "}"
       );
+    }
+  }
+
+  describe "fdja_to_djan() colour output"
+  {
+    it "is nice"
+    {
+      v = fdja_v(
+        "{"
+          "type: car, "
+          "\"make/brand\": mitsubishi, "
+          "id: 2, "
+          "ok: true"
+          "\"suppliers,\": [ alpha, bravo, charly, \"4\", 3 ]"
+          "list: []"
+          "stuff: nada"
+          "'branding': fail "
+          "people: { owner: Jeff, driver: Coop, wing: Herman }"
+          "0: ok\n"
+          "x: false"
+        "}"
+      );
+
+      //char *s = fdja_to_djan(v, 1); puts(s); free(s);
     }
   }
 }
