@@ -37,6 +37,15 @@ context "to_x"
 
       expect(fdja_to_json(vv) ===f "\"car\"");
     }
+
+    it "preserves escapes"
+    {
+      v = fdja_v("\"na\\nda\"");
+
+      expect(fdja_string(v) ===f "\"na\\nda\"");
+      expect(fdja_to_string(v) ===f "na\nda");
+      expect(fdja_to_json(v) ===f "\"na\\nda\"");
+    }
   }
 
   describe "fdja_to_json_f()"
