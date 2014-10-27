@@ -35,6 +35,21 @@ context "strings, single quoted strings and symbols"
           expect(fdja_vj("\"hello/honolulu\"") ===f "\"hello/honolulu\"");
         }
       }
+      describe "fdja_s()"
+      {
+        it "escapes its input"
+        {
+          fdja_value *v = NULL;
+
+          v = fdja_s("hello s");
+          expect(fdja_to_json(v) ===f "\"hello s\"");
+          fdja_free(v);
+
+          v = fdja_s("hello\ns");
+          expect(fdja_to_json(v) ===f "\"hello\\ns\"");
+          fdja_free(v);
+        }
+      }
     }
     context "single-quoted strings"
     {
@@ -82,20 +97,21 @@ context "strings, single quoted strings and symbols"
     }
   }
 
-  context "output"
-  {
-    context "double-quoted strings"
-    {
-      it "flips burgers"
-    }
-    context "single-quoted strings"
-    {
-      it "flips burgers"
-    }
-    context "symbols"
-    {
-      it "flips burgers"
-    }
-  }
+  //context "output"
+  //{
+  //  context "double-quoted strings"
+  //  {
+  //    it "flips burgers"
+  //  }
+  //  context "single-quoted strings"
+  //  {
+  //    it "flips burgers"
+  //  }
+  //  context "symbols"
+  //  {
+  //    it "flips burgers"
+  //  }
+  //}
+    // dealt with above...
 }
 
