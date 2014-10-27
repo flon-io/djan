@@ -97,6 +97,8 @@ context "to_x"
         "}"
       );
 
+      expect(v != NULL);
+
       expect(fdja_to_djan(v, FDJA_F_ONELINE) ===f ""
         "{ "
           "type: car, "
@@ -164,7 +166,7 @@ context "to_x"
       v = fdja_v(
         "{"
           "type: car, "
-          "\"make\\/brand\": mitsubishi, "
+          "\"make/brand\": mitsubishi, "
           "id: 2, "
           "ok: true"
           "\"suppliers,\": [ alpha, bravo, charly, \"4\", 3 ]"

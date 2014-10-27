@@ -30,6 +30,10 @@ context "strings, single quoted strings and symbols"
           expect(fdja_vj("\"hello\\\\world\"") ===f "\"hello\\\\world\"");
           expect(fdja_vj("\"hello\\bworld\"") ===f "\"hello\\bworld\"");
         }
+        it "accepts slashes"
+        {
+          expect(fdja_vj("\"hello/honolulu\"") ===f "\"hello/honolulu\"");
+        }
       }
     }
     context "single-quoted strings"
@@ -50,6 +54,10 @@ context "strings, single quoted strings and symbols"
           expect(fdja_vj("'hello\\\\world'") ===f "\"hello\\\\world\"");
           expect(fdja_vj("'hello\\bworld'") ===f "\"hello\\bworld\"");
         }
+        it "accepts slashes"
+        {
+          expect(fdja_vj("'hello/honolulu'") ===f "\"hello/honolulu\"");
+        }
       }
     }
     context "symbols"
@@ -65,6 +73,10 @@ context "strings, single quoted strings and symbols"
         {
           expect(fdja_parse("hello\\nworld") == NULL);
           expect(fdja_parse("hello\\/world") == NULL);
+        }
+        it "accepts slashes"
+        {
+          expect(fdja_vj("hello/honolulu") ===f "\"hello/honolulu\"");
         }
       }
     }
