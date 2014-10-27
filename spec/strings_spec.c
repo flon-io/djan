@@ -54,7 +54,19 @@ context "strings, single quoted strings and symbols"
     }
     context "symbols"
     {
-      it "rejects control characters"
+      describe "fdja_parse()"
+      {
+        it "rejects control characters"
+        {
+          expect(fdja_parse("hello\nworld") == NULL);
+          expect(fdja_parse("hello\bworld") == NULL);
+        }
+        it "rejects escaped control characters"
+        {
+          expect(fdja_parse("hello\\nworld") == NULL);
+          expect(fdja_parse("hello\\/world") == NULL);
+        }
+      }
     }
   }
 

@@ -114,13 +114,13 @@ static void fdja_parser_init()
           "]"
         ")*"
       "'");
+  fabr_parser *symbol =
+    fabr_n_rex(
+      "symbol",
+      "[^ \b\f\n\r\t\"':,\\[\\]\\{\\}#\\\\]+");
 
   fabr_parser *number =
     fabr_n_rex("number", "-?[0-9]+(\\.[0-9]+)?([eE][+-]?[0-9]+)?");
-
-  fabr_parser *symbol =
-    fabr_n_rex("symbol", "[^ \t\n\r\"':,\\[\\]\\{\\}#]+");
-      // TODO: align on string (do not accept control chars)
 
   fabr_parser *entry =
     fabr_n_seq(
