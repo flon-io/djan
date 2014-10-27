@@ -34,6 +34,7 @@ context "parsing"
         ensure(fdja_to_int(v) == 1);
         ensure(fdja_to_json(v) ===f "1");
       }
+
       it "parses \"-1\""
       {
         v = fdja_dparse("-1");
@@ -87,6 +88,7 @@ context "parsing"
         ensure(fdja_to_string(v) ===f "hello");
         ensure(fdja_to_json(v) ===f "\"hello\"");
       }
+
       it "parses \"hello \\\"old bore\\\"\""
       {
         v = fdja_dparse("\"hello \\\"old bore\\\"\"");
@@ -97,6 +99,7 @@ context "parsing"
         ensure(fdja_to_string(v) ===f "hello \"old bore\"");
         ensure(fdja_to_json(v) ===f "\"hello \\\"old bore\\\"\"");
       }
+
       it "parses \\t"
       {
         v = fdja_dparse("\"hello\\ttab\"");
@@ -107,6 +110,7 @@ context "parsing"
         ensure(fdja_to_string(v) ===f "hello\ttab");
         ensure(fdja_to_json(v) ===f "\"hello\\ttab\"");
       }
+
       it "parses unicode escape sequences"
       {
         v = fdja_dparse("\"hello \\u0066ool\"");
@@ -117,6 +121,7 @@ context "parsing"
         ensure(fdja_to_string(v) ===f "hello fool");
         ensure(fdja_to_json(v) ===f "\"hello \\u0066ool\"");
       }
+
       it "doesn't parse unknown escapes"
       {
         v = fdja_parse("\"hello \\z\"");
@@ -124,6 +129,14 @@ context "parsing"
 
         ensure(v == NULL);
       }
+
+      it "rejects control characters"
+      {
+        v = fdja_parse("\"hello\nnada\"");
+
+        ensure(v == NULL);
+      }
+
       context "single quotes"
       {
         it "parses single quotes strings"

@@ -93,20 +93,26 @@ static void fdja_parser_init()
   fabr_parser *string =
     fabr_n_rex(
       "string",
-      "\"("
-        //"\\\\." "|"
-        "\\\\[\"\\/\\\\bfnrt]" "|"
-        "\\\\u[0-9a-fA-F]{4}" "|"
-        "[^\"\\\\]"
-      ")*\"");
+      "\""
+        "("
+          "\\\\[\"\\/\\\\bfnrt]" "|"
+          "\\\\u[0-9a-fA-F]{4}" "|"
+          "[^\"\\\\]"
+          //"[^"
+          //  "\"" "\\" "\/" "\b" "\f" "\n" "\r" "\t"
+          //"]"
+        ")*"
+      "\"");
   fabr_parser *sqstring =
     fabr_n_rex("sqstring", "'(\\\\'|[^'])*'");
+      // TODO: align on string (do not accept control chars)
 
   fabr_parser *number =
     fabr_n_rex("number", "-?[0-9]+(\\.[0-9]+)?([eE][+-]?[0-9]+)?");
 
   fabr_parser *symbol =
     fabr_n_rex("symbol", "[^ \t\n\r\"':,\\[\\]\\{\\}#]+");
+      // TODO: align on string (do not accept control chars)
 
   fabr_parser *entry =
     fabr_n_seq(
@@ -420,7 +426,10 @@ fdja_value *fdja_s(char *format, ...)
   char *s = flu_svprintf(format, ap);
   va_end(ap);
 
-  return fdja_value_malloc('y', s, 0, strlen(s), 1);
+  char *ss = flu_escape(s);
+  free(s);
+
+  return fdja_value_malloc('y', ss, 0, strlen(ss), 1);
 }
 
 static void fdja_add_radc(fdja_value *parent, fdja_value *child)

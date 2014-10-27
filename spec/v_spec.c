@@ -83,6 +83,13 @@ context "fdja_v, fdja_s, ..."
       expect(v->sibling == NULL);
       expect(fdja_to_json(v) ===f "\"hello world\"");
     }
+
+    it "escapes newlines and co"
+    {
+      v = fdja_s("hello\nworld");
+
+      expect(fdja_to_json(v) ===f "\"hello\\nworld\"");
+    }
   }
 
   describe "fdja_c()"
