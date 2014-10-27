@@ -21,14 +21,14 @@ context "strings, single quoted strings and symbols"
           expect(fdja_parse("\"hello\nworld\"") == NULL);
           expect(fdja_parse("\"hello\tworld\"") == NULL);
           expect(fdja_parse("\"hello\\world\"") == NULL);
-          expect(fdja_parse("\"hello\/world\"") == NULL);
+          expect(fdja_parse("\"hello\b/world\"") == NULL);
         }
         it "accepts escaped control characters"
         {
           expect(fdja_vj("\"hello\\nworld\"") ===f "\"hello\\nworld\"");
           expect(fdja_vj("\"hello\\tworld\"") ===f "\"hello\\tworld\"");
           expect(fdja_vj("\"hello\\\\world\"") ===f "\"hello\\\\world\"");
-          expect(fdja_vj("\"hello\\/world\"") ===f "\"hello\\/world\"");
+          expect(fdja_vj("\"hello\\bworld\"") ===f "\"hello\\bworld\"");
         }
       }
     }
@@ -41,14 +41,14 @@ context "strings, single quoted strings and symbols"
           expect(fdja_parse("'hello\nworld'") == NULL);
           expect(fdja_parse("'hello\tworld'") == NULL);
           expect(fdja_parse("'hello\\world'") == NULL);
-          expect(fdja_parse("'hello\/world'") == NULL);
+          expect(fdja_parse("'hello\bworld'") == NULL);
         }
         it "accepts escaped control characters"
         {
           expect(fdja_vj("'hello\\nworld'") ===f "\"hello\\nworld\"");
           expect(fdja_vj("'hello\\tworld'") ===f "\"hello\\tworld\"");
           expect(fdja_vj("'hello\\\\world'") ===f "\"hello\\\\world\"");
-          expect(fdja_vj("'hello\\/world'") ===f "\"hello\\/world\"");
+          expect(fdja_vj("'hello\\bworld'") ===f "\"hello\\bworld\"");
         }
       }
     }
