@@ -45,6 +45,7 @@ context "to_x"
       expect(fdja_string(v) ===f "\"na\\nda\"");
       expect(fdja_to_string(v) ===f "na\nda");
       expect(fdja_to_json(v) ===f "\"na\\nda\"");
+      expect(fdja_tod(v) ===f "\"na\\nda\"");
     }
   }
 
@@ -127,7 +128,7 @@ context "to_x"
       v = fdja_v(
         "{"
           "type: car, "
-          "\"make/brand\": mitsubishi, "
+          "\"make\\/brand\": mitsubishi, "
           "id: 2, "
           "ok: true"
           "\"suppliers,\": [ alpha, bravo, charly, \"4\", 3 ]"
@@ -138,10 +139,12 @@ context "to_x"
         "}"
       );
 
+      expect(v != NULL);
+
       expect(fdja_to_djan(v, 0) ===f ""
         "{\n"
         "  type: car\n"
-        "  make/brand: mitsubishi\n"
+        "  \"make\\/brand\": mitsubishi\n"
         "  id: 2\n"
         "  ok: true\n"
         "  \"suppliers,\": [ alpha, bravo, charly, \"4\", 3 ]\n"
@@ -161,7 +164,7 @@ context "to_x"
       v = fdja_v(
         "{"
           "type: car, "
-          "\"make/brand\": mitsubishi, "
+          "\"make\\/brand\": mitsubishi, "
           "id: 2, "
           "ok: true"
           "\"suppliers,\": [ alpha, bravo, charly, \"4\", 3 ]"
@@ -174,15 +177,18 @@ context "to_x"
         "}"
       );
 
+      expect(v != NULL);
+
       char *s;
 
-      //s = fdja_to_djan(v, 1); puts(s); free(s);
       //s = fdja_tod(v); puts(s); free(s);
 
       s = fdja_tod(v);
       expect(strstr(s, "0;33m") == NULL);
       expect(strstr(s, "\n") == NULL);
       free(s);
+
+      //s = fdja_todc(v); puts(s); free(s);
 
       s = fdja_todc(v);
       expect(strstr(s, "0;33m") != NULL);
