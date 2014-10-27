@@ -1,0 +1,6 @@
+
+* regex: still reachable 163,079 bytes in 1,162 blocks
+* post aabro update: 162,663 bytes in 1,162 blocks
+* with rex: 9,609 bytes in 289 blocks (memleaks to fix)
+* later: 11,914 bytes in 412 blocks (parser->id)
+
