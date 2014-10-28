@@ -198,5 +198,24 @@ context "to_x"
       free(s);
     }
   }
+
+  describe "fdja_f_todc()"
+  {
+    it "reads a file and outputs it as coloured djan"
+    {
+      char *s = fdja_f_todc("../spec/%s", "_test1.json");
+
+      //puts(s);
+      expect(strstr(s, "0;33m") != NULL);
+      expect(strstr(s, "12345") != NULL);
+      expect(strstr(s, "\n") == NULL);
+      free(s);
+    }
+
+    it "returns NULL if it cannot read"
+    {
+      expect(fdja_f_todc("../spec/_nada.json") == NULL);
+    }
+  }
 }
 
