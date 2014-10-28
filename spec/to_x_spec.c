@@ -123,6 +123,50 @@ context "to_x"
     }
   }
 
+  describe "fdja_to_djan() compact"
+  {
+    it "doesn't print unnecessary spaces"
+    {
+      v = fdja_v(
+        "{"
+          "type: car, "
+          "\"make/brand\": mitsubishi, "
+          "id: 3, "
+          "ok: true"
+          "\"suppliers,\": [ ]"
+          "stuff: nada"
+          "'branding': fail,"
+          "x: \"4\""
+          "list: []"
+        "}"
+      );
+
+      expect(v != NULL);
+
+      expect(fdja_to_djan(v, FDJA_F_COMPACT) ===f ""
+        "{"
+          "type:car,"
+          "make/brand:mitsubishi,"
+          "id:3,"
+          "ok:true,"
+          "\"suppliers,\":[],"
+          "stuff:nada,"
+          "branding:fail,"
+          "x:\"4\","
+          "list:[]"
+        "}"
+      );
+    }
+
+    it "doesn't print the key when the entry is on its own"
+    {
+      v = fdja_v("{ type: car, make: mitsubishi, id: 2 }");
+      fdja_value *vv = fdja_lookup(v, "type");
+
+      expect(fdja_to_djan(vv, FDJA_F_ONELINE) ===f "car");
+    }
+  }
+
   describe "fdja_to_djan() multiline"
   {
     it "turns a fdja_value to a pretty djan string"

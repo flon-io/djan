@@ -79,20 +79,25 @@ fdja_value *fdja_clone(fdja_value *v);
 
 char *fdja_to_json(fdja_value *v);
 
+int fdja_to_json_f(fdja_value *v, const char *path, ...);
+
 enum // flags for fdja_to_djan()
 {
   FDJA_F_COLOR    = 1 << 0, // colour output
-  FDJA_F_ONELINE  = 1 << 1  // result will come in one line
+  FDJA_F_ONELINE  = 1 << 1, // result will come in one line
+  FDJA_F_COMPACT  = 1 << 2  // outputs [1,2,3] instead of [ 1, 2, 3 ]
 };
+  // compact implies oneline...
 
 char *fdja_to_djan(fdja_value *v, int flags);
 #define fdja_tod(v) fdja_to_djan(v, 2)
 #define fdja_todc(v) fdja_to_djan(v, 1)
 char *fdja_f_todc(const char *path, ...);
 
-//char *fdja_to_radial(fdja_value *v);
+//int fdja_to_djan_f(fdja_value *v, int flags, const char *path, ...);
+  // TODO
 
-int fdja_to_json_f(fdja_value *v, const char *path, ...);
+//char *fdja_to_radial(fdja_value *v);
 
 /*
  * Frees the fdja_value resources. If the fdja_value has children, they
