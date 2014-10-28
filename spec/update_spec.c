@@ -117,6 +117,42 @@ context "update"
       expect(r == 1);
       expect(fdja_to_json(v) ===f "{\"a\":0,\"c\":2}");
     }
+
+    it "sets at the beginning of the object when key starts with backslash-b"
+    {
+      v = fdja_dparse("{ a: 0, b: 1, c: 2 }");
+      int r = fdja_set(v, "\bz", fdja_s("zorro"));
+
+      expect(r == 1);
+      expect(fdja_tod(v) ===f "{ z: zorro, a: 0, b: 1, c: 2 }");
+    }
+
+    it "sets at the beginning of an empty object with backslash-b"
+    {
+      v = fdja_dparse("{}");
+      int r = fdja_set(v, "\bz", fdja_s("zorro"));
+
+      expect(r == 1);
+      expect(fdja_tod(v) ===f "{ z: zorro }");
+    }
+
+    it "moves to the front when already present and backslash-b"
+    {
+      v = fdja_dparse("{ a: 0, b: 1 }");
+      int r = fdja_set(v, "\bb", fdja_v("2"));
+
+      expect(r == 1);
+      expect(fdja_tod(v) ===f "{ b: 2, a: 0 }");
+    }
+
+    it "doesn't care about backlash-b if the value is NULL, it unsets"
+    {
+      v = fdja_dparse("{ a: 0, b: 1 }");
+      int r = fdja_set(v, "\bb", NULL);
+
+      expect(r == 1);
+      expect(fdja_tod(v) ===f "{ a: 0 }");
+    }
   }
 
   describe "fdja_merge()"
@@ -328,6 +364,16 @@ context "update"
 
       expect(r == 0);
       expect(fdja_to_json(v) ===f "{\"a\":[]}");
+    }
+
+    it "accepts backslash-b to set at the beginning of objects"
+    {
+      v = fdja_dparse("{ a: { t1: here } }");
+
+      int r = fdja_psetf(v, "a.\btype-%i", 0, "%s-car", "blue");
+
+      expect(r == 1);
+      expect(fdja_tod(v) ===f "{ a: { type-0: blue-car, t1: here } }");
     }
   }
 }
