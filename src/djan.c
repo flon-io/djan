@@ -739,7 +739,7 @@ static int fdja_is_number(char *s)
   return fabr_match(s, fdja_number_parser);
 }
 
-static void fdja_to_d(FILE *f, fdja_value *v, int flags, size_t depth)
+void fdja_to_d(FILE *f, fdja_value *v, int flags, size_t depth)
 {
   short cl = flags & FDJA_F_COLOR;
   short ol = flags & FDJA_F_ONELINE;

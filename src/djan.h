@@ -89,13 +89,14 @@ enum // flags for fdja_to_djan()
 };
   // compact implies oneline...
 
+/* Low level function, made available for dumpers that need it...
+ */
+void fdja_to_d(FILE *f, fdja_value *v, int flags, size_t depth);
+
 char *fdja_to_djan(fdja_value *v, int flags);
 #define fdja_tod(v) fdja_to_djan(v, 2)
 #define fdja_todc(v) fdja_to_djan(v, 1)
 char *fdja_f_todc(const char *path, ...);
-
-//int fdja_to_djan_f(fdja_value *v, int flags, const char *path, ...);
-  // TODO
 
 //char *fdja_to_radial(fdja_value *v);
 
