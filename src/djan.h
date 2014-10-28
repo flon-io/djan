@@ -28,6 +28,7 @@
 #ifndef DJAN_H
 #define DJAN_H
 
+#include <stdio.h>
 #include <stddef.h>
 #include <stdarg.h>
 
