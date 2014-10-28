@@ -153,6 +153,24 @@ context "fdja_lookup..."
     }
   }
 
+  describe "fdja_ld()"
+  {
+    it "lookups a value and returns it turned into djan"
+    {
+      v = fdja_dparse("{ type: car, color: blue, ids: [ 123, 456 ] }");
+
+      expect(fdja_ld(v, "ids") ===f "[ 123, 456 ]");
+      expect(fdja_ld(v, "color") ===f "blue");
+    }
+
+    it "returns NULL if it doesn't find"
+    {
+      v = fdja_dparse("{ type: car, color: blue, ids: [ 123, 456 ] }");
+
+      expect(fdja_ld(v, "nada") == NULL);
+    }
+  }
+
   describe "fdja_lookup_string()"
   {
     it "returns a copy of the string value when it finds"
