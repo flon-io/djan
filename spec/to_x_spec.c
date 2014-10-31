@@ -79,6 +79,16 @@ context "to_x"
     }
   }
 
+  describe "fdja_to_djan()"
+  {
+    it "quotes symbols that could be mistaken for numbers"
+    {
+      v = fdja_s("1234.456");
+
+      expect(fdja_to_djan(v, 0) ===f "\"1234.456\"");
+    }
+  }
+
   describe "fdja_to_djan() oneline"
   {
     it "turns a fdja_value to a djan string"
