@@ -122,5 +122,22 @@ context "fdja_v, fdja_s, ..."
       expect(fdja_c("host: nada {") == NULL);
     }
   }
+
+  describe "fdja_sym()"
+  {
+    it "takes a string, wraps it directly as a symbol"
+    {
+      char *s = strdup("123456.789");
+      v = fdja_sym(s);
+
+      expect(v->type c== 'y');
+      expect(v->source == s);
+      expect(v->soff zu== 0);
+      expect(v->slen zu== strlen(s));
+      expect(v->sowner == 1);
+      expect(fdja_to_json(v) ===f "\"123456.789\"");
+      expect(fdja_tod(v) ===f "\"123456.789\"");
+    }
+  }
 }
 
