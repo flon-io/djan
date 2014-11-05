@@ -127,7 +127,7 @@ context "fdja_v, fdja_s, ..."
   {
     it "takes a string, wraps it directly as a symbol"
     {
-      char *s = strdup("123456.789");
+      char *s = rdz_strdup("123456.789");
       v = fdja_sym(s);
 
       expect(v->type c== 'y');
