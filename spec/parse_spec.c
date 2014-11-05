@@ -160,6 +160,20 @@ context "parsing"
           ensure(fdja_to_json(v) ===f "\"aujourd'hui\"");
         }
       }
+
+      context "escapes"
+      {
+        it "accepts reverse soliduses"
+        {
+          v = fdja_dparse("\"$(dol\\\\)lar)\"");
+
+          expect(v != NULL);
+          expect(v->type == 's');
+          expect(fdja_string(v) ===f "\"$(dol\\\\)lar)\"");
+          expect(fdja_to_string(v) ===f "$(dol\\)lar)");
+          expect(fdja_to_json(v) ===f "\"$(dol\\\\)lar)\"");
+        }
+      }
     }
 
     context "booleans"
