@@ -7,8 +7,6 @@
 
 #include "djan.h"
 
-//int fdja_push(fdja_value *array, fdja_value *v);
-//int fdja_set(fdja_value *object, const char *key, fdja_value *v);
 
 context "update"
 {
@@ -28,18 +26,18 @@ context "update"
     it "pushes at the end of the target array"
     {
       v = fdja_dparse("[ 0, 1, 2 ]");
-      int r = fdja_push(v, fdja_v("3"));
+      fdja_value *r = fdja_push(v, fdja_v("3"));
 
-      expect(r == 1);
+      expect(r != NULL);
       expect(fdja_to_json(v) ===f "[0,1,2,3]");
     }
 
     it "pushes into empty arrays"
     {
       v = fdja_dparse("[]");
-      int r = fdja_push(v, fdja_v("\"hello\""));
+      fdja_value *r = fdja_push(v, fdja_v("\"hello\""));
 
-      expect(r == 1);
+      expect(r != NULL);
       expect(fdja_to_json(v) ===f "[\"hello\"]");
     }
 
@@ -47,17 +45,17 @@ context "update"
     {
       v = fdja_dparse("{}");
       vv = fdja_v("false");
-      int r = fdja_push(v, vv);
+      fdja_value *r = fdja_push(v, vv);
 
-      expect(r == 0);
+      expect(r == NULL);
     }
 
     it "pushes null values"
     {
       v = fdja_dparse("[]");
-      int r = fdja_push(v, fdja_v("null"));
+      fdja_value *r = fdja_push(v, fdja_v("null"));
 
-      expect(r == 1);
+      expect(r != NULL);
       expect(fdja_to_json(v) ===f "[null]");
     }
   }
@@ -67,90 +65,92 @@ context "update"
     it "sets a value"
     {
       v = fdja_dparse("{ a: 0, b: 1, c: 2 }");
-      int r = fdja_set(v, "d", fdja_v("3"));
+      fdja_value *r = fdja_set(v, "d", fdja_v("3"));
 
-      expect(r == 1);
+      expect(r != NULL);
       expect(fdja_to_json(v) ===f "{\"a\":0,\"b\":1,\"c\":2,\"d\":3}");
+      expect(fdja_tod(r) ===f "3");
     }
 
     it "sets a value into an empty object"
     {
       v = fdja_dparse("{}");
-      int r = fdja_set(v, "e", fdja_v("4"));
+      fdja_value *r = fdja_set(v, "e", fdja_v("4"));
 
-      expect(r == 1);
+      expect(r != NULL);
       expect(fdja_to_json(v) ===f "{\"e\":4}");
+      expect(fdja_tod(r) ===f "4");
     }
 
-    it "returns 0 if the target isn't an object"
+    it "returns NULL if the target isn't an object"
     {
       v = fdja_dparse("[]");
       vv = fdja_v("false");
-      int r = fdja_set(v, "a", vv);
+      fdja_value *r = fdja_set(v, "a", vv);
 
-      expect(r == 0);
+      expect(r == NULL);
     }
 
     it "re-sets values"
     {
       v = fdja_dparse("{ a: 0, b: 1, c: 2 }");
-      int r = fdja_set(v, "b", fdja_v("\"BB\""));
+      fdja_value *r = fdja_set(v, "b", fdja_v("\"BB\""));
 
-      expect(r == 1);
+      expect(r != NULL);
       expect(fdja_to_json(v) ===f "{\"a\":0,\"b\":\"BB\",\"c\":2}");
     }
 
     it "sets null values"
     {
       v = fdja_dparse("{ a: 0, b: 1 }");
-      int r = fdja_set(v, "c", fdja_v("null"));
+      fdja_value *r = fdja_set(v, "c", fdja_v("null"));
 
-      expect(r == 1);
+      expect(r != NULL);
       expect(fdja_to_json(v) ===f "{\"a\":0,\"b\":1,\"c\":null}");
     }
 
     it "unsets when v is NULL"
     {
       v = fdja_dparse("{ a: 0, b: 1, c: 2 }");
-      int r = fdja_set(v, "b", NULL);
+      fdja_value *r = fdja_set(v, "b", NULL);
 
-      expect(r == 1);
+      expect(r == NULL);
       expect(fdja_to_json(v) ===f "{\"a\":0,\"c\":2}");
     }
 
     it "sets at the beginning of the object when key starts with backslash-b"
     {
       v = fdja_dparse("{ a: 0, b: 1, c: 2 }");
-      int r = fdja_set(v, "\bz", fdja_s("zorro"));
+      fdja_value *r = fdja_set(v, "\bz", fdja_s("zorro"));
 
-      expect(r == 1);
+      expect(r != NULL);
       expect(fdja_tod(v) ===f "{ z: zorro, a: 0, b: 1, c: 2 }");
     }
 
     it "sets at the beginning of an empty object with backslash-b"
     {
       v = fdja_dparse("{}");
-      int r = fdja_set(v, "\bz", fdja_s("zorro"));
+      fdja_value *r = fdja_set(v, "\bz", fdja_s("zorro"));
 
-      expect(r == 1);
+      expect(r != NULL);
       expect(fdja_tod(v) ===f "{ z: zorro }");
     }
 
     it "moves to the front when already present and backslash-b"
     {
       v = fdja_dparse("{ a: 0, b: 1 }");
-      int r = fdja_set(v, "\bb", fdja_v("2"));
+      fdja_value *r = fdja_set(v, "\bb", fdja_v("2"));
 
-      expect(r == 1);
+      expect(r != NULL);
       expect(fdja_tod(v) ===f "{ b: 2, a: 0 }");
     }
 
     it "doesn't care about backlash-b if the value is NULL, it unsets"
     {
       v = fdja_dparse("{ a: 0, b: 1 }");
-      int r = fdja_set(v, "\bb", NULL);
+      fdja_value *r = fdja_set(v, "\bb", NULL);
 
-      expect(r == 1);
+      expect(r == NULL);
       expect(fdja_tod(v) ===f "{ a: 0 }");
     }
   }
@@ -283,63 +283,63 @@ context "update"
     it "sets here if the path is immediate"
     {
       v = fdja_dparse("{ a: 0, b: 1, c: 2 }");
-      int r = fdja_pset(v, "b", fdja_v("\"B\""));
+      fdja_value *r = fdja_pset(v, "b", fdja_v("\"B\""));
       //int r = fdja_pset(v, "b", fdja_s("B"));
 
-      expect(r == 1);
+      expect(r != NULL);
       expect(fdja_to_json(v) ===f "{\"a\":0,\"b\":\"B\",\"c\":2}");
     }
 
     it "sets in an object"
     {
       v = fdja_dparse("{ a: {} }");
-      int r = fdja_pset(v, "a.a", fdja_v("2"));
+      fdja_value *r = fdja_pset(v, "a.a", fdja_v("2"));
 
-      expect(r == 1);
+      expect(r != NULL);
       expect(fdja_to_json(v) ===f "{\"a\":{\"a\":2}}");
     }
 
     it "sets in arrays"
     {
       v = fdja_dparse("{ a: [ 0 ] }");
-      int r = fdja_pset(v, "a.0", fdja_v("1"));
+      fdja_value *r = fdja_pset(v, "a.0", fdja_v("1"));
 
-      expect(r == 1);
+      expect(r != NULL);
       expect(fdja_to_json(v) ===f "{\"a\":[1]}");
     }
 
     it "returns 0 when outside of array reach"
     {
       v = fdja_dparse("{ a: [ 0 ] }");
-      int r = fdja_pset(v, "a.1", NULL);
+      fdja_value *r = fdja_pset(v, "a.1", NULL);
 
-      expect(r == 0);
+      expect(r == NULL);
     }
 
     it "appends to the array when index is ']'"
     {
       v = fdja_dparse("{ a: [ 0 ] }");
-      int r = fdja_pset(v, "a.]", fdja_v("1"));
+      fdja_value *r = fdja_pset(v, "a.]", fdja_v("1"));
 
-      expect(r == 1);
+      expect(r != NULL);
       expect(fdja_to_json(v) ===f "{\"a\":[0,1]}");
     }
 
     it "understands negative indexes"
     {
       v = fdja_dparse("{ a: [ 0, 1 ] }");
-      int r = fdja_pset(v, "a.-1", fdja_v("-1"));
+      fdja_value *r = fdja_pset(v, "a.-1", fdja_v("-1"));
 
-      expect(r == 1);
+      expect(r != NULL);
       expect(fdja_to_json(v) ===f "{\"a\":[0,-1]}");
     }
 
     it "composes its path"
     {
       v = fdja_dparse("{ a: [ 0, 1 ] }");
-      int r = fdja_pset(v, "a.%i", 0, fdja_v("zero"));
+      fdja_value *r = fdja_pset(v, "a.%i", 0, fdja_v("zero"));
 
-      expect(r == 1);
+      expect(r != NULL);
       expect(fdja_to_json(v) ===f "{\"a\":[\"zero\",1]}");
     }
   }
@@ -350,19 +350,19 @@ context "update"
     {
       v = fdja_dparse("{ a: {} }");
 
-      int r = fdja_psetf(v, "a.type-%i", 0, "%s-car", "blue");
+      fdja_value *r = fdja_psetf(v, "a.type-%i", 0, "%s-car", "blue");
 
-      expect(r == 1);
+      expect(r != NULL);
       expect(fdja_to_json(v) ===f "{\"a\":{\"type-0\":\"blue-car\"}}");
     }
 
-    it "returns 0 when it cannot set"
+    it "returns NULL when it cannot set"
     {
       v = fdja_dparse("{ a: [] }");
 
-      int r = fdja_psetf(v, "a.type-%i", 0, "%s-car", "red");
+      fdja_value *r = fdja_psetf(v, "a.type-%i", 0, "%s-car", "red");
 
-      expect(r == 0);
+      expect(r == NULL);
       expect(fdja_to_json(v) ===f "{\"a\":[]}");
     }
 
@@ -370,9 +370,9 @@ context "update"
     {
       v = fdja_dparse("{ a: { t1: here } }");
 
-      int r = fdja_psetf(v, "a.\btype-%i", 0, "%s-car", "blue");
+      fdja_value *r = fdja_psetf(v, "a.\btype-%i", 0, "%s-car", "blue");
 
-      expect(r == 1);
+      expect(r != NULL);
       expect(fdja_tod(v) ===f "{ a: { type-0: blue-car, t1: here } }");
     }
   }
