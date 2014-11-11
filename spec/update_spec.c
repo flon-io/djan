@@ -356,6 +356,17 @@ context "update"
       expect(fdja_to_json(v) ===f "{\"a\":{\"type-0\":\"blue-car\"}}");
     }
 
+    it "sets over"
+    {
+      v = fdja_dparse("{ a: { b: 0 } }");
+
+      fdja_value *r = fdja_psetf(v, "a.b", "1");
+
+      expect(r != NULL);
+      expect(fdja_tod(v) ===f "{ a: { b: 1 } }");
+      expect(fdja_tod(r) ===f "1");
+    }
+
     it "returns NULL when it cannot set"
     {
       v = fdja_dparse("{ a: [] }");
