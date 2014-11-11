@@ -81,6 +81,13 @@ context "fdja_lookup..."
 
       ensure(fdja_lj(v, "group a.0_0-f") ===F fdja_vj("sruf"));
     }
+
+    it "accepts an escaped . in the key"
+    {
+      v = fdja_v("{ a: { \"b.b\": { c: 0 }, \"d'd\": e } }");
+
+      ensure(fdja_lj(v, "a.b\\.b.c") ===F fdja_vj("0"));
+    }
   }
 
   describe "fdja_lookup_c()"
