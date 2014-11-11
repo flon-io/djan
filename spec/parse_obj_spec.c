@@ -5,6 +5,7 @@
 // Sun Sep 28 17:44:25 JST 2014
 //
 
+#include "flutil.h"
 #include "djan.h"
 
 
@@ -159,6 +160,32 @@ context "parsing obj"
       v = fdja_parse_obj_f("../spec/_test3.bad");
 
       expect(v == NULL);
+    }
+
+    it "parses fine (gh-9)"
+    {
+      flu_writeall(
+        "../spec/_gh9.json",
+        "{\n"
+        "  execute:\n"
+        "    [ sequence, {}, [\n"
+        "      [ invoke, { _0: stamp, color: blue }, [] ]\n"
+        "      [ invoke, { _0: stamp, color: green }, [] ]\n"
+        "      [ invoke, { _0: stamp, color: red }, [] ]\n"
+        "      #[ invoke, { _0: sgmail, subjet: lila }, [] ]\n"
+        "    ] ]\n"
+        "  exid: launch.rb-u0-20141104.0729.lotichumeba\n"
+        "  payload: {\n"
+        "    hello: world\n"
+        "  }\n"
+        "}\n");
+
+      v = fdja_parse_obj_f("../spec/_gh9.json");
+
+      expect(v != NULL);
+      expect(fdja_ls(v, "payload.hello", NULL) ===f "world");
+
+      //flu_putf(fdja_todc(v));
     }
   }
 }
