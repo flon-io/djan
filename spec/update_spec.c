@@ -342,6 +342,17 @@ context "update"
       expect(r != NULL);
       expect(fdja_to_json(v) ===f "{\"a\":[\"zero\",1]}");
     }
+
+    it "accepts escaped . in its path"
+    {
+      v = fdja_dparse("{ a: { \"b.b\": {}} }");
+
+      fdja_value *r = fdja_pset(v, "a.b\\.b.c", fdja_v("C"));
+
+      expect(r != NULL);
+      expect(fdja_tod(v) ===f "{ a: { b.b: { c: C } } }");
+      expect(fdja_tod(r) ===f "C");
+    }
   }
 
   describe "fdja_psetf()"
@@ -385,6 +396,17 @@ context "update"
 
       expect(r != NULL);
       expect(fdja_tod(v) ===f "{ a: { type-0: blue-car, t1: here } }");
+    }
+
+    it "accepts escaped . in its path"
+    {
+      v = fdja_dparse("{ a: { \"b.b\": {}} }");
+
+      fdja_value *r = fdja_psetf(v, "a.b\\.b.c", "C%s", "ok");
+
+      expect(r != NULL);
+      expect(fdja_tod(v) ===f "{ a: { b.b: { c: Cok } } }");
+      expect(fdja_tod(r) ===f "Cok");
     }
   }
 }
