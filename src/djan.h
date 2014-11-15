@@ -192,7 +192,7 @@ fdja_value *fdja_pset(fdja_value *start, const char *path, ...);
  *
  * Returns the value just set.
  */
-fdja_value *fdja_psetf(fdja_value *start, const char *path, ...);
+fdja_value *fdja_psetv(fdja_value *start, const char *path, ...);
 
 #endif // FLON_DJAN_H
 

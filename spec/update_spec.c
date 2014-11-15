@@ -355,13 +355,13 @@ context "update"
     }
   }
 
-  describe "fdja_psetf()"
+  describe "fdja_psetv()"
   {
     it "sets"
     {
       v = fdja_dparse("{ a: {} }");
 
-      fdja_value *r = fdja_psetf(v, "a.type-%i", 0, "%s-car", "blue");
+      fdja_value *r = fdja_psetv(v, "a.type-%i", 0, "%s-car", "blue");
 
       expect(r != NULL);
       expect(fdja_to_json(v) ===f "{\"a\":{\"type-0\":\"blue-car\"}}");
@@ -371,7 +371,7 @@ context "update"
     {
       v = fdja_dparse("{ a: { b: 0 } }");
 
-      fdja_value *r = fdja_psetf(v, "a.b", "1");
+      fdja_value *r = fdja_psetv(v, "a.b", "1");
 
       expect(r != NULL);
       expect(fdja_tod(v) ===f "{ a: { b: 1 } }");
@@ -382,7 +382,7 @@ context "update"
     {
       v = fdja_dparse("{ a: [] }");
 
-      fdja_value *r = fdja_psetf(v, "a.type-%i", 0, "%s-car", "red");
+      fdja_value *r = fdja_psetv(v, "a.type-%i", 0, "%s-car", "red");
 
       expect(r == NULL);
       expect(fdja_to_json(v) ===f "{\"a\":[]}");
@@ -392,7 +392,7 @@ context "update"
     {
       v = fdja_dparse("{ a: { t1: here } }");
 
-      fdja_value *r = fdja_psetf(v, "a.\btype-%i", 0, "%s-car", "blue");
+      fdja_value *r = fdja_psetv(v, "a.\btype-%i", 0, "%s-car", "blue");
 
       expect(r != NULL);
       expect(fdja_tod(v) ===f "{ a: { type-0: blue-car, t1: here } }");
@@ -402,7 +402,7 @@ context "update"
     {
       v = fdja_dparse("{ a: { \"b.b\": {}} }");
 
-      fdja_value *r = fdja_psetf(v, "a.b\\.b.c", "C%s", "ok");
+      fdja_value *r = fdja_psetv(v, "a.b\\.b.c", "C%s", "ok");
 
       expect(r != NULL);
       expect(fdja_tod(v) ===f "{ a: { b.b: { c: Cok } } }");

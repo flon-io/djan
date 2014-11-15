@@ -1318,7 +1318,7 @@ _over:
   return r;
 }
 
-fdja_value *fdja_psetf(fdja_value *start, const char *path, ...)
+fdja_value *fdja_psetv(fdja_value *start, const char *path, ...)
 {
   va_list ap; va_start(ap, path);
   char *p = flu_svprintf(path, ap);
