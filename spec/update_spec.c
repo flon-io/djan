@@ -153,6 +153,16 @@ context "update"
       expect(r == NULL);
       expect(fdja_tod(v) ===f "{ a: 0 }");
     }
+
+    it "composes its key"
+    {
+      v = fdja_dparse("{ a: 0, b: 1, c: 2 }");
+      fdja_value *r = fdja_set(v, "%sd", "d", fdja_v("3d"));
+
+      expect(r != NULL);
+      expect(fdja_tod(v) ===f "{ a: 0, b: 1, c: 2, dd: 3d }");
+      expect(fdja_tod(r) ===f "3d");
+    }
   }
 
   describe "fdja_merge()"

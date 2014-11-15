@@ -171,9 +171,11 @@ fdja_value *fdja_push(fdja_value *array, fdja_value *v);
  * at the beginning of the object.
  * If the value is NULL, the keyed entry gets removed.
  *
+ * The last argument must be a fdja_value *.
+ *
  * Returns the value just set.
  */
-fdja_value *fdja_set(fdja_value *object, const char *key, fdja_value *v);
+fdja_value *fdja_set(fdja_value *object, const char *key, ...);
 
 int fdja_merge(fdja_value *dst, fdja_value *src);
 
