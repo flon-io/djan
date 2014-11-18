@@ -516,6 +516,23 @@ context "parsing"
         ensure(fdja_to_json(v) ===f "{\"a\":0,\"bb\":null,\"cc c\":true}");
       }
     }
+
+    it "parses fine"
+    {
+      v = fdja_parse(
+        "{\n"
+          "domain: org.example\n"
+          "execute: [ invoke, { _0: stamp }, [] ]\n"
+          "payload: {}\n"
+        "}\n");
+
+      expect(v != NULL);
+
+      v->sowner = 0;
+
+      expect(fdja_ls(v, "domain", NULL) ===f "org.example");
+      expect(fdja_ls(v, "execute.1._0", NULL) ===f "stamp");
+    }
   }
 
   describe "fdja_parse_f()"
