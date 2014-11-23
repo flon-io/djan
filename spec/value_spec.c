@@ -90,5 +90,18 @@ context "fdja_value"
       // Valgrind to the rescue...
     }
   }
+
+  describe "fdja_src()"
+  {
+    it "returns a pointer to the beginning of the source string of the value"
+    {
+      v = fdja_v("{\"a\":true,\"b\":[1,2,\"trois\"],\"c\":\"nada\"}");
+
+      fdja_value *v1 = fdja_lookup(v, "b");
+
+      expect(fdja_src(v1) ^== "[1,2,\"trois\"],\"c\":");
+        // yes, it's a pointer inside the source
+    }
+  }
 }
 
