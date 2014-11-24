@@ -103,5 +103,22 @@ context "fdja_value"
         // yes, it's a pointer inside the source
     }
   }
+
+  describe "fdja_srk()"
+  {
+    it "behaves like fjda_src() but skips the initial \" or ' if present"
+    {
+      v = fdja_v("{\"a\":true,\"b\":[1,2,\"trois\"],\"c\":\"nada\"}");
+
+      fdja_value *v1 = fdja_lookup(v, "b.2");
+
+      expect(fdja_srk(v1) ^== "trois\"],\"c\":");
+        // yes, it's a pointer inside the source
+
+      v1 = fdja_lookup(v, "b");
+
+      expect(fdja_srk(v1) ^== "[1,2,\"trois\"],\"c\":");
+    }
+  }
 }
 
