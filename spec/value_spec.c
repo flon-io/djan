@@ -89,6 +89,12 @@ context "fdja_value"
 
       // Valgrind to the rescue...
     }
+
+    it "doesn't mind NULL fdja_value pointers"
+    {
+      fdja_value_free(NULL);
+      fdja_free(NULL);
+    }
   }
 
   describe "fdja_src()"
