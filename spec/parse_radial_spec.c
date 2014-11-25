@@ -297,5 +297,23 @@ context "parsing radial"
       expect(v == NULL);
     }
   }
+
+  describe "fdja_fparse_radial()"
+  {
+    it "reads files"
+    {
+      FILE *f = fopen("../spec/_test2.rad", "r");
+      v = fdja_fparse_radial(f);
+
+      //puts(fdja_to_json(v));
+
+      expect(v != NULL);
+      expect(v->slen == 0);
+      expect(fdja_lookup_string(v, "0", NULL) ===f "define");
+      expect(fdja_lookup_string(v, "2.0.0", NULL) ===f "mail");
+      expect(fdja_lookup_string(v, "2.0.1.to", NULL) ===f "$(user.email)");
+
+      fclose(f);
+    }
 }
 

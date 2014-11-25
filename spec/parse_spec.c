@@ -586,5 +586,19 @@ context "parsing"
       //flu_putf(fdja_todc(v));
     }
   }
+
+  describe "fdja_fparse()"
+  {
+    it "reads JSON from a FILE"
+    {
+      FILE *f = fopen("../spec/_test1.json", "r");
+      v = fdja_fparse(f);
+
+      expect(fdja_lookup_int(v, "id", -1) == 12345);
+      expect(fdja_lookup_string(v, "type", NULL) ===f "test");
+
+      fclose(f);
+    }
+  }
 }
 

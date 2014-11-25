@@ -188,5 +188,20 @@ context "parsing obj"
       //flu_putf(fdja_todc(v));
     }
   }
+
+  describe "fdja_fparse_obj()"
+  {
+    it "parses files"
+    {
+      FILE *f = fopen("../spec/_test0.jon", "r");
+      v = fdja_fparse_obj(f);
+
+      expect(v != NULL);
+      expect(v->slen > 0);
+      expect(fdja_to_json(v) ===f "{\"hello\":\"world\"}");
+
+      fclose(f);
+    }
+  }
 }
 
