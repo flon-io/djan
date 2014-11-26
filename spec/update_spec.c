@@ -419,5 +419,19 @@ context "update"
       expect(fdja_tod(r) ===f "Cok");
     }
   }
+
+//  describe "fdja_replace()"
+//  {
+//    it "replaces old with new"
+//    {
+//      v = fdja_dparse("{ a: { b: c } }");
+//
+//      fdja_value *b = fdja_l(v, "a.b");
+//
+//      fdja_replace(b, fdja_v("d"));
+//
+//      expect(fdja_to_json(v) ===F fdja_vj("{ a: { b: d } }"));
+//    }
+//  }
 }
 
