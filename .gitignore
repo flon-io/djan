@@ -5,3 +5,6 @@ tmp/*.so
 tmp/s
 *.swp
 bin/*
+
+spec/_gh9.json
+
