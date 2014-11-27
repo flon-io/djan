@@ -432,6 +432,28 @@ context "update"
 
       expect(fdja_to_json(v) ===F fdja_vj("{ a: { b: d } }"));
     }
+
+    it "replaces with an array"
+    {
+      v = fdja_dparse("{ a: { b: c } }");
+
+      fdja_value *b = fdja_l(v, "a.b");
+
+      fdja_replace(b, fdja_v("[ sr, lh, em ]"));
+
+      expect(fdja_to_json(v) ===F fdja_vj("{ a: { b: [ sr, lh, em ] } }"));
+    }
+
+    it "replaces with an object"
+    {
+      v = fdja_dparse("{ a: { b: c } }");
+
+      fdja_value *b = fdja_l(v, "a.b");
+
+      fdja_replace(b, fdja_v("{ air: lots }"));
+
+      expect(fdja_to_json(v) ===F fdja_vj("{ a: { b: { air: lots } } }"));
+    }
   }
 }
 
