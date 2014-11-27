@@ -36,6 +36,13 @@ context "fdja_v, fdja_s, ..."
       expect(fdja_to_json(v) ===f ""
         "{\"type\":\"car\",\"make\":\"nissan\",\"id\":3}");
     }
+
+    it "doesn't leak if it fails parsing"
+    {
+      v = fdja_v("hello world");
+
+      expect(v == NULL);
+    }
   }
 
   describe "fdja_vj()"
@@ -49,6 +56,11 @@ context "fdja_v, fdja_s, ..."
     it "returns NULL if it cannot parse"
     {
       expect(fdja_vj("type: car, make: honda }") == NULL);
+    }
+
+    it "doesn't leak if it fails parsing"
+    {
+      expect(fdja_vj("hello world") == NULL);
     }
   }
 
