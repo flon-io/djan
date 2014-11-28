@@ -420,6 +420,60 @@ context "update"
     }
   }
 
+  describe "fdja_oset()"
+  {
+    it "sets"
+    {
+      v = fdja_v("{}");
+
+      fdja_value *r = fdja_oset(v, "aa", fdja_v("0"));
+
+      expect(fdja_to_json(r) ===F fdja_vj("0"));
+      expect(fdja_to_json(v) ===F fdja_vj("{ aa: 0 }"));
+    }
+
+    it "replaces"
+    {
+      v = fdja_v("{ aa: 0, bb: 1 }");
+
+      fdja_value *r = fdja_oset(v, "bb", fdja_v("2"));
+
+      expect(fdja_to_json(r) ===F fdja_vj("2"));
+      expect(fdja_to_json(v) ===F fdja_vj("{ aa: 0, bb: 2 }"));
+    }
+
+    it "sets an entry, assuming alphabetical order for the keys"
+    {
+      v = fdja_v("{ al: 0, br: 1, ch: 2 }");
+
+      fdja_value *r = fdja_oset(v, "bz", fdja_v("3"));
+
+      expect(fdja_to_json(r) ===F fdja_vj(""
+        "3"));
+      expect(fdja_to_json(v) ===F fdja_vj(""
+        "{ al: 0, br: 1, bz: 3, ch: 2 }"));
+
+      r = fdja_oset(v, "ab", fdja_v("4"));
+
+      expect(fdja_to_json(r) ===F fdja_vj(""
+        "4"));
+      expect(fdja_to_json(v) ===F fdja_vj(""
+        "{ ab: 4, al: 0, br: 1, bz: 3, ch: 2 }"));
+    }
+
+    it "composes its keys"
+    {
+      v = fdja_v("{ al: 0, br: 1, ch: 2 }");
+
+      fdja_value *r = fdja_oset(v, "b%s", "z", fdja_v("3"));
+
+      expect(fdja_to_json(r) ===F fdja_vj(""
+        "3"));
+      expect(fdja_to_json(v) ===F fdja_vj(""
+        "{ al: 0, br: 1, bz: 3, ch: 2 }"));
+    }
+  }
+
   describe "fdja_replace()"
   {
     it "replaces old with new"

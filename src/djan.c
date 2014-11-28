@@ -1249,6 +1249,44 @@ fdja_value *fdja_set(fdja_value *object, const char *key, ...)
   return val;
 }
 
+fdja_value *fdja_oset(fdja_value *object, const char *key, ...)
+{
+  if (object->type != 'o') return NULL;
+
+  va_list ap; va_start(ap, key);
+  char *k = flu_svprintf(key, ap);
+  fdja_value *val = va_arg(ap, fdja_value *);
+  va_end(ap);
+
+  free(val->key); val->key = k;
+
+  for (fdja_value **link = &object->child; ; link = &(*link)->sibling)
+  {
+    fdja_value *child = *link;
+
+    if (child == NULL) { *link = val; break; }
+
+    int cmp = strcmp(k, child->key);
+
+    if (cmp > 0) continue;
+
+    *link = val;
+
+    if (cmp == 0)
+    {
+      val->sibling = child->sibling;
+      fdja_value_free(child);
+    }
+    else if (cmp < 0)
+    {
+      val->sibling = child;
+    }
+    break;
+  }
+
+  return val;
+}
+
 int fdja_merge(fdja_value *dst, fdja_value *src)
 {
   if (dst->type != 'o' || src->type != 'o') return 0;

@@ -189,6 +189,12 @@ fdja_value *fdja_push(fdja_value *array, fdja_value *v);
  */
 fdja_value *fdja_set(fdja_value *object, const char *key, ...);
 
+/* Like fdja_set() but assumes keys are in alphabetical order. Will thus
+ * insert its entry right before the first key that is "bigger" than the
+ * inserted key.
+ */
+fdja_value *fdja_oset(fdja_value *object, const char *key, ...);
+
 int fdja_merge(fdja_value *dst, fdja_value *src);
 
 int fdja_splice(fdja_value *array, long long start, size_t count, ...);
