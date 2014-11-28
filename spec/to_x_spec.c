@@ -89,7 +89,7 @@ context "to_x"
     }
   }
 
-  describe "fdja_to_djan() oneline"
+  describe "fdja_to_djan() FDJA_F_ONELINE"
   {
     it "turns a fdja_value to a djan string"
     {
@@ -133,7 +133,7 @@ context "to_x"
     }
   }
 
-  describe "fdja_to_djan() compact"
+  describe "fdja_to_djan() FDJA_F_COMPACT"
   {
     it "doesn't print unnecessary spaces"
     {
@@ -177,6 +177,57 @@ context "to_x"
     }
   }
 
+  describe "fdja_to_djan() FDJA_F_OBJ"
+  {
+    it "doesn't output the top {} obj brackets (single line)"
+    {
+      v = fdja_v(
+        "{"
+          "type: car\n"
+          "\"make/brand\": mitsubishi\n"
+          "id: 3\n"
+        "}"
+      );
+
+      expect(v != NULL);
+
+      expect(fdja_to_djan(v, FDJA_F_OBJ) ===f ""
+        "type: car, make/brand: mitsubishi, id: 3"
+      );
+    }
+
+    it "doesn't output the top {} obj brackets"
+    {
+      v = fdja_v(
+        "{"
+          "type: car\n"
+          "\"make/brand\": mitsubishi\n"
+          "id: 3\n"
+          "ok: true\n"
+          "\"suppliers,\": [ ]\n"
+          "stuff: nada\n"
+          "'branding': fail\n"
+          "x: \"4\"\n"
+          "list: []"
+        "}"
+      );
+
+      expect(v != NULL);
+
+      expect(fdja_to_djan(v, FDJA_F_OBJ) ===f ""
+        "type: car\n"
+        "make/brand: mitsubishi\n"
+        "id: 3\n"
+        "ok: true\n"
+        "\"suppliers,\": []\n"
+        "stuff: nada\n"
+        "branding: fail\n"
+        "x: \"4\"\n"
+        "list: []\n"
+      );
+    }
+  }
+
   describe "fdja_to_djan() multiline"
   {
     it "turns a fdja_value to a pretty djan string"
@@ -197,6 +248,7 @@ context "to_x"
 
       expect(v != NULL);
 
+      //flu_putf(fdja_to_djan(v, 0));
       expect(fdja_to_djan(v, 0) ===f ""
         "{\n"
         "  type: car\n"
