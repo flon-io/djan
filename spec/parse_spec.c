@@ -398,6 +398,14 @@ context "parsing"
         expect(v != NULL);
         expect(fdja_to_json(v) ===f "{}");
       }
+
+      it "doesn't mind empty lines before the object"
+      {
+        v = fdja_dparse("\n{}");
+
+        expect(v != NULL);
+        expect(fdja_to_json(v) ===f "{}");
+      }
     }
 
     context "symbols"

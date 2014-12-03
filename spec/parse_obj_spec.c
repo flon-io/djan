@@ -113,7 +113,7 @@ context "parsing obj"
 
     it "parses"
     {
-      v = fdja_dparse_obj(""
+      v = fdja_dparse_obj(
         "execute: [ invoke, { _0: stamp, color: blue }, [] ]\n"
         "id: 20141015.1320.fujutseli\n"
         "payload: {\n"
@@ -121,10 +121,42 @@ context "parsing obj"
         "}\n"
       );
 
-      ensure(v != NULL);
+      expect(v != NULL);
 
       //puts(fdja_to_json(v));
-      ensure(fdja_lookup_string(v, "id", NULL) ===f "20141015.1320.fujutseli");
+      expect(fdja_lookup_string(v, "id", NULL) ===f "20141015.1320.fujutseli");
+    }
+
+    it "doesn't mind empty lines before the obj"
+    {
+      v = fdja_dparse_obj("\n{ hello: world }");
+
+      expect(v != NULL);
+      expect(fdja_tod(v) ===f "{ hello: world }");
+    }
+
+    it "doesn't mind empty lines before the obj (no brackets)"
+    {
+      v = fdja_dparse_obj("\n\n\nhello: world");
+
+      expect(v != NULL);
+      expect(fdja_tod(v) ===f "{ hello: world }");
+    }
+
+    it "doesn't mind empty lines after the obj"
+    {
+      v = fdja_dparse_obj("{ hello: world }\n");
+
+      expect(v != NULL);
+      expect(fdja_tod(v) ===f "{ hello: world }");
+    }
+
+    it "doesn't mind empty lines in the obj"
+    {
+      v = fdja_dparse_obj("{ hello:\n \n world }");
+
+      expect(v != NULL);
+      expect(fdja_tod(v) ===f "{ hello: world }");
     }
   }
 
