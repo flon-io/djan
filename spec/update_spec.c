@@ -318,6 +318,16 @@ context "update"
       expect(fdja_to_json(v) ===f "{\"a\":[1]}");
     }
 
+    it "sets in the array immediately at hand"
+    {
+      v = fdja_dparse("[ a, b, c ]");
+
+      fdja_value *r = fdja_pset(v, "2", fdja_v("2"));
+
+      expect(r != NULL);
+      expect(fdja_to_json(v) ===F fdja_vj("[ a, b, 2 ]"));
+    }
+
     it "returns 0 when outside of array reach"
     {
       v = fdja_dparse("{ a: [ 0 ] }");
