@@ -60,6 +60,13 @@ context "update"
     }
   }
 
+  describe "fdja_unpush()"
+  {
+    it "removes a value from an array"
+    it "removes the first corresponding value"
+    it "leaves the array as is if it doesn't find"
+  }
+
   describe "fdja_set()"
   {
     it "sets a value"
