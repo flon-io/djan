@@ -1213,21 +1213,37 @@ fdja_value *fdja_push(fdja_value *array, fdja_value *v)
   return v;
 }
 
-int fdja_unpush(fdja_value *array, fdja_value *v)
+int fdja_unpush(fdja_value *array, const char* val, ...)
 {
   if (array->type != 'a') return 0;
 
+  int r = -1; // "couldn't parse" for now
+  fdja_value *v = NULL;
+
+  va_list ap; va_start(ap, val); char *s = flu_svprintf(val, ap); va_end(ap);
+
+  v = fdja_v(s); if (v == NULL) goto _over;
+
+  r = 0; // "not found" for now
+
   for (fdja_value **l = &array->child; ; l = &(*l)->sibling)
   {
-    if (*l == NULL) return 0;
+    if (*l == NULL) goto _over;
     if (fdja_cmp(*l, v) != 0) continue;
-
     fdja_value *rem = *l;
     *l = (*l)->sibling;
     fdja_free(rem);
     break;
   }
-  return 1;
+
+  r = 1; // "success"
+
+_over:
+
+  fdja_free(v);
+  free(s);
+
+  return r;
 }
 
 fdja_value *fdja_set(fdja_value *object, const char *key, ...)

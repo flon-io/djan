@@ -186,16 +186,16 @@ int fdja_lookup_bool(fdja_value *v, const char *path, ...);
 char *fdja_lj(fdja_value *v, const char *path, ...);
 char *fdja_ld(fdja_value *v, const char *path, ...);
 
-/*
- * Adds a value at the end of the array.
+/* Adds a value at the end of the array.
  */
 fdja_value *fdja_push(fdja_value *array, fdja_value *v);
 
-/*
- * Removes the first value that is fdja_equal() to the given value.
- * Returns 1 when successful.
+/* Combines val into a fdja_value then removes its first occurence
+ * from the array.
+ * Returns 1 if an occurence was found (and removed), 0 else.
+ * Returns -1 if it couldn't turn val, ... into a fdja_value.
  */
-int fdja_unpush(fdja_value *array, fdja_value *v);
+int fdja_unpush(fdja_value *array, const char* val, ...);
 
 /* Sets a value in an object.
  * If the key is prefixed with \b (backslash b), the entry is placed

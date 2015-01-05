@@ -66,7 +66,16 @@ context "update"
     {
       v = fdja_v("[ alice, bob, charly ]");
 
-      fdja_unpush(v, fdja_v("bob"));
+      fdja_unpush(v, "bob");
+
+      expect(fdja_tod(v) ===f "[ alice, charly ]");
+    }
+
+    it "composes the value"
+    {
+      v = fdja_v("[ alice, bob, charly ]");
+
+      fdja_unpush(v, "b%cb", 'o');
 
       expect(fdja_tod(v) ===f "[ alice, charly ]");
     }
@@ -75,7 +84,7 @@ context "update"
     {
       v = fdja_v("[ alice, bob, bob, charly ]");
 
-      fdja_unpush(v, fdja_v("bob"));
+      fdja_unpush(v, "bob");
 
       expect(fdja_tod(v) ===f "[ alice, bob, charly ]");
     }
@@ -84,7 +93,7 @@ context "update"
     {
       v = fdja_v("[ alice, bob, charly ]");
 
-      fdja_unpush(v, fdja_v("doug"));
+      fdja_unpush(v, "doug");
 
       expect(fdja_tod(v) ===f "[ alice, bob, charly ]");
     }
@@ -93,7 +102,7 @@ context "update"
     {
       v = fdja_v("{ alice: true }");
 
-      int r = fdja_unpush(v, fdja_v("doug"));
+      int r = fdja_unpush(v, "doug");
 
       expect(r i== 0);
     }
