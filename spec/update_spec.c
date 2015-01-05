@@ -63,8 +63,40 @@ context "update"
   describe "fdja_unpush()"
   {
     it "removes a value from an array"
+    {
+      v = fdja_v("[ alice, bob, charly ]");
+
+      fdja_unpush(v, fdja_v("bob"));
+
+      expect(fdja_tod(v) ===f "[ alice, charly ]");
+    }
+
     it "removes the first corresponding value"
+    {
+      v = fdja_v("[ alice, bob, bob, charly ]");
+
+      fdja_unpush(v, fdja_v("bob"));
+
+      expect(fdja_tod(v) ===f "[ alice, bob, charly ]");
+    }
+
     it "leaves the array as is if it doesn't find"
+    {
+      v = fdja_v("[ alice, bob, charly ]");
+
+      fdja_unpush(v, fdja_v("doug"));
+
+      expect(fdja_tod(v) ===f "[ alice, bob, charly ]");
+    }
+
+    it "returns 0 if the target isn't an array"
+    {
+      v = fdja_v("{ alice: true }");
+
+      int r = fdja_unpush(v, fdja_v("doug"));
+
+      expect(r i== 0);
+    }
   }
 
   describe "fdja_set()"

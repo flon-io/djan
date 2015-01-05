@@ -1206,11 +1206,28 @@ fdja_value *fdja_push(fdja_value *array, fdja_value *v)
 {
   if (array->type != 'a') return NULL;
 
-  for (fdja_value **s = &array->child; ; s = &(*s)->sibling)
+  for (fdja_value **l = &array->child; ; l = &(*l)->sibling)
   {
-    if (*s == NULL) { *s = v; break; }
+    if (*l == NULL) { *l = v; break; }
   }
   return v;
+}
+
+int fdja_unpush(fdja_value *array, fdja_value *v)
+{
+  if (array->type != 'a') return 0;
+
+  for (fdja_value **l = &array->child; ; l = &(*l)->sibling)
+  {
+    if (*l == NULL) return 0;
+    if (fdja_cmp(*l, v) != 0) continue;
+
+    fdja_value *rem = *l;
+    *l = (*l)->sibling;
+    fdja_free(rem);
+    break;
+  }
+  return 1;
 }
 
 fdja_value *fdja_set(fdja_value *object, const char *key, ...)

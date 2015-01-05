@@ -193,8 +193,9 @@ fdja_value *fdja_push(fdja_value *array, fdja_value *v);
 
 /*
  * Removes the first value that is fdja_equal() to the given value.
+ * Returns 1 when successful.
  */
-fdja_value *fdja_unpush(fdja_value *array, fdja_value *v);
+int fdja_unpush(fdja_value *array, fdja_value *v);
 
 /* Sets a value in an object.
  * If the key is prefixed with \b (backslash b), the entry is placed
