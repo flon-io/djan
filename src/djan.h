@@ -152,6 +152,16 @@ long double fdja_to_double(fdja_value *v);
 
 size_t fdja_size(fdja_value *v);
 
+/* Returns 0 if the values are the same. Returns 0 if the values have
+ * the same JSON representation.
+ *
+ * Returns strcmp(to_json(a), to_json(b)) else.
+ *
+ * Returns 0 if the two pointers hold NULL, returns -1 if one of the pointers
+ * hold NULL.
+ */
+int fdja_cmp(fdja_value *a, fdja_value *b);
+
 fdja_value *fdja_value_at(fdja_value *v, long n);
 
 fdja_value *fdja_vlookup(fdja_value *v, const char *path, va_list ap);
@@ -176,7 +186,15 @@ int fdja_lookup_bool(fdja_value *v, const char *path, ...);
 char *fdja_lj(fdja_value *v, const char *path, ...);
 char *fdja_ld(fdja_value *v, const char *path, ...);
 
+/*
+ * Adds a value at the end of the array.
+ */
 fdja_value *fdja_push(fdja_value *array, fdja_value *v);
+
+/*
+ * Removes the first value that is fdja_equal() to the given value.
+ */
+fdja_value *fdja_unpush(fdja_value *array, fdja_value *v);
 
 /* Sets a value in an object.
  * If the key is prefixed with \b (backslash b), the entry is placed

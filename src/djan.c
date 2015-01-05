@@ -1004,6 +1004,23 @@ size_t fdja_size(fdja_value *v)
   return i;
 }
 
+int fdja_cmp(fdja_value *a, fdja_value *b)
+{
+  if (a == NULL && b == NULL) return 0;
+  if (a == NULL || b == NULL) return -1;
+  if (a == b) return 0;
+
+  char *ja = fdja_to_json(a);
+  char *jb = fdja_to_json(b);
+
+  int r = strcmp(ja, jb);
+
+  free(ja);
+  free(jb);
+
+  return r;
+}
+
 fdja_value *fdja_value_at(fdja_value *v, long n)
 {
   if (n < 0)

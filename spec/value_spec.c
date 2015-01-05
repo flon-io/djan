@@ -16,7 +16,7 @@ context "fdja_value"
   }
   after each
   {
-    if (v != NULL) fdja_value_free(v);
+    fdja_value_free(v);
   }
 
   describe "fdja_size()"
@@ -44,7 +44,7 @@ context "fdja_value"
     }
     after each
     {
-      if (v2) fdja_value_free(v2);
+      fdja_value_free(v2);
     }
 
     it "copies entirely a fdja_value"
@@ -124,6 +124,54 @@ context "fdja_value"
       v1 = fdja_lookup(v, "b");
 
       expect(fdja_srk(v1) ^== "[1,2,\"trois\"],\"c\":");
+    }
+  }
+
+  describe "fdja_cmp()"
+  {
+    before each
+    {
+      fdja_value *v1 = NULL;
+    }
+    after each
+    {
+      fdja_value_free(v1);
+    }
+
+    it "returns 0 if a and b are the same"
+    {
+      v = fdja_v("{ a: true }");
+
+      expect(fdja_cmp(v, v) i== 0);
+    }
+
+    it "returns 0 if a and b have the same JSON representation"
+    {
+      v = fdja_v("{ a: true }");
+      v1 = fdja_v("{ 'a': true }");
+
+      expect(fdja_cmp(v, v1) i== 0);
+    }
+
+    it "returns some non-zero value else"
+    {
+      v = fdja_v("{ a: true }");
+      v1 = fdja_v("{ b: true }");
+
+      expect(fdja_cmp(v, v1) < 0);
+    }
+
+    it "returns 0 if both values point to NULL"
+    {
+      expect(fdja_cmp(NULL, NULL) i== 0);
+    }
+
+    it "returns -1 if 1! of the values point to NULL"
+    {
+      v = fdja_v("true");
+
+      expect(fdja_cmp(v, NULL) i== -1);
+      expect(fdja_cmp(NULL, v) i== -1);
     }
   }
 }
