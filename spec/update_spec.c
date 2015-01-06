@@ -274,6 +274,24 @@ context "update"
       expect(fdja_to_json(v) ===f "[0]");
     }
 
+    it "doesn't remove values when the array is empty"
+    {
+      v = fdja_v("[]");
+      int r = fdja_splice(v, 0, 1, NULL);
+
+      expect(r == 0);
+      expect(fdja_tod(v) ===f "[]");
+    }
+
+    it "doesn't remove values when the args point to something off"
+    {
+      v = fdja_v("[ 0, 1, 2, 3 ]");
+      int r = fdja_splice(v, 4, 10, NULL);
+
+      expect(r == 0);
+      expect(fdja_tod(v) ===f "[ 0, 1, 2, 3 ]");
+    }
+
     it "inserts values"
     {
       v = fdja_v("[]");
