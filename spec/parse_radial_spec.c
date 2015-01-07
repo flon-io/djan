@@ -214,6 +214,16 @@ context "parsing radial"
         "[\"nada\",{\"_0\":\"aa\",\"_1\":\"bb\",\"d\":2,\"e\":3},[]]");
     }
 
+    it "preserves the attribute order"
+    {
+      v = fdja_dparse_radial("nada d: 0 e: 1 aa bb");
+
+      ensure(v != NULL);
+
+      ensure(fdja_tod(v) ===f ""
+        "[ nada, { d: 0, e: 1, _2: aa, _3: bb }, [] ]");
+    }
+
     it "accepts comments at the end of the radial lines"
     {
       v = fdja_dparse_radial(
