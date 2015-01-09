@@ -891,7 +891,12 @@ void fdja_to_d(FILE *f, fdja_value *v, int flags, size_t depth)
 
 char *fdja_to_djan(fdja_value *v, int flags)
 {
-  if (v == NULL) return NULL;
+  if (v == NULL)
+  {
+    if (flags & FDJA_F_NULL == 0) return NULL;
+    if (flags & FDJA_F_COLOR) return strdup("[0;31mNULL[0;0m");
+    return strdup("NULL");
+  }
 
   flu_sbuffer *b = flu_sbuffer_malloc();
   fdja_to_d(b->stream, v, flags, 0);
