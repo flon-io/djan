@@ -893,7 +893,7 @@ char *fdja_to_djan(fdja_value *v, int flags)
 {
   if (v == NULL)
   {
-    if (flags & FDJA_F_NULL == 0) return NULL;
+    if ((flags & FDJA_F_NULL) == 0) return NULL;
     if (flags & FDJA_F_COLOR) return strdup("[0;31mNULL[0;0m");
     return strdup("NULL");
   }
