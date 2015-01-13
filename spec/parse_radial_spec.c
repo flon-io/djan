@@ -16,7 +16,7 @@ context "parsing radial"
   }
   after each
   {
-    if (v != NULL) fdja_value_free(v);
+    fdja_value_free(v);
   }
 
   describe "fdja_parse_radial()"
