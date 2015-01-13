@@ -50,6 +50,7 @@ typedef struct fdja_value {
   short sowner; // if 1 then this fdja_value "owns" the source (has to free it)
   struct fdja_value *sibling;
   struct fdja_value *child;
+  long ind; // only used by radial
 } fdja_value;
 
 fdja_value *fdja_parse(char *input);

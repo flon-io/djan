@@ -276,6 +276,24 @@ context "parsing radial"
         "]]"
       );
     }
+
+    it "accepts single values as radial lines"
+    {
+      v = fdja_dparse_radial(
+        "sequence\n"
+        "  3\n"
+        "  null\n"
+        "  quatre\n"
+      );
+
+      ensure(v != NULL);
+
+      ensure(fdja_tod(v) ===f ""
+        "[ sequence, {}, [ "
+          "3, null, [ quatre, {}, [] ]"
+        " ] ]"
+      );
+    }
   }
 
   describe "fdja_parse_radial_f()"
