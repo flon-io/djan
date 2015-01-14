@@ -336,6 +336,7 @@ context "parsing radial"
 
       //puts(fdja_to_json(v));
 
+      expect(v != NULL);
       //expect(v->source != NULL);
       expect(v->slen == 0);
       expect(fdja_lookup_string(v, "0", NULL) ===f "define");
@@ -347,6 +348,7 @@ context "parsing radial"
     {
       v = fdja_parse_radial_f("../spec/_%s2.rad", "test");
 
+      expect(v != NULL);
       expect(fdja_lookup_string(v, "2.0.1.to", NULL) ===f "$(user.email)");
     }
 
