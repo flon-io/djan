@@ -277,6 +277,22 @@ context "parsing radial"
       );
     }
 
+    it "accepts the $(dollar) stuff"
+    {
+      v = fdja_dparse_radial(
+        "$(a)\n"
+        "  b $(c) $(d): e f: $(g) $(h)$(i)\n"
+      );
+
+      ensure(v != NULL);
+
+      ensure(fdja_tod(v) ===f ""
+        "[ $(a), {}, ["
+          " [ b, { _0: $(c), $(d): e, f: $(g), _3: $(h)$(i) }, [] ] "
+        "] ]"
+      );
+    }
+
 //    it "accepts ':' in symbol values (not symbol keys)"
 //    {
 //      v = fdja_dparse_radial(
