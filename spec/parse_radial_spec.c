@@ -277,22 +277,38 @@ context "parsing radial"
       );
     }
 
-    it "accepts single values as radial lines"
+//    it "accepts ':' in symbol values (not symbol keys)"
+//    {
+//      v = fdja_dparse_radial(
+//        "invoke a b: c:y\n"
+//      );
+//
+//      ensure(v != NULL);
+//
+//      ensure(fdja_to_json(v) ===f ""
+//        "[\"invoke\",{},[]]"
+//      );
+//    }
+
+    context "single values"
     {
-      v = fdja_dparse_radial(
-        "sequence\n"
-        "  3\n"
-        "  null\n"
-        "  quatre\n"
-      );
+      it "accepts single values as radial lines"
+      {
+        v = fdja_dparse_radial(
+          "sequence\n"
+          "  3\n"
+          "  null\n"
+          "  quatre\n"
+        );
 
-      ensure(v != NULL);
+        ensure(v != NULL);
 
-      ensure(fdja_tod(v) ===f ""
-        "[ sequence, {}, ["
-          " 3, null, [ quatre, {}, [] ] "
-        "] ]"
-      );
+        ensure(fdja_tod(v) ===f ""
+          "[ sequence, {}, ["
+            " 3, null, [ quatre, {}, [] ] "
+          "] ]"
+        );
+      }
     }
 
     context "and () groups"
