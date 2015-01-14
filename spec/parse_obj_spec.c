@@ -158,6 +158,14 @@ context "parsing obj"
       expect(v != NULL);
       expect(fdja_tod(v) ===f "{ hello: world }");
     }
+
+    it "doesn't mind a value symbol containing ':'"
+    {
+      v = fdja_dparse_obj("{ hello:wor:ld,stuff:none }");
+
+      expect(v != NULL);
+      expect(fdja_tod(v) ===f "{ hello: wor:ld, stuff: none }");
+    }
   }
 
   describe "fdja_parse_obj_f()"

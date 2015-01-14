@@ -118,10 +118,14 @@ static void fdja_parser_init()
         ")*"
       "'");
 
-  fabr_parser *symbol =
+  fabr_parser *symbolk =
     fabr_n_rex(
       "symbol",
-      "[^ \b\f\n\r\t\"':,\\[\\]\\{\\}#\\\\]+");
+      "[^ \b\f\n\r\t\"',\\[\\]\\{\\}#\\\\:]+");
+  fabr_parser *symbolv =
+    fabr_n_rex(
+      "symbol",
+      "[^ \b\f\n\r\t\"',\\[\\]\\{\\}#\\\\]+");
 
   fabr_parser *number =
     fabr_n_rex("number", "-?[0-9]+(\\.[0-9]+)?([eE][+-]?[0-9]+)?");
@@ -130,7 +134,7 @@ static void fdja_parser_init()
     fabr_n_seq(
       "entry",
       blanks,
-      fabr_n_alt("key", string, sqstring, symbol, NULL),
+      fabr_n_alt("key", string, sqstring, symbolk, NULL),
       blanks,
       fabr_string(":"),
       fabr_n("value"),
@@ -173,7 +177,7 @@ static void fdja_parser_init()
       fabr_altg(
         fabr_alt(
           string, sqstring, number, object, array, jtrue, jfalse, jnull, NULL),
-        symbol,
+        symbolv,
         NULL),
       blanks,
       NULL);
@@ -181,7 +185,7 @@ static void fdja_parser_init()
   // number & symbol
 
   fdja_number_parser = number;
-  fdja_symbol_parser = symbol;
+  fdja_symbol_parser = symbolv;
 
   // obj
 
@@ -255,14 +259,14 @@ static void fdja_parser_init()
       fabr_alt(
         rad_p, string, sqstring, number, object, array, jtrue, jfalse, jnull,
         NULL),
-      symbol,
+      symbolv,
       NULL);
 
   fabr_parser *rad_e =
     fabr_n_seq(
       "rad_e",
       fabr_seq(
-        fabr_n_alt("rad_k", string, sqstring, symbol, NULL),
+        fabr_n_alt("rad_k", string, sqstring, symbolk, NULL),
         spaces, fabr_str(":"), blanks,
         NULL), fabr_q("?"),
       rad_v,
