@@ -239,6 +239,32 @@ static void fdja_parser_init()
 //    fabr_n_rep(
 //      "symbol", fabr_alt(sy_dol, sy_out, NULL), 0, -1);
 
+  fabr_parser *syk_dol =
+    fabr_seq(
+      fabr_string("$("), fabr_n("symk"), fabr_string(")"), NULL);
+  fabr_parser *syk_str =
+    fabr_rex(
+      "("
+        "[^\\$ \b\f\n\r\t\"',\\[\\]\\{\\}\\)#\\\\:]" "|"
+        "\\$[^\\( \b\f\n\r\t\"',\\[\\]\\{\\}\\)#\\\\:]"
+      ")+");
+  fabr_parser *symk =
+    fabr_n_rep(
+      "symk", fabr_alt(syk_dol, syk_str, NULL), 1, -1);
+
+  fabr_parser *syv_dol =
+    fabr_seq(
+      fabr_string("$("), fabr_n("symv"), fabr_string(")"), NULL);
+  fabr_parser *syv_str =
+    fabr_rex(
+      "("
+        "[^\\$ \b\f\n\r\t\"',\\[\\]\\{\\}\\)#\\\\]" "|"
+        "\\$[^\\( \b\f\n\r\t\"',\\[\\]\\{\\}\\)#\\\\]"
+      ")+");
+  fabr_parser *symv =
+    fabr_n_rep(
+      "symv", fabr_alt(syv_dol, syv_str, NULL), 1, -1);
+
   //fabr_parser *symbolh = fabr_n_rex("symbolh", "[^ \t\n\r,\\[\\]\\{\\}#]+");
   fabr_parser *spaces = fabr_rex("[ \t]*");
 
@@ -259,21 +285,21 @@ static void fdja_parser_init()
       fabr_alt(
         rad_p, string, sqstring, number, object, array, jtrue, jfalse, jnull,
         NULL),
-      symbolv,
+      symv,
       NULL);
 
   fabr_parser *rad_e =
     fabr_n_seq(
       "rad_e",
       fabr_seq(
-        fabr_n_alt("rad_k", string, sqstring, symbolk, NULL),
+        fabr_n_alt("rad_k", string, sqstring, symk, NULL),
         spaces, fabr_str(":"), blanks,
         NULL), fabr_q("?"),
       rad_v,
       NULL);
 
   fabr_parser *rad_h =
-    fabr_n_altg("rad_h", rad_v, symbolv, NULL);
+    fabr_n_altg("rad_h", rad_v, symv, NULL);
 
   fabr_parser *rad_g =
     fabr_n_seq("rad_g", rad_h, fabr_seq(comma, rad_e, NULL), fabr_q("*"), NULL);
@@ -674,6 +700,7 @@ fdja_value *fdja_parse_radial(char *input)
     //
     // debugging input and cleaned up tree
 
+  //printf(">%s<\n", input);
   //fabr_tree *tt = fabr_parse_f(input, 0, fdja_radial_parser, FABR_F_ALL);
   //flu_putf(fabr_tree_to_string(tt, input, 1));
   //fabr_tree_free(tt);
