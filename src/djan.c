@@ -239,7 +239,7 @@ static void fdja_parser_init()
 //    fabr_n_rep(
 //      "symbol", fabr_alt(sy_dol, sy_out, NULL), 0, -1);
 
-  fabr_parser *word = fabr_n_rex("symbol", "[^ \t\n\r,\\[\\]\\{\\}#]+");
+  //fabr_parser *symbolh = fabr_n_rex("symbolh", "[^ \t\n\r,\\[\\]\\{\\}#]+");
   fabr_parser *spaces = fabr_rex("[ \t]*");
 
   fabr_parser *rad_i = fabr_name("rad_i", spaces);
@@ -273,7 +273,7 @@ static void fdja_parser_init()
       NULL);
 
   fabr_parser *rad_h =
-    fabr_n_altg("rad_h", rad_v, word, NULL);
+    fabr_n_altg("rad_h", rad_v, symbolv, NULL);
 
   fabr_parser *rad_g =
     fabr_n_seq("rad_g", rad_h, fabr_seq(comma, rad_e, NULL), fabr_q("*"), NULL);
