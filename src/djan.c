@@ -117,6 +117,7 @@ static void fdja_parser_init()
           "]"
         ")*"
       "'");
+
   fabr_parser *symbol =
     fabr_n_rex(
       "symbol",
@@ -193,6 +194,47 @@ static void fdja_parser_init()
 
   // radial
 
+//  fabr_parser *dol =
+//    fabr_n_seq(
+//      "d", fabr_string("$("), fabr_n("p"), fabr_string(")"), NULL);
+//  fabr_parser *str =
+//    fabr_n_rex(
+//      "s",
+//      "("
+//        "\\\\\\)" "|"
+//        "[^\\$\\)]" "|"
+//        "\\$[^\\(]"
+//      ")+");
+//  //fabr_parser *span =
+//    fabr_n_rep(
+//      "p", fabr_alt(dol, str, NULL), 0, -1);
+//  fabr_parser *outerstr =
+//    fabr_n_rex(
+//      "s",
+//      "("
+//        "[^\\$]" "|" // doesn't mind ")"
+//        "\\$[^\\(]"
+//      ")+");
+//  fdol_parser =
+//    fabr_n_rep(
+//      "r", fabr_alt(dol, outerstr, NULL), 0, -1);
+  //
+//  fabr_parser *sy_dol =
+//    fabr_seq(
+//      fabr_string("$("), fabr_n("sy_spa"), fabr_string(")"), NULL);
+//  //fabr_parser *sy_spa =
+//    fabr_n_rep(
+//      "sy_spa", fabr_alt(sy_dol, sy_str, NULL), 0, -1);
+//  fabr_parser *sy_out =
+//    fabr_rex(
+//      "("
+//        "[^\\$ \b\f\n\r\t\"':,\\[\\]\\{\\}#\\\\]" "|"
+//        "\\$[^\\( \b\f\n\r\t\"':,\\[\\]\\{\\}#\\\\]"
+//      ")+");
+//  fabr_parser *symbol =
+//    fabr_n_rep(
+//      "symbol", fabr_alt(sy_dol, sy_out, NULL), 0, -1);
+
   fabr_parser *word = fabr_n_rex("symbol", "[^ \t\n\r,\\[\\]\\{\\}#]+");
   fabr_parser *spaces = fabr_rex("[ \t]*");
 
@@ -203,7 +245,8 @@ static void fdja_parser_init()
 
   fabr_parser *rad_p =
     fabr_n_seq(
-      "rad_p", fabr_string("("), fabr_n("rad_g"), fabr_string(")"),
+      "rad_p",
+      fabr_string("("), blanks, fabr_n("rad_g"), blanks, fabr_string(")"),
       NULL);
 
   fabr_parser *rad_v =

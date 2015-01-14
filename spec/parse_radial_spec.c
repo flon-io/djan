@@ -289,10 +289,26 @@ context "parsing radial"
       ensure(v != NULL);
 
       ensure(fdja_tod(v) ===f ""
-        "[ sequence, {}, [ "
-          "3, null, [ quatre, {}, [] ]"
-        " ] ]"
+        "[ sequence, {}, ["
+          " 3, null, [ quatre, {}, [] ] "
+        "] ]"
       );
+    }
+
+    context "and () groups"
+    {
+      it "reads 'p' groups"
+      {
+        v = fdja_dparse_radial(
+          "if (a > b)\n"
+        );
+
+        ensure(v != NULL);
+
+        ensure(fdja_tod(v) ===f ""
+          "[ if, {}, [] ]"
+        );
+      }
     }
   }
 
