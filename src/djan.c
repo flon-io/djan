@@ -653,24 +653,31 @@ static fdja_value *parse_radg(char *input, ssize_t ind, fabr_tree *radg)
 
     r = fdja_value_malloc('a', NULL, 0, 0, 0);
 
-    fdja_value *vname = parse_radv(input, radh->child);
-
+    fdja_value *vname = NULL;
     fdja_value *vatts = fdja_value_malloc('o', NULL, 0, 0, 0);
     fdja_value *vchildren = fdja_value_malloc('a', NULL, 0, 0, 0);
 
+    vname = parse_radv(input, radh->child);
+    if (ind == -1)
+    {
+      fdja_value *n = vname;
+      vname = fdja_s("(");
+      fdja_set(vatts, "_0", n);
+    }
+
     // attributes
 
-    fdja_value **anext = &vatts->child;
-    size_t j = 0;
+    size_t j = ind == -1 ? 1 : 0;
     for (flu_node *n = es->first; n; n = n->next)
     {
       fabr_tree *ak = fabr_subtree_lookup(n->item, "rad_k");
       fabr_tree *av = fabr_subtree_lookup(n->item, "rad_v");
       fdja_value *va = parse_radv(input, av);
-      va->key = ak ? fabr_tree_string(input, ak) : flu_sprintf("_%zu", j);
-      *anext = va;
-      anext = &va->sibling;
-      ++j;
+      fdja_push(vatts, va);
+      char *k = ak ? fabr_tree_string(input, ak) : flu_sprintf("_%zu", j);
+      fdja_set(vatts, k, va);
+      free(k);
+      j++;
     }
 
     r->child = vname; // [ name,
