@@ -574,7 +574,6 @@ static void fdja_stack_radl(flu_list *values, fdja_value *v)
 
 static int is_stringy(fabr_tree *t)
 {
-  //printf("is_stringy() %s\n", fabr_tree_to_string(t, NULL, 0));
   if (t->name == NULL) return 0;
   if (*t->name == 's') return 1; // string, sqstring, symbol
   return 0;
@@ -782,6 +781,11 @@ fdja_value *fdja_c(const char *format, ...)
 fdja_value *fdja_clone(fdja_value *v)
 {
   return v ? fdja_parse(fdja_to_json(v)) : NULL;
+}
+
+int fdja_is_stringy(fdja_value *v)
+{
+  return v->type == 's' || v->type == 'q' || v->type == 'y';
 }
 
 

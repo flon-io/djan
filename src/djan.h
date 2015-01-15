@@ -89,6 +89,10 @@ fdja_value *fdja_c(const char *input, ...);
 
 fdja_value *fdja_clone(fdja_value *v);
 
+/* Returns 1 if v is a string, a sqstring or a symbol.
+ */
+int fdja_is_stringy(fdja_value *v);
+
 char *fdja_to_json(fdja_value *v);
 
 int fdja_to_json_f(fdja_value *v, const char *path, ...);

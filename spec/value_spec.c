@@ -174,5 +174,41 @@ context "fdja_value"
       expect(fdja_cmp(NULL, v) i== -1);
     }
   }
+
+  describe "fdja_is_stringy()"
+  {
+    it "returns 1 if v is a string, a single quote string or a symbol"
+    {
+      fdja_free(v); v = fdja_v("\"nada\"");
+      expect(fdja_is_stringy(v) i== 1);
+
+      fdja_free(v); v = fdja_v("'nada'");
+      expect(fdja_is_stringy(v) i== 1);
+
+      fdja_free(v); v = fdja_v("nada");
+      expect(fdja_is_stringy(v) i== 1);
+    }
+
+    it "returns 0 else"
+    {
+      fdja_free(v); v = fdja_v("null");
+      expect(fdja_is_stringy(v) i== 0);
+
+      fdja_free(v); v = fdja_v("[ \"nada\" ]");
+      expect(fdja_is_stringy(v) i== 0);
+
+      fdja_free(v); v = fdja_v("{ a: 0 }");
+      expect(fdja_is_stringy(v) i== 0);
+
+      fdja_free(v); v = fdja_v("1.0");
+      expect(fdja_is_stringy(v) i== 0);
+
+      fdja_free(v); v = fdja_v("true");
+      expect(fdja_is_stringy(v) i== 0);
+
+      fdja_free(v); v = fdja_v("false");
+      expect(fdja_is_stringy(v) i== 0);
+    }
+  }
 }
 
