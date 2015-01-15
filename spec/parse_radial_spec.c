@@ -329,7 +329,7 @@ context "parsing radial"
 
     context "and () groups"
     {
-      it "reads 'p' groups"
+      it "reads '(' groups"
       {
         v = fdja_dparse_radial(
           "if (a > b)\n"
@@ -339,6 +339,23 @@ context "parsing radial"
 
         ensure(fdja_tod(v) ===f ""
           "[ if, { _0: [ (, { _0: a, _1: >, _2: b }, [] ] }, [] ]"
+        );
+      }
+
+      it "accepts '(' groups as head"
+      {
+        v = fdja_dparse_radial(
+          "(a > 0) and (b > 1)\n"
+        );
+
+        ensure(v != NULL);
+
+        ensure(fdja_tod(v) ===f ""
+          "[ "
+            "[ (, { _0: a, _1: >, _2: 0 }, [] ], "
+            "{ _0: and, _1: [ (, { _0: b, _1: >, _2: 1 }, [] ] }, "
+            "[] "
+          "]"
         );
       }
     }
