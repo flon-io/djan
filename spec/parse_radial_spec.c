@@ -293,18 +293,18 @@ context "parsing radial"
       );
     }
 
-//    it "accepts ':' in symbol values (not symbol keys)"
-//    {
-//      v = fdja_dparse_radial(
-//        "invoke a b: c:y\n"
-//      );
-//
-//      ensure(v != NULL);
-//
-//      ensure(fdja_to_json(v) ===f ""
-//        "[\"invoke\",{},[]]"
-//      );
-//    }
+    it "accepts ':' in symbol values (not symbol keys)"
+    {
+      v = fdja_dparse_radial(
+        "invoke a b: c:y\n"
+      );
+
+      ensure(v != NULL);
+
+      ensure(fdja_tod(v) ===f ""
+        "[ invoke, { _0: a, b: c:y }, [] ]"
+      );
+    }
 
     context "single values"
     {
