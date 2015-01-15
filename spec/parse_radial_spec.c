@@ -327,21 +327,21 @@ context "parsing radial"
       }
     }
 
-//    context "and () groups"
-//    {
-//      it "reads 'p' groups"
-//      {
-//        v = fdja_dparse_radial(
-//          "if (a > b)\n"
-//        );
-//
-//        ensure(v != NULL);
-//
-//        ensure(fdja_tod(v) ===f ""
-//          "[ if, {}, [] ]"
-//        );
-//      }
-//    }
+    context "and () groups"
+    {
+      it "reads 'p' groups"
+      {
+        v = fdja_dparse_radial(
+          "if (a > b)\n"
+        );
+
+        ensure(v != NULL);
+
+        ensure(fdja_tod(v) ===f ""
+          "[ if, { _0: [ a, { _0: >, _1: b }, [] ] }, [] ]"
+        );
+      }
+    }
   }
 
   describe "fdja_parse_radial_f()"
