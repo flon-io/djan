@@ -320,8 +320,10 @@ context "parsing radial"
         ensure(v != NULL);
 
         ensure(fdja_tod(v) ===f ""
-          "[ sequence, {}, ["
-            " 3, null, [ quatre, {}, [] ] "
+          "[ sequence, {}, [ "
+            "[ val, { _0: 3 }, [] ], "
+            "[ val, { _0: null }, [] ], "
+            "[ quatre, {}, [] ] "
           "] ]"
         );
       }

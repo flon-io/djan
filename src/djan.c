@@ -639,23 +639,22 @@ static fdja_value *parse_radg(char *input, ssize_t ind, fabr_tree *radg)
   fabr_tree *radh = fabr_tree_lookup(radg, "rad_h");
   flu_list *es = fabr_tree_list_named(radg->child->sibling, "rad_e");
 
-  fdja_value *r = NULL;
+  fdja_value *r = fdja_value_malloc('a', NULL, 0, 0, 0);
+  fdja_value *vname = NULL;
+  fdja_value *vatts = fdja_value_malloc('o', NULL, 0, 0, 0);
+  fdja_value *vchildren = fdja_value_malloc('a', NULL, 0, 0, 0);
 
   if (es->first == NULL && ! (is_stringy(radh->child->child)))
   {
     // single value
 
-    r = fdja_extract_value(input, radh->child->child);
+    vname = fdja_s("val");
+
+    fdja_set(vatts, "_0", fdja_extract_value(input, radh->child->child));
   }
   else
   {
-    // [ "sequence", {}, [] ]
-
-    r = fdja_value_malloc('a', NULL, 0, 0, 0);
-
-    fdja_value *vname = NULL;
-    fdja_value *vatts = fdja_value_malloc('o', NULL, 0, 0, 0);
-    fdja_value *vchildren = fdja_value_malloc('a', NULL, 0, 0, 0);
+    // vanilla tree node
 
     vname = parse_radv(input, radh->child);
     if (ind == -1)
@@ -679,11 +678,11 @@ static fdja_value *parse_radg(char *input, ssize_t ind, fabr_tree *radg)
       free(k);
       j++;
     }
-
-    r->child = vname; // [ name,
-    vname->sibling = vatts; // {},
-    vatts->sibling = vchildren; // [] ]
   }
+
+  r->child = vname; // [ name,
+  vname->sibling = vatts; // {},
+  vatts->sibling = vchildren; // [] ]
 
   flu_list_free(es);
 
