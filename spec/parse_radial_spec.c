@@ -358,6 +358,19 @@ context "parsing radial"
           "]"
         );
       }
+
+      it "plays well with $(dollar)"
+      {
+        v = fdja_dparse_radial(
+          "if (a > $(b)$(c))\n"
+        );
+
+        ensure(v != NULL);
+
+        ensure(fdja_tod(v) ===f ""
+          "[ if, { _0: [ (, { _0: a, _1: >, _2: $(b)$(c) }, [] ] }, [] ]"
+        );
+      }
     }
   }
 
