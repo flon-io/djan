@@ -53,6 +53,9 @@ typedef struct fdja_value {
   ssize_t ind; // only used by radial
 } fdja_value;
 
+fdja_value *fdja_array();
+fdja_value *fdja_object();
+
 fdja_value *fdja_parse(char *input);
 fdja_value *fdja_dparse(char *input);
 fdja_value *fdja_fparse(FILE *f);

@@ -43,7 +43,7 @@
 //
 // fdja_value malloc/free
 
-static fdja_value *fdja_value_malloc(
+fdja_value *fdja_value_malloc(
   char type, char *input, size_t off, size_t len, short owner)
 {
   fdja_value *v = calloc(1, sizeof(fdja_value));
@@ -75,6 +75,9 @@ void fdja_value_free(fdja_value *v)
 
   free(v);
 }
+
+fdja_value *fdja_array() { return fdja_value_malloc('a', NULL, 0, 0, 0); }
+fdja_value *fdja_object() { return fdja_value_malloc('o', NULL, 0, 0, 0); }
 
 
 //
