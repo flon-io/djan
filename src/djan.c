@@ -1638,7 +1638,11 @@ void fdja_replace(fdja_value *old, fdja_value *new)
   old->soff = new->soff;
   old->slen = new->slen;
 
-  fdja_free(old->child); old->child = new->child; new->child = NULL;
+  for (fdja_value *c = old->child; c; )
+  {
+    fdja_value *sibling = c->sibling; fdja_free(c); c = sibling;
+  }
+  old->child = new->child; new->child = NULL;
 
   fdja_free(new);
 }

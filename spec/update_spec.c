@@ -584,6 +584,16 @@ context "update"
 
       expect(fdja_to_json(v) ===F fdja_vj("{ a: { b: { air: lots } } }"));
     }
+
+    it "frees child and siblings"
+    {
+      v = fdja_v("[ a, { _0: b }, [] ]");
+      fdja_value *v1 = fdja_v("[ c, { _0: d }, [] ]");
+
+      fdja_replace(v, v1);
+
+      expect(fdja_tod(v) ===f "[ c, { _0: d }, [] ]");
+    }
   }
 }
 
