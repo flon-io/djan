@@ -175,6 +175,42 @@ context "fdja_value"
     }
   }
 
+  describe "fdja_strcmp()"
+  {
+    it "returns -1 if the value isn't a string or symbol"
+    {
+      fdja_free(v); v = fdja_v("true");
+      expect(fdja_strcmp(v, "true") i== -1);
+
+      fdja_free(v); v = fdja_v("[]");
+      expect(fdja_strcmp(v, "[]") i== -1);
+    }
+
+    it "returns 0 in case of match"
+    {
+      fdja_free(v); v = fdja_v("\"chf\"");
+      expect(fdja_strcmp(v, "chf") i== 0);
+
+      fdja_free(v); v = fdja_v("'eur'");
+      expect(fdja_strcmp(v, "eur") i== 0);
+
+      fdja_free(v); v = fdja_v("jpy");
+      expect(fdja_strcmp(v, "jpy") i== 0);
+    }
+
+    it "returns some non zero int else"
+    {
+      fdja_free(v); v = fdja_v("\"chf\"");
+      expect(fdja_strcmp(v, "Chf") i!= 0);
+
+      fdja_free(v); v = fdja_v("'eur'");
+      expect(fdja_strcmp(v, "Eur") i!= 0);
+
+      fdja_free(v); v = fdja_v("jpy");
+      expect(fdja_strcmp(v, "Jpy") i!= 0);
+    }
+  }
+
   describe "fdja_is_stringy()"
   {
     it "returns 1 if v is a string, a single quote string or a symbol"
