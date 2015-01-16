@@ -149,6 +149,8 @@ char *fdja_srk(fdja_value *v);
 
 /* Returns 0 if v holds a string or a symbol and the text matches s.
  * Returns what strcmp() would return else.
+ *
+ * Warning: the comparison is performed on the escaped version of the string!
  */
 int fdja_strcmp(fdja_value *v, const char *s);
 
