@@ -76,8 +76,15 @@ void fdja_value_free(fdja_value *v)
   free(v);
 }
 
-fdja_value *fdja_array() { return fdja_value_malloc('a', NULL, 0, 0, 0); }
-fdja_value *fdja_object() { return fdja_value_malloc('o', NULL, 0, 0, 0); }
+fdja_value *fdja_array_malloc()
+{
+  return fdja_value_malloc('a', NULL, 0, 0, 0);
+}
+
+fdja_value *fdja_object_malloc()
+{
+  return fdja_value_malloc('o', NULL, 0, 0, 0);
+}
 
 
 //
