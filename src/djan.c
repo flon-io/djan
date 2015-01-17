@@ -1337,6 +1337,18 @@ fdja_value *fdja_push(fdja_value *array, fdja_value *v)
   {
     if (*l == NULL) { *l = v; break; }
   }
+
+  return v;
+}
+
+fdja_value *fdja_unshift(fdja_value *array, fdja_value *v)
+{
+  if (array->type != 'a') return NULL;
+
+  fdja_value *c = array->child;
+  array->child = v;
+  v->sibling = c;
+
   return v;
 }
 

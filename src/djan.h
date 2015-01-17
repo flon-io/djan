@@ -207,8 +207,14 @@ char *fdja_lj(fdja_value *v, const char *path, ...);
 char *fdja_ld(fdja_value *v, const char *path, ...);
 
 /* Adds a value at the end of the array.
+ * Returns that value.
  */
 fdja_value *fdja_push(fdja_value *array, fdja_value *v);
+
+/* Adds a value at the beginning of the array.
+ * Returns that value.
+ */
+fdja_value *fdja_unshift(fdja_value *array, fdja_value *v);
 
 /* Combines val into a fdja_value then removes its first occurence
  * from the array.

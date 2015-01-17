@@ -60,6 +60,18 @@ context "update"
     }
   }
 
+  describe "fdja_unshift()"
+  {
+    it "pushes at the begging of an array"
+    {
+      v = fdja_v("[ 0, 1, 2 ]");
+      fdja_value *r = fdja_unshift(v, fdja_v("3"));
+
+      expect(r != NULL);
+      expect(fdja_tod(v) ===f "[ 3, 0, 1, 2 ]");
+    }
+  }
+
   describe "fdja_unpush()"
   {
     it "removes a value from an array"
