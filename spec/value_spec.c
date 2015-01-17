@@ -217,6 +217,13 @@ context "fdja_value"
 
       expect(fdja_strcmp(v, "chff") i!= 0);
     }
+
+    it "considers the whole source span"
+    {
+      v = fdja_v("chff");
+
+      expect(fdja_strcmp(v, "chf") i!= 0);
+    }
   }
 
   describe "fdja_is_stringy()"

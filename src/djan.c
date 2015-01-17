@@ -1084,10 +1084,12 @@ int fdja_strcmp(fdja_value *v, const char *s)
   if (v == NULL) return -1;
   if ( ! fdja_is_stringy(v)) return -1;
 
-  size_t l = strlen(s);
-  if (l > v->slen) return -1;
+  char *sv = fdja_to_string(v);
+  int r = strcmp(sv, s);
+  free(sv);
+    // a bit costly but easier to follow
 
-  return strncmp(fdja_srk(v), s, l);
+  return r;
 }
 
 char *fdja_value_to_s(fdja_value *v)
