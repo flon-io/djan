@@ -209,6 +209,14 @@ context "fdja_value"
       fdja_free(v); v = fdja_v("jpy");
       expect(fdja_strcmp(v, "Jpy") i!= 0);
     }
+
+    it "doesn't overflow the source"
+    {
+      v = fdja_v("chff");
+      v->slen = 3;
+
+      expect(fdja_strcmp(v, "chff") i!= 0);
+    }
   }
 
   describe "fdja_is_stringy()"
