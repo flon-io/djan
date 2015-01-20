@@ -535,6 +535,19 @@ fdja_value *fdja_sym(char *s)
   return fdja_value_malloc('y', s, 0, strlen(s), 1);
 }
 
+fdja_value *fdja_a(fdja_value *v0, ...)
+{
+  fdja_value *r = fdja_array_malloc();
+
+  if (v0 == NULL) return r;
+
+  va_list ap; va_start(ap, v0);
+  for (fdja_value *v = v0; v; v = va_arg(ap, fdja_value *)) fdja_push(r, v);
+  va_end(ap);
+
+  return r;
+}
+
 static void fdja_add_radc(fdja_value *parent, fdja_value *child)
 {
   parent = fdja_value_at(parent, 2);

@@ -73,6 +73,10 @@ fdja_value *fdja_s(const char *format, ...);
  */
 fdja_value *fdja_sym(char *s);
 
+/* Composes an array from its args. Expects a final NULL.
+ */
+fdja_value *fdja_a(fdja_value *v0, ...);
+
 fdja_value *fdja_parse_radial(char *input);
 fdja_value *fdja_dparse_radial(char *input);
 fdja_value *fdja_fparse_radial(FILE *f);
