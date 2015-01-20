@@ -39,8 +39,8 @@ context "parsing radial"
       ensure(v != NULL);
       ensure(v->type == 'a');
 
-      ensure(fdja_to_json(v) ===f ""
-        "[\"sequence\",{},[]]"
+      ensure(fdja_tod(v) ===f ""
+        "[ sequence, {}, 1, [] ]"
       );
     }
 
@@ -54,10 +54,10 @@ context "parsing radial"
       ensure(v != NULL);
       ensure(v->type == 'a');
 
-      ensure(fdja_to_json(v) ===f ""
-        "[\"sequence\",{},["
-          "[\"participant\",{\"_0\":\"bravo\"},[]]"
-        "]]"
+      ensure(fdja_tod(v) ===f ""
+        "[ sequence, {}, 1, [ "
+          "[ participant, { _0: bravo }, 2, [] ] "
+        "] ]"
       );
     }
 
@@ -74,15 +74,15 @@ context "parsing radial"
 
       ensure(v != NULL);
 
-      ensure(fdja_to_json(v) ===f ""
-        "[\"sequence\",{},["
-          "[\"participant\",{\"_0\":\"alpha\"},[]],"
-          "[\"concurrence\",{},["
-            "[\"participant\",{\"_0\":\"bravo\"},[]],"
-            "[\"participant\",{\"_0\":\"charly\"},[]]"
-          "]],"
-          "[\"participant\",{\"_0\":\"delta\"},[]]"
-        "]]"
+      ensure(fdja_tod(v) ===f ""
+        "[ sequence, {}, 1, [ "
+          "[ participant, { _0: alpha }, 2, [] ], "
+          "[ concurrence, {}, 3, [ "
+            "[ participant, { _0: bravo }, 4, [] ], "
+            "[ participant, { _0: charly }, 5, [] ] "
+          "] ], "
+          "[ participant, { _0: delta }, 6, [] ] "
+        "] ]"
       );
     }
 
@@ -96,10 +96,10 @@ context "parsing radial"
 
       ensure(v != NULL);
 
-      ensure(fdja_to_json(v) ===f ""
-        "[\"iterate\",{\"_0\":[1,2,3]},["
-          "[\"bravo\",{},[]]"
-        "]]"
+      ensure(fdja_tod(v) ===f ""
+        "[ iterate, { _0: [ 1, 2, 3 ] }, 1, [ "
+          "[ bravo, {}, 3, [] ] "
+        "] ]"
       );
     }
 
@@ -111,18 +111,14 @@ context "parsing radial"
 
       ensure(v != NULL);
 
-      ensure(fdja_to_json(v) ===f ""
-        "["
-          "\"participant\","
-          "{"
-            "\"_0\":\"charly\","
-            "\"a\":0,"
-            "\"b\":\"one\","
-            "\"c\":true,"
-            "\"d\":[\"four\"]"
-          "},"
-          "[]"
-        "]"
+      ensure(fdja_tod(v) ===f ""
+        "[ participant, { "
+          "_0: charly, "
+          "a: 0, "
+          "b: one, "
+          "c: true, "
+          "d: [ four ] "
+        "}, 1, [] ]"
       );
     }
 
@@ -138,18 +134,14 @@ context "parsing radial"
 
       ensure(v != NULL);
 
-      ensure(fdja_to_json(v) ===f ""
-        "["
-          "\"participant\","
-          "{"
-            "\"_0\":\"charly\","
-            "\"aa\":0,"
-            "\"bb\":\"one\","
-            "\"cc\":true,"
-            "\"dd\":[\"four\"]"
-          "},"
-          "[]"
-        "]"
+      ensure(fdja_tod(v) ===f ""
+        "[ participant, { "
+          "_0: charly, "
+          "aa: 0, "
+          "bb: one, "
+          "cc: true, "
+          "dd: [ four ] "
+        "}, 1, [] ]"
       );
     }
 
@@ -165,18 +157,14 @@ context "parsing radial"
 
       ensure(v != NULL);
 
-      ensure(fdja_to_json(v) ===f ""
-        "["
-          "\"participant\","
-          "{"
-            "\"_0\":\"charly\","
-            "\"aa\":0,"
-            "\"bb\":\"one\","
-            "\"cc\":true,"
-            "\"dd\":[\"four\"]"
-          "},"
-          "[]"
-        "]"
+      ensure(fdja_tod(v) ===f ""
+        "[ participant, { "
+          "_0: charly, "
+          "aa: 0, "
+          "bb: one, "
+          "cc: true, "
+          "dd: [ four ] "
+        "}, 1, [] ]"
       );
     }
 
@@ -191,16 +179,12 @@ context "parsing radial"
 
       ensure(v != NULL);
 
-      ensure(fdja_to_json(v) ===f ""
-        "["
-          "\"participant\","
-          "{"
-            "\"_0\":\"charly\","
-            "\"aa\":0,"
-            "\"bb\":\"one\""
-          "},"
-          "[]"
-        "]"
+      ensure(fdja_tod(v) ===f ""
+        "[ participant, { "
+          "_0: charly, "
+          "aa: 0, "
+          "bb: one "
+        "}, 1, [] ]"
       );
     }
 
@@ -210,8 +194,8 @@ context "parsing radial"
 
       ensure(v != NULL);
 
-      ensure(fdja_to_json(v) ===f ""
-        "[\"nada\",{\"_0\":\"aa\",\"_1\":\"bb\",\"d\":2,\"e\":3},[]]");
+      ensure(fdja_tod(v) ===f ""
+        "[ nada, { _0: aa, _1: bb, d: 2, e: 3 }, 1, [] ]");
     }
 
     it "preserves the attribute order"
@@ -221,7 +205,7 @@ context "parsing radial"
       ensure(v != NULL);
 
       ensure(fdja_tod(v) ===f ""
-        "[ nada, { d: 0, e: 1, _2: aa, _3: bb }, [] ]");
+        "[ nada, { d: 0, e: 1, _2: aa, _3: bb }, 1, [] ]");
     }
 
     it "accepts comments at the end of the radial lines"
@@ -234,11 +218,11 @@ context "parsing radial"
 
       ensure(v != NULL);
 
-      ensure(fdja_to_json(v) ===f ""
-        "[\"sequence\",{},["
-          "[\"participant\",{\"_0\":\"toto\"},[]],"
-          "[\"participant\",{\"_0\":\"tutu\"},[]]"
-        "]]"
+      ensure(fdja_tod(v) ===f ""
+        "[ sequence, {}, 1, [ "
+          "[ participant, { _0: toto }, 2, [] ], "
+          "[ participant, { _0: tutu }, 3, [] ] "
+        "] ]"
       );
     }
 
@@ -252,10 +236,10 @@ context "parsing radial"
 
       ensure(v != NULL);
 
-      ensure(fdja_to_json(v) ===f ""
-        "[\"sequence\",{},["
-          "[\"participant\",{\"_0\":\"toto\"},[]]"
-        "]]"
+      ensure(fdja_tod(v) ===f ""
+        "[ sequence, {}, 2, [ "
+          "[ participant, { _0: toto }, 3, [] ] "
+        "] ]"
       );
     }
 
@@ -270,10 +254,10 @@ context "parsing radial"
 
       ensure(v != NULL);
 
-      ensure(fdja_to_json(v) ===f ""
-        "[\"sequence\",{},["
-          "[\"git://github.com/flon-io/tst\",{\"_0\":\"x\",\"b\":0},[]]"
-        "]]"
+      ensure(fdja_tod(v) ===f ""
+        "[ sequence, {}, 1, [ "
+          "[ git://github.com/flon-io/tst, { _0: x, b: 0 }, 2, [] ] "
+        "] ]"
       );
     }
 
@@ -287,8 +271,8 @@ context "parsing radial"
       ensure(v != NULL);
 
       ensure(fdja_tod(v) ===f ""
-        "[ $(a), {}, ["
-          " [ b, { _0: $(c), $(d): e, f: $(g), _3: $(h)$(i) }, [] ] "
+        "[ $(a), {}, 1, ["
+          " [ b, { _0: $(c), $(d): e, f: $(g), _3: $(h)$(i) }, 2, [] ] "
         "] ]"
       );
     }
@@ -302,7 +286,7 @@ context "parsing radial"
       ensure(v != NULL);
 
       ensure(fdja_tod(v) ===f ""
-        "[ invoke, { _0: a, b: c:y }, [] ]"
+        "[ invoke, { _0: a, b: c:y }, 1, [] ]"
       );
     }
 
@@ -320,10 +304,10 @@ context "parsing radial"
         ensure(v != NULL);
 
         ensure(fdja_tod(v) ===f ""
-          "[ sequence, {}, [ "
-            "[ val, { _0: 3 }, [] ], "
-            "[ val, { _0: null }, [] ], "
-            "[ quatre, {}, [] ] "
+          "[ sequence, {}, 1, [ "
+            "[ val, { _0: 3 }, 2, [] ], "
+            "[ val, { _0: null }, 3, [] ], "
+            "[ quatre, {}, 4, [] ] "
           "] ]"
         );
       }
@@ -340,7 +324,7 @@ context "parsing radial"
         ensure(v != NULL);
 
         ensure(fdja_tod(v) ===f ""
-          "[ if, { _0: [ a, { _0: >, _1: b }, [] ] }, [] ]"
+          "[ if, { _0: [ a, { _0: >, _1: b }, 1, [] ] }, 1, [] ]"
         );
       }
 
@@ -354,8 +338,9 @@ context "parsing radial"
 
         ensure(fdja_tod(v) ===f ""
           "[ "
-            "[ a, { _0: >, _1: 0 }, [] ], "
-            "{ _0: and, _1: [ b, { _0: >, _1: 1 }, [] ] }, "
+            "[ a, { _0: >, _1: 0 }, 1, [] ], "
+            "{ _0: and, _1: [ b, { _0: >, _1: 1 }, 1, [] ] }, "
+            "1, "
             "[] "
           "]"
         );
@@ -370,7 +355,7 @@ context "parsing radial"
         ensure(v != NULL);
 
         ensure(fdja_tod(v) ===f ""
-          "[ if, { _0: [ a, { _0: >, _1: $(b)$(c) }, [] ] }, [] ]"
+          "[ if, { _0: [ a, { _0: >, _1: $(b)$(c) }, 1, [] ] }, 1, [] ]"
         );
       }
     }
@@ -388,8 +373,8 @@ context "parsing radial"
       //expect(v->source != NULL);
       expect(v->slen == 0);
       expect(fdja_lookup_string(v, "0", NULL) ===f "define");
-      expect(fdja_lookup_string(v, "2.0.0", NULL) ===f "mail");
-      expect(fdja_lookup_string(v, "2.0.1.to", NULL) ===f "$(user.email)");
+      expect(fdja_lookup_string(v, "3.0.0", NULL) ===f "mail");
+      expect(fdja_lookup_string(v, "3.0.1.to", NULL) ===f "$(user.email)");
     }
 
     it "composes filenames"
@@ -397,7 +382,7 @@ context "parsing radial"
       v = fdja_parse_radial_f("../spec/_%s2.rad", "test");
 
       expect(v != NULL);
-      expect(fdja_lookup_string(v, "2.0.1.to", NULL) ===f "$(user.email)");
+      expect(fdja_lookup_string(v, "3.0.1.to", NULL) ===f "$(user.email)");
     }
 
     it "returns NULL when it fails to read"
@@ -420,8 +405,8 @@ context "parsing radial"
       expect(v != NULL);
       expect(v->slen == 0);
       expect(fdja_lookup_string(v, "0", NULL) ===f "define");
-      expect(fdja_lookup_string(v, "2.0.0", NULL) ===f "mail");
-      expect(fdja_lookup_string(v, "2.0.1.to", NULL) ===f "$(user.email)");
+      expect(fdja_lookup_string(v, "3.0.0", NULL) ===f "mail");
+      expect(fdja_lookup_string(v, "3.0.1.to", NULL) ===f "$(user.email)");
 
       fclose(f);
     }

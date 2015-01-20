@@ -567,7 +567,7 @@ fdja_value *fdja_o(char *k0, ...)
 
 static void fdja_add_radc(fdja_value *parent, fdja_value *child)
 {
-  parent = fdja_value_at(parent, 2);
+  parent = fdja_value_at(parent, 3);
 
   if (parent->child == NULL)
   {
@@ -630,6 +630,20 @@ static fdja_value *parse_radv(char *input, fabr_tree *radv)
   return parse_radg(input, -1, fabr_tree_lookup(c, "rad_g"));
 }
 
+static ssize_t count_lines(char *input, size_t offset)
+{
+  size_t r = 0;
+
+  for (size_t i = 0; i <= offset; ++i)
+  {
+    char c = input[i];
+    if (c == 0) return -1;
+    if (c == '\n' || c == '\r') ++r;
+  }
+
+  return r + 1;
+}
+
 static fdja_value *parse_radg(char *input, ssize_t ind, fabr_tree *radg)
 {
   // rad_h rad_e*
@@ -640,6 +654,7 @@ static fdja_value *parse_radg(char *input, ssize_t ind, fabr_tree *radg)
   fdja_value *r = fdja_value_malloc('a', NULL, 0, 0, 0);
   fdja_value *vname = NULL;
   fdja_value *vatts = fdja_value_malloc('o', NULL, 0, 0, 0);
+  fdja_value *vline = fdja_v("%zu", count_lines(input, radg->offset));
   fdja_value *vchildren = fdja_value_malloc('a', NULL, 0, 0, 0);
 
   if (es->first == NULL && ! (is_stringy(radh->child->child)))
@@ -672,9 +687,10 @@ static fdja_value *parse_radg(char *input, ssize_t ind, fabr_tree *radg)
     }
   }
 
-  r->child = vname; // [ name,
-  vname->sibling = vatts; // {},
-  vatts->sibling = vchildren; // [] ]
+  r->child = vname;
+  vname->sibling = vatts;
+  vatts->sibling = vline;
+  vline->sibling = vchildren;
 
   flu_list_free(es);
 
