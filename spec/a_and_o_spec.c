@@ -45,7 +45,33 @@ context "fdja_a(), fdja_o(), ..."
 
   describe "fdja_o()"
   {
-    it "flips burgers"
+    it "composes an empty object"
+    {
+      v = fdja_o(NULL);
+
+      expect(fdja_tod(v) ===f "{}");
+    }
+
+    it "composes an object (1 entry)"
+    {
+      v = fdja_o("k0", fdja_v("val0"), NULL);
+
+      expect(fdja_tod(v) ===f "{ k0: val0 }");
+    }
+
+    it "composes an object"
+    {
+      v = fdja_o("k0", fdja_v("val0"), "k1", fdja_v("null"), NULL);
+
+      expect(fdja_tod(v) ===f "{ k0: val0, k1: null }");
+    }
+
+    it "composes its keys"
+    {
+      v = fdja_o("k0", fdja_v("val0"), "k%d", 1, fdja_v("hello"), NULL);
+
+      expect(fdja_tod(v) ===f "{ k0: val0, k1: hello }");
+    }
   }
 }
 

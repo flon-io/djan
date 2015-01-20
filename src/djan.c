@@ -539,10 +539,27 @@ fdja_value *fdja_a(fdja_value *v0, ...)
 {
   fdja_value *r = fdja_array_malloc();
 
-  if (v0 == NULL) return r;
+  //if (v0 == NULL) return r;
 
   va_list ap; va_start(ap, v0);
   for (fdja_value *v = v0; v; v = va_arg(ap, fdja_value *)) fdja_push(r, v);
+  va_end(ap);
+
+  return r;
+}
+
+fdja_value *fdja_o(char *k0, ...)
+{
+  fdja_value *r = fdja_object_malloc();
+
+  va_list ap; va_start(ap, k0);
+  for (char *kf = k0; kf; kf = va_arg(ap, char *))
+  {
+    char *k = flu_svprintf(kf, ap);
+    fdja_value *v = va_arg(ap, fdja_value *);
+    fdja_set(r, k, v);
+    free(k);
+  }
   va_end(ap);
 
   return r;

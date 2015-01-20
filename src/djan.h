@@ -77,6 +77,11 @@ fdja_value *fdja_sym(char *s);
  */
 fdja_value *fdja_a(fdja_value *v0, ...);
 
+/* Composes an object. Expects a final NULL.
+ * May compose the keys as well.
+ */
+fdja_value *fdja_o(char *k0, ...);
+
 fdja_value *fdja_parse_radial(char *input);
 fdja_value *fdja_dparse_radial(char *input);
 fdja_value *fdja_fparse_radial(FILE *f);
