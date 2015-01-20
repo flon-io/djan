@@ -25,9 +25,21 @@ context "parsing radial"
     {
       // another method for pointing at syntax errors?
 
-      v = fdja_parse_radial("12[3");
+      v = fdja_parse_radial("12[3", NULL);
 
       ensure(v == NULL);
+    }
+
+    it "tracks the origin of the string"
+    {
+      v = fdja_parse_radial(
+        rdz_strdup("sequence timeout: 1d"),
+        "var/lib/one.rad");
+
+      ensure(v != NULL);
+
+      ensure(fdja_tod(v) ===f ""
+        "[ sequence, { timeout: 1d }, 1, [], var/lib/one.rad ]");
     }
 
     it "parses a single line"
@@ -398,7 +410,7 @@ context "parsing radial"
     it "reads files"
     {
       FILE *f = fopen("../spec/_test2.rad", "r");
-      v = fdja_fparse_radial(f);
+      v = fdja_fparse_radial(f, "../spec/_test2.rad");
 
       //puts(fdja_to_json(v));
 

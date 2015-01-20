@@ -459,15 +459,20 @@ fdja_value *fdja_dparse(char *input)
 static fdja_value *fdja_do_parse(
   FILE *f, const char *path, va_list ap, char mode)
 {
-  char *s = f ? flu_freadall(f) : flu_vreadall(path, ap);
+  char *p = (char *)path; if (path && ap) p = flu_svprintf(path, ap);
+  char *s = f ? flu_freadall(f) : flu_readall(p);
 
-  if (s == NULL) return NULL;
+  if (s == NULL) { free(p); return NULL; }
 
   fdja_value *v = NULL;
-  if (mode == 'o') v = fdja_parse_obj(s);
-  else if (mode == 'r') v = fdja_parse_radial(s);
-  else v = fdja_parse(s);
+  if (mode == 'o')
+    v = fdja_parse_obj(s);
+  else if (mode == 'r')
+    v = fdja_parse_radial(s, p);
+  else
+    v = fdja_parse(s);
 
+  if (p != path) free(p);
   if (v == NULL) free(s);
 
   return v;
@@ -711,7 +716,7 @@ static void fdja_parse_radl(char *input, fabr_tree *radl, flu_list *values)
   fdja_stack_radl(values, v);
 }
 
-fdja_value *fdja_parse_radial(char *input)
+fdja_value *fdja_parse_radial(char *input, const char *origin)
 {
   if (fdja_parser == NULL) fdja_parser_init();
 
@@ -750,17 +755,19 @@ fdja_value *fdja_parse_radial(char *input)
   root->source = input;
   root->sowner = 1;
 
+  if (origin) fdja_push(root, fdja_s(origin));
+
   return root;
 }
 
 fdja_value *fdja_dparse_radial(char *input)
 {
-  return fdja_parse_radial(strdup(input));
+  return fdja_parse_radial(strdup(input), NULL);
 }
 
-fdja_value *fdja_fparse_radial(FILE *f)
+fdja_value *fdja_fparse_radial(FILE *f, const char *origin)
 {
-  return fdja_do_parse(f, NULL, NULL, 'r');
+  return fdja_do_parse(f, origin, NULL, 'r');
 }
 
 fdja_value *fdja_parse_radial_f(const char *path, ...)
