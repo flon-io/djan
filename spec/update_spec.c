@@ -17,8 +17,8 @@ context "update"
   }
   after each
   {
-    if (v != NULL) fdja_value_free(v);
-    if (vv != NULL) fdja_value_free(vv);
+    fdja_value_free(v);
+    fdja_value_free(vv);
   }
 
   describe "fdja_push()"

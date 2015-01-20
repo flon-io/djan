@@ -16,7 +16,7 @@ context "fdja_v, fdja_s, ..."
   }
   after each
   {
-    if (v != NULL) fdja_value_free(v);
+    fdja_value_free(v);
   }
 
   describe "fdja_v()"
