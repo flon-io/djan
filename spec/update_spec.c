@@ -401,6 +401,14 @@ context "update"
     }
 
     it "resets the ->sibling when inserting"
+    {
+      v = fdja_v("[]");
+      fdja_value *v1 = fdja_v("one");
+      v1->sibling = v;
+
+      fdja_splice(v, 0, 0, v1, NULL);
+      expect(v1->sibling == NULL);
+    }
   }
 
   describe "fdja_pset()"
