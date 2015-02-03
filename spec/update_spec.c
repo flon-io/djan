@@ -488,7 +488,7 @@ context "update"
 
     it "accepts escaped . in its path"
     {
-      v = fdja_dparse("{ a: { \"b.b\": {}} }");
+      v = fdja_dparse("{ a: { \"b.b\": {} } }");
 
       fdja_value *r = fdja_pset(v, "a.b\\.b.c", fdja_v("C"));
 
@@ -498,6 +498,15 @@ context "update"
     }
 
     it "resets the ->sibling"
+    {
+      v = fdja_dparse("{ a: {} }");
+      fdja_value *v1 = fdja_v("0");
+      v1->sibling = v;
+
+      fdja_pset(v, "a.b", v1);
+
+      expect(v1->sibling == NULL);
+    }
   }
 
   describe "fdja_psetv()"
