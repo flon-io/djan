@@ -58,6 +58,16 @@ context "update"
       expect(r != NULL);
       expect(fdja_to_json(v) ===f "[null]");
     }
+
+    it "resets the ->sibling"
+    {
+      v = fdja_dparse("[]");
+      fdja_value *v1 = fdja_dparse("a");
+      v1->sibling = v;
+
+      fdja_push(v, v1);
+      expect(v1->sibling == NULL);
+    }
   }
 
   describe "fdja_unshift()"
@@ -70,6 +80,8 @@ context "update"
       expect(r != NULL);
       expect(fdja_tod(v) ===f "[ 3, 0, 1, 2 ]");
     }
+
+    it "resets the ->sibling"
   }
 
   describe "fdja_unpush()"
@@ -223,6 +235,8 @@ context "update"
       expect(fdja_tod(v) ===f "{ a: 0, b: 1, c: 2, dd: 3d }");
       expect(fdja_tod(r) ===f "3d");
     }
+
+    it "resets the ->sibling"
   }
 
   describe "fdja_merge()"
@@ -376,6 +390,8 @@ context "update"
 
       expect(r == 0);
     }
+
+    it "resets the ->sibling when inserting"
   }
 
   describe "fdja_pset()"
@@ -463,6 +479,8 @@ context "update"
       expect(fdja_tod(v) ===f "{ a: { b.b: { c: C } } }");
       expect(fdja_tod(r) ===f "C");
     }
+
+    it "resets the ->sibling"
   }
 
   describe "fdja_psetv()"
@@ -572,6 +590,8 @@ context "update"
       expect(fdja_to_json(v) ===F fdja_vj(""
         "{ al: 0, br: 1, bz: 3, ch: 2 }"));
     }
+
+    it "resets the ->sibling"
   }
 
   describe "fdja_replace()"
