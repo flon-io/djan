@@ -238,6 +238,14 @@ context "update"
     }
 
     it "resets the ->sibling"
+    {
+      v = fdja_object_malloc();
+      fdja_value *v1 = fdja_v("nada");
+      v1->sibling = v;
+
+      fdja_set(v, v1);
+      expect(v1->sibling == NULL);
+    }
   }
 
   describe "fdja_merge()"

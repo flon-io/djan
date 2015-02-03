@@ -1461,7 +1461,7 @@ fdja_value *fdja_set(fdja_value *object, const char *key, ...)
 
   if (val != NULL)
   {
-    if (val->key) free(val->key);
+    free(val->key);
     val->key = strdup(k);
   }
 
@@ -1469,25 +1469,33 @@ fdja_value *fdja_set(fdja_value *object, const char *key, ...)
   {
     fdja_value *child = *link;
 
-    if (child == NULL) { *link = v; break; }
-
-    if (strcmp(k, child->key) == 0)
+    if (child == NULL) // add at the end
     {
-      if (v == NULL)
+      *link = v;
+      if (v) v->sibling = NULL;
+
+      break;
+    }
+
+    if (strcmp(k, child->key) == 0) // found previous entry
+    {
+      if (v == NULL) // remove
       {
         *link = child->sibling;
         fdja_value_free(child);
       }
-      else
+      else // add
       {
         *link = v;
         v->sibling = child->sibling;
         fdja_value_free(child);
       }
+
       break;
     }
   }
-  if (start)
+
+  if (start) // add at start
   {
     val->sibling = object->child;
     object->child = val;
