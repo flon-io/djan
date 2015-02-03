@@ -1540,18 +1540,9 @@ int fdja_merge(fdja_value *dst, fdja_value *src)
 {
   if (dst->type != 'o' || src->type != 'o') return 0;
 
-  fdja_value *last = dst->child;
-  while (last && last->sibling) { last = last->sibling; }
-
-  for (fdja_value *c = src->child; c != NULL; c = c->sibling)
+  for (fdja_value *n = src->child; n; n = n->sibling)
   {
-    fdja_value *cc = fdja_clone(c);
-    cc->key = strdup(c->key);
-
-    if (last) last->sibling = cc;
-    else dst->child = cc;
-
-    last = cc;
+    fdja_set(dst, n->key, fdja_clone(n));
   }
 
   return 1;

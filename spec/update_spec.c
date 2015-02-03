@@ -247,6 +247,18 @@ context "update"
       expect(fdja_merge(v, vv) == 0);
       expect(fdja_merge(vv, v) == 0);
     }
+
+    it "overwrites the old values"
+    {
+      v = fdja_v("{ name: henri, color: blue }");
+      vv = fdja_v("{ color: red, car: vw }");
+
+      int r = fdja_merge(v, vv);
+
+      expect(r == 1);
+      expect(fdja_tod(v) ===f "{ name: henri, color: red, car: vw }");
+      expect(fdja_tod(vv) ===f "{ color: red, car: vw }");
+    }
   }
 
   describe "fdja_splice()"
