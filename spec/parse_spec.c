@@ -494,20 +494,20 @@ context "parsing"
         v = fdja_dparse("\n{\n\"a\": 0, \"bb\": null, \"cc c\": true\n}\n");
 
         ensure(v != NULL);
-        ensure(v->type == 'o');
-        ensure(fdja_value_at(v, 0) != NULL);
-        ensure(fdja_value_at(v, 1) != NULL);
-        ensure(fdja_value_at(v, 2) != NULL);
-        ensure(fdja_value_at(v, 3) == NULL);
-        ensure(fdja_value_at(v, 0)->key === "a");
-        ensure(fdja_value_at(v, 1)->key === "bb");
-        ensure(fdja_value_at(v, 2)->key === "cc c");
-        ensure(fdja_value_at(v, 0)->type == 'n');
-        ensure(fdja_value_at(v, 1)->type == '0');
-        ensure(fdja_value_at(v, 2)->type == 't');
-        ensure(fdja_to_int(fdja_value_at(v, 0)) == 0);
-        ensure(fdja_to_int(fdja_value_at(v, 2)) == 1);
-        ensure(fdja_to_json(v) ===f "{\"a\":0,\"bb\":null,\"cc c\":true}");
+        ensure(v->type c== 'o');
+        ensure(fdja_at(v, 0) != NULL);
+        ensure(fdja_at(v, 1) != NULL);
+        ensure(fdja_at(v, 2) != NULL);
+        ensure(fdja_at(v, 3) == NULL);
+        ensure(fdja_at(v, 0)->key === "a");
+        ensure(fdja_at(v, 1)->key === "bb");
+        ensure(fdja_at(v, 2)->key === "cc c");
+        ensure(fdja_at(v, 0)->type c== 'n');
+        ensure(fdja_at(v, 1)->type c== '0');
+        ensure(fdja_at(v, 2)->type c== 't');
+        ensure(fdja_li(v, "a") i== 0);
+        ensure(fdja_to_int(fdja_at(v, 2)) i== 1);
+        ensure(fdja_tod(v) ===f "{ a: 0, bb: null, \"cc c\": true }");
       }
 
       it "accepts comments at the end of lines"
