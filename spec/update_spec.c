@@ -618,6 +618,15 @@ context "update"
     }
 
     it "resets the ->sibling"
+    {
+      v = fdja_v("{ al: 0, br: 1, ch: 2 }");
+      fdja_value *v1 = fdja_v("3");
+      v1->sibling = v;
+
+      fdja_oset(v, "zz", v1);
+
+      expect(v1->sibling == NULL);
+    }
   }
 
   describe "fdja_replace()"

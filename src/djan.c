@@ -1521,7 +1521,7 @@ fdja_value *fdja_oset(fdja_value *object, const char *key, ...)
   {
     fdja_value *child = *link;
 
-    if (child == NULL) { *link = val; break; }
+    if (child == NULL) { *link = val; val->sibling = NULL; break; }
 
     int cmp = strcmp(k, child->key);
 
