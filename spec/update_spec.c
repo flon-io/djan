@@ -81,7 +81,8 @@ context "update"
       expect(fdja_tod(v) ===f "[ 3, 0, 1, 2 ]");
     }
 
-    it "resets the ->sibling"
+    //it "sets the ->sibling"
+      // yes, else the spec above wouldn't work
   }
 
   describe "fdja_unpush()"
