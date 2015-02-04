@@ -59,6 +59,15 @@ context "update"
       expect(fdja_to_json(v) ===f "[null]");
     }
 
+    it "pushes NULL and returns NULL"
+    {
+      v = fdja_dparse("[]");
+
+      fdja_value *r = fdja_push(v, NULL);
+
+      expect(r == NULL);
+    }
+
     it "resets the ->sibling"
     {
       v = fdja_dparse("[]");

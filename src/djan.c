@@ -1389,6 +1389,7 @@ char *fdja_ld(fdja_value *v, const char *path, ...)
 
 fdja_value *fdja_push(fdja_value *array, fdja_value *v)
 {
+  if (v == NULL) return NULL;
   if (array->type != 'a') return NULL;
 
   for (fdja_value **l = &array->child; ; l = &(*l)->sibling)
