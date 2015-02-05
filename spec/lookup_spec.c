@@ -259,6 +259,15 @@ context "fdja_lookup..."
       expect(fdja_lookup_int(v, "z", 0) == 0);
     }
 
+    it "returns the default value if it doesn't find (2)"
+    {
+      v = fdja_v("{ point: terminated, nid: \"0\", from: \"\" }");
+      fdja_set(v, "payload", fdja_v("{\"ret\":42}"));
+
+      expect(fdja_lookup_int(v, "ret", 0) lli== 0);
+      expect(fdja_lookup_int(v, "payload.ret", 0) lli== 42); // extra
+    }
+
     it "composes its path"
     {
       v = fdja_v("{ a: { b: 77 } }");
