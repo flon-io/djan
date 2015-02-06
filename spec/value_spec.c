@@ -226,6 +226,20 @@ context "fdja_value"
     }
   }
 
+  describe "fdja_strncmp()"
+  {
+    it "returns -1 if the value isn't a string or symbol"
+    {
+      fdja_free(v); v = fdja_v("true");
+      expect(fdja_strncmp(v, "tr", 2) i== -1);
+
+      fdja_free(v); v = fdja_v("[]");
+      expect(fdja_strncmp(v, "[", 1) i== -1);
+    }
+
+    it "flips burgers"
+  }
+
   describe "fdja_is_stringy()"
   {
     it "returns 1 if v is a string, a single quote string or a symbol"

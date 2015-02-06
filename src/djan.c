@@ -1131,18 +1131,23 @@ char *fdja_srk(fdja_value *v)
   return v->source + v->soff;
 }
 
-int fdja_strcmp(fdja_value *v, const char *s)
+int fdja_strncmp(fdja_value *v, const char *s, ssize_t n)
 {
   if (s == NULL) return -1;
   if (v == NULL) return -1;
   if ( ! fdja_is_stringy(v)) return -1;
 
   char *sv = fdja_to_string(v);
-  int r = strcmp(sv, s);
+  int r = n < 0 ? strcmp(sv, s) : strncmp(sv, s, n);
   free(sv);
     // a bit costly but easier to follow
 
   return r;
+}
+
+int fdja_strcmp(fdja_value *v, const char *s)
+{
+  return fdja_strncmp(v, s, -1);
 }
 
 char *fdja_value_to_s(fdja_value *v)

@@ -166,6 +166,11 @@ char *fdja_srk(fdja_value *v);
  */
 int fdja_strcmp(fdja_value *v, const char *s);
 
+/* Like fdja_strcmp(), but restricts itself to the first n chars.
+ * If n < 0, behaves like fdja_strcmp().
+ */
+int fdja_strncmp(fdja_value *v, const char *s, ssize_t n);
+
 /* Returns the string value behind the fdja_value. For a string fdja_value,
  * the enclosing double quotes will not be included and the string will be
  * unescaped.
