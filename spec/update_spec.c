@@ -252,7 +252,7 @@ context "update"
       fdja_value *v1 = fdja_v("nada");
       v1->sibling = v;
 
-      fdja_set(v, v1);
+      fdja_set(v, "nada", v1);
       expect(v1->sibling == NULL);
     }
   }
