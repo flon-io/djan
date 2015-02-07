@@ -302,6 +302,36 @@ context "parsing radial"
       );
     }
 
+    it "accepts arithmetical signs as symbols"
+    {
+      v = fdja_dparse_radial(
+        "sequence\n"
+        "  + a b \n"
+        "  - a b \n"
+        "  a + b\n"
+        "  a - b\n"
+        "  * c d\n"
+        "  / c d\n"
+        "  c * d\n"
+        "  c / d\n"
+      );
+
+      ensure(v != NULL);
+
+      ensure(fdja_tod(v) ===f ""
+        "[ sequence, {}, 1, [ "
+          "[ +, { _0: a, _1: b }, 2, [] ], "
+          "[ -, { _0: a, _1: b }, 3, [] ], "
+          "[ a, { _0: +, _1: b }, 4, [] ], "
+          "[ a, { _0: -, _1: b }, 5, [] ], "
+          "[ *, { _0: c, _1: d }, 6, [] ], "
+          "[ /, { _0: c, _1: d }, 7, [] ], "
+          "[ c, { _0: *, _1: d }, 8, [] ], "
+          "[ c, { _0: /, _1: d }, 9, [] ] "
+        "] ]"
+      );
+    }
+
     context "single values"
     {
       it "accepts single values as radial lines"
