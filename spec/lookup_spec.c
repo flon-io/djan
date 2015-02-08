@@ -346,5 +346,18 @@ context "fdja_lookup..."
       expect(fdja_lookup_boolean(v, "%s", "d", -1) == -1);
     }
   }
+
+  describe "fdja_lk()"
+  {
+    it "returns the first char in the value"
+    {
+      v = fdja_v("{ a: true, b: \"string\", c: sybmol, d: 1 }");
+
+      expect(fdja_lk(v, "a") == 't');
+      expect(fdja_lk(v, "b") == 's');
+      expect(fdja_lk(v, "c") == 's');
+      expect(fdja_lk(v, "d") == '1');
+    }
+  }
 }
 

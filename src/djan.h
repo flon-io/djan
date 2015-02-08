@@ -217,6 +217,7 @@ int fdja_lookup_bool(fdja_value *v, const char *path, ...);
 #define fdja_lsd(...) fdja_lookup_string_dup_default(__VA_ARGS__)
 #define fdja_li(...) fdja_lookup_int(__VA_ARGS__)
 #define fdja_lb(...) fdja_lookup_bool(__VA_ARGS__)
+#define fdja_lk(...) *fdja_srk(fdja_lookup(__VA_ARGS__))
 
 char *fdja_lj(fdja_value *v, const char *path, ...);
 char *fdja_ld(fdja_value *v, const char *path, ...);
