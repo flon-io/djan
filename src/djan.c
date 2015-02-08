@@ -1397,6 +1397,8 @@ fdja_value *fdja_push(fdja_value *array, fdja_value *v)
   if (v == NULL) return NULL;
   if (array->type != 'a') return NULL;
 
+  free(v->key); v->key = NULL;
+
   for (fdja_value **l = &array->child; ; l = &(*l)->sibling)
   {
     if (*l == NULL) { *l = v; v->sibling = NULL; break; }

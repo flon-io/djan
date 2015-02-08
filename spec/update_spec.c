@@ -77,6 +77,16 @@ context "update"
       fdja_push(v, v1);
       expect(v1->sibling == NULL);
     }
+
+    it "resets the ->key"
+    {
+      v = fdja_dparse("[]");
+      fdja_value *v1 = fdja_dparse("a");
+      v1->key = strdup("hello");
+
+      fdja_push(v, v1);
+      expect(v1->key == NULL);
+    }
   }
 
   describe "fdja_unshift()"
