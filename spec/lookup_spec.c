@@ -359,5 +359,35 @@ context "fdja_lookup..."
       expect(fdja_lk(v, "d") == '1');
     }
   }
+
+  describe "fdja_at()"
+  {
+    it "looks up in arrays"
+    {
+      v = fdja_v("[ 1, 2, 3 ]");
+
+      expect(fdja_tod(fdja_at(v, 0)) ===f "1");
+      expect(fdja_tod(fdja_at(v, 2)) ===f "3");
+      expect(fdja_tod(fdja_at(v, -1)) ===f "3");
+      expect(fdja_at(v, 4) == NULL);
+    }
+
+    it "looks up in objects"
+    {
+      v = fdja_v("{ _0: 1, b: 2, c: 3 }");
+
+      expect(fdja_tod(fdja_at(v, 0)) ===f "1");
+      expect(fdja_tod(fdja_at(v, 2)) ===f "3");
+      expect(fdja_tod(fdja_at(v, -1)) ===f "3");
+      expect(fdja_at(v, 4) == NULL);
+    }
+
+    it "returns NULL when pointed to 'atoms'"
+    {
+      v = fdja_v("true");
+
+      expect(fdja_at(v, 0) == NULL);
+    }
+  }
 }
 

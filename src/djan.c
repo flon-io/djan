@@ -1211,7 +1211,7 @@ int fdja_cmp(fdja_value *a, fdja_value *b)
   return r;
 }
 
-fdja_value *fdja_value_at(fdja_value *v, long n)
+fdja_value *fdja_value_at(fdja_value *v, long long n)
 {
   if (n < 0)
   {
@@ -1219,7 +1219,7 @@ fdja_value *fdja_value_at(fdja_value *v, long n)
     if (n < 0) return NULL;
   }
 
-  size_t i = 0; for (fdja_value *c = v->child; c != NULL; c = c->sibling)
+  size_t i = 0; for (fdja_value *c = v->child; c; c = c->sibling)
   {
     if (i++ == n) return c;
   }
