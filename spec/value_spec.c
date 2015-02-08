@@ -237,7 +237,19 @@ context "fdja_value"
       expect(fdja_strncmp(v, "[", 1) i== -1);
     }
 
-    it "flips burgers"
+    it "returns 0 if the value matches"
+    {
+      v = fdja_v("chff");
+
+      expect(fdja_strncmp(v, "chf", 3) i== 0);
+    }
+
+    it "returns some non-zero int if the value doesn't match"
+    {
+      v = fdja_v("ch");
+
+      expect(fdja_strncmp(v, "chf", 3) i!= 0);
+    }
   }
 
   describe "fdja_is_stringy()"
