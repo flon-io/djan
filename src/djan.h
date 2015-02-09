@@ -211,6 +211,8 @@ int fdja_lookup_bool(fdja_value *v, const char *path, ...);
   //
   // the last arg is the default value
 
+ssize_t fdja_lookup_size(fdja_value *v, const char *path, ...);
+
 #define fdja_l(...) fdja_lookup(__VA_ARGS__)
 #define fdja_lc(...) fdja_lookup_c(__VA_ARGS__)
 #define fdja_ls(...) fdja_lookup_string(__VA_ARGS__)
@@ -218,6 +220,7 @@ int fdja_lookup_bool(fdja_value *v, const char *path, ...);
 #define fdja_li(...) fdja_lookup_int(__VA_ARGS__)
 #define fdja_lb(...) fdja_lookup_bool(__VA_ARGS__)
 #define fdja_lk(...) *fdja_srk(fdja_lookup(__VA_ARGS__))
+#define fdja_lz(...) fdja_lookup_size(__VA_ARGS__)
 
 char *fdja_lj(fdja_value *v, const char *path, ...);
 char *fdja_ld(fdja_value *v, const char *path, ...);

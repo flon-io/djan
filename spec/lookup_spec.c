@@ -360,6 +360,19 @@ context "fdja_lookup..."
     }
   }
 
+  describe "fdja_lz()"
+  {
+    it "looks up a value and returns its size"
+    {
+      v = fdja_v("{ a: true, b: [ 1, 2 ], c: { x: y, z: o } }");
+
+      expect(fdja_lookup_size(v, "b") zu== 2);
+      expect(fdja_lz(v, "a") zu== 0);
+      expect(fdja_lz(v, "c") zu== 2);
+      expect(fdja_lz(v, "d") == -1);
+    }
+  }
+
   describe "fdja_at()"
   {
     it "looks up in arrays"
