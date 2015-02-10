@@ -199,6 +199,8 @@ int fdja_cmp(fdja_value *a, fdja_value *b);
 fdja_value *fdja_value_at(fdja_value *v, long long n);
 #define fdja_at(v, n) fdja_value_at(v, n)
 
+#define fdja_atc(v, n) fdja_clone(fdja_value_at(v, n))
+
 fdja_value *fdja_vlookup(fdja_value *v, const char *path, va_list ap);
 fdja_value *fdja_lookup(fdja_value *v, const char *path, ...);
 fdja_value *fdja_lookup_c(fdja_value *v, const char *path, ...);
