@@ -779,6 +779,31 @@ fdja_value *fdja_parse_radial_f(const char *path, ...)
   return v;
 }
 
+static void renumber(fdja_value *t, size_t lnumber)
+{
+  if (t == NULL) return;
+
+  fdja_replace(fdja_at(t, 2), fdja_v("%zu", lnumber));
+
+  for (fdja_value *c = fdja_at(t, 3)->child; c; c = c->sibling)
+  {
+    renumber(c, lnumber + 1);
+  }
+}
+
+fdja_value *fdja_parse_r(const char *format, ...)
+{
+  va_list ap; va_start(ap, format);
+  char *input = flu_svprintf(format, ap);
+  size_t lnumber = va_arg(ap, size_t);
+  va_end(ap);
+
+  fdja_value *r = fdja_parse_radial(input, NULL);
+  renumber(r, lnumber);
+
+  return r;
+}
+
 fdja_value *fdja_parse_obj(char *input)
 {
   if (fdja_parser == NULL) fdja_parser_init();

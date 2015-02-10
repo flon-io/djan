@@ -452,5 +452,27 @@ context "parsing radial"
 
       fclose(f);
     }
+  }
+
+  describe "fdja_parse_r()"
+  {
+    it "composes and parses"
+    {
+      v = fdja_parse_r(
+        "sequence\n"
+        "  task %s",
+        "bob",
+        3
+      );
+
+      expect(v != NULL);
+
+      expect(fdja_tod(v) ===f ""
+        "[ sequence, {}, 3, [ "
+          "[ task, { _0: bob }, 4, [] ] "
+        "] ]"
+      );
+    }
+  }
 }
 

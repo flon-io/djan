@@ -87,6 +87,10 @@ fdja_value *fdja_dparse_radial(char *input);
 fdja_value *fdja_fparse_radial(FILE *fm, const char *origin);
 fdja_value *fdja_parse_radial_f(const char *path, ...);
 
+/* Expect a size_t (start line number) as last argument.
+ */
+fdja_value *fdja_parse_r(const char *format, ...);
+
 fdja_value *fdja_parse_obj(char *input);
 fdja_value *fdja_dparse_obj(char *input);
 fdja_value *fdja_fparse_obj(FILE *f);
