@@ -401,6 +401,49 @@ context "parsing radial"
         );
       }
     }
+
+    context "and // regexes"
+    {
+      it "accepts /.../ regexes"
+      {
+        v = fdja_dparse_radial(
+          "sequence\n"
+          "  =~ ab /c d/\n"
+        );
+
+        ensure(v != NULL);
+
+        ensure(fdja_tod(v) ===f ""
+          "[ sequence, {}, 1, [ "
+            "[ =~, { _0: ab, _1: \"/c d/\" }, 2, [] ] "
+          "] ]"
+        );
+
+        expect(fdja_l(v, "3.0.1._1")->type c== 'y');
+        expect(fdja_lk(v, "3.0.1._1") c== '/');
+        expect(fdja_ls(v, "3.0.1._1", NULL) ===f "/c d/");
+      }
+
+      it "accepts /.../i regexes"
+      {
+        v = fdja_dparse_radial(
+          "sequence\n"
+          "  =~ ab /c, d/i\n"
+        );
+
+        ensure(v != NULL);
+
+        ensure(fdja_tod(v) ===f ""
+          "[ sequence, {}, 1, [ "
+            "[ =~, { _0: ab, _1: \"/c, d/i\" }, 2, [] ] "
+          "] ]"
+        );
+
+        expect(fdja_l(v, "3.0.1._1")->type c== 'y');
+        expect(fdja_lk(v, "3.0.1._1") c== '/');
+        expect(fdja_ls(v, "3.0.1._1", NULL) ===f "/c, d/i");
+      }
+    }
   }
 
   describe "fdja_parse_radial_f()"
