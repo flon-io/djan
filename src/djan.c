@@ -239,7 +239,8 @@ static void fdja_parser_init()
   fabr_parser *syv_str =
     fabr_rex(
       "("
-        "[^\\$ \b\f\n\r\t\"',\\[\\]\\{\\}\\)#\\\\]" "|"
+        //"[^\\$ \b\f\n\r\t\"',\\[\\]\\{\\}\\)#\\\\]" "|" // accept dollar...
+        "[^ \b\f\n\r\t\"',\\[\\]\\{\\}\\)#\\\\]" "|"
         "\\$[^\\( \b\f\n\r\t\"',\\[\\]\\{\\}\\)#\\\\]"
       ")+");
   fabr_parser *symv =

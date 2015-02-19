@@ -332,6 +332,24 @@ context "parsing radial"
       );
     }
 
+    it "accepts dollar at the end of a symbol"
+    {
+      v = fdja_dparse_radial(
+        "=~\n"
+        "  toto\n"
+        "  to$\n"
+      );
+
+      ensure(v != NULL);
+
+      ensure(fdja_tod(v) ===f ""
+        "[ =~, {}, 1, [ "
+          "[ toto, {}, 2, [] ], "
+          "[ to$, {}, 3, [] ] "
+        "] ]"
+      );
+    }
+
     context "single values"
     {
       it "accepts single values as radial lines"
