@@ -225,8 +225,14 @@ ssize_t fdja_lookup_size(fdja_value *v, const char *path, ...);
 #define fdja_lsd(...) fdja_lookup_string_dup_default(__VA_ARGS__)
 #define fdja_li(...) fdja_lookup_int(__VA_ARGS__)
 #define fdja_lb(...) fdja_lookup_bool(__VA_ARGS__)
-#define fdja_lk(...) *fdja_srk(fdja_lookup(__VA_ARGS__))
 #define fdja_lz(...) fdja_lookup_size(__VA_ARGS__)
+
+/* Looks up the first char of a value. Useful to quickly assess a value by
+ * its first char.
+ * Returns 0 if the value is not present (returns 0 too if the value is an
+ * empty string...)
+ */
+char fdja_lk(fdja_value *v, const char *path, ...);
 
 char *fdja_lj(fdja_value *v, const char *path, ...);
 char *fdja_ld(fdja_value *v, const char *path, ...);

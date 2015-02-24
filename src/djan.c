@@ -1424,6 +1424,15 @@ ssize_t fdja_lookup_size(fdja_value *v, const char *path, ...)
   return vv ? fdja_size(vv) : -1;
 }
 
+char fdja_lk(fdja_value *v, const char *path, ...)
+{
+  va_list ap; va_start(ap, path);
+  fdja_value *r = fdja_vlookup(v, path, ap);
+  va_end(ap);
+
+  return r ? *fdja_srk(r) : 0;
+}
+
 char *fdja_lj(fdja_value *v, const char *path, ...)
 {
   va_list ap; va_start(ap, path);

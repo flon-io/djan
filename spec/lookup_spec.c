@@ -358,6 +358,13 @@ context "fdja_lookup..."
       expect(fdja_lk(v, "c") == 's');
       expect(fdja_lk(v, "d") == '1');
     }
+
+    it "returns 0 if there is no value"
+    {
+      v = fdja_v("{ a: true, b: \"string\", c: sybmol, d: 1 }");
+
+      expect(fdja_lk(v, "e") == 0);
+    }
   }
 
   describe "fdja_lz()"
