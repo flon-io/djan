@@ -133,9 +133,9 @@ char *fdja_to_djan(fdja_value *v, int flags);
 #define fdja_todc(v) fdja_to_djan(v, 1)
 char *fdja_f_todc(const char *path, ...);
 
-#define fdja_putj(v) flu_putf(fdja_to_json(v));
-#define fdja_putd(v) flu_putf(fdja_to_djan(v, 2 | 16));
-#define fdja_putdc(v) flu_putf(fdja_to_djan(v, 1 | 16));
+#define fdja_putj(v) flu_putf(fdja_to_json(v))
+#define fdja_putd(v) flu_putf(fdja_to_djan(v, 2 | 16))
+#define fdja_putdc(v) flu_putf(fdja_to_djan(v, 1 | 16))
 
 //char *fdja_to_radial(fdja_value *v);
 
