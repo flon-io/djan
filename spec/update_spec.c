@@ -581,6 +581,16 @@ context "update"
       expect(fdja_tod(v) ===f "{ a: { b.b: { c: Cok } } }");
       expect(fdja_tod(r) ===f "Cok");
     }
+
+    it "frees the value if it cannot parse it"
+    {
+      v = fdja_dparse("{}");
+
+      fdja_value *r = fdja_psetv(v, "a", "na%s", " blah");
+
+      expect(r == NULL);
+      expect(fdja_tod(v) ===f "{}");
+    }
   }
 
   describe "fdja_oset()"

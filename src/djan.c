@@ -1756,7 +1756,7 @@ fdja_value *fdja_psetv(fdja_value *start, const char *path, ...)
   fdja_value *r = NULL;
 
   fdja_value *v = fdja_parse(s);
-  if (v == NULL) goto _over;
+  if (v == NULL) { free(s); goto _over; }
 
   r = fdja_pset(start, p, v);
   if (r == NULL) fdja_free(v);
