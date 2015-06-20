@@ -4,3 +4,13 @@
 * with rex: 9,609 bytes in 289 blocks (memleaks to fix)
 * later: 11,914 bytes in 412 blocks (parser->id)
 
+* make spec before move to new aabro:
+  * 64.458ms
+  * 76.695ms
+  * 73.279ms
+  * 74.54ms
+  * 72.64ms
+  * 79.35ms
+  * 82.11ms
+  * ...
+
