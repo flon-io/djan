@@ -90,237 +90,225 @@ fdja_value *fdja_object_malloc()
 //
 // parsing
 
-static fabr_parser *fdja_parser = NULL;
-static fabr_parser *fdja_obj_parser = NULL;
-static fabr_parser *fdja_number_parser = NULL;
-static fabr_parser *fdja_symbol_parser = NULL;
-static fabr_parser *fdja_radial_parser = NULL;
+// DJAN PARSERS
+//
+//fabr_parser *blanks = // blanks and comments
+//  fabr_rex("([ \t]*((#[^\r\n]*)?([\r\n]|$))?)*");
+//
+//fabr_parser *string =
+//  fabr_n_rex(
+//    "string",
+//    "\""
+//      "("
+//        "\\\\[\"\\/\\\\bfnrt]" "|"
+//        "\\\\u[0-9a-fA-F]{4}" "|"
+//        "[^"
+//          "\"" "\\\\" /*"\\/"*/ "\b" "\f" "\n" "\r" "\t"
+//        "]"
+//      ")*"
+//    "\"");
+//fabr_parser *sqstring =
+//  fabr_n_rex(
+//    "sqstring",
+//    "'"
+//      "("
+//        "\\\\['\\/\\\\bfnrt]" "|"
+//        "\\\\u[0-9a-fA-F]{4}" "|"
+//        "[^"
+//          "'" "\\\\" /*"\\/"*/ "\b" "\f" "\n" "\r" "\t"
+//        "]"
+//      ")*"
+//    "'");
+//fabr_parser *rxstring = // only for radial
+//  fabr_n_rex(
+//    "rxstring",
+//    "/"
+//      "("
+//        "\\\\['\\/\\\\bfnrt]" "|"
+//        "\\\\u[0-9a-fA-F]{4}" "|"
+//        "[^"
+//          "/" "\\\\" "\b" "\f" "\n" "\r" "\t"
+//        "]"
+//      ")*"
+//    "/i?");
+//
+//fabr_parser *symbolk =
+//  fabr_n_rex(
+//    "symbol",
+//    "[^ \b\f\n\r\t\"',\\[\\]\\{\\}#\\\\:]+");
+//fabr_parser *symbolv =
+//  fabr_n_rex(
+//    "symbol",
+//    "[^ \b\f\n\r\t\"',\\[\\]\\{\\}#\\\\]+");
+//
+//fabr_parser *number =
+//  fabr_n_rex("number", "-?[0-9]+(\\.[0-9]+)?([eE][+-]?[0-9]+)?");
+//
+//fabr_parser *entry =
+//  fabr_n_seq(
+//    "entry",
+//    blanks,
+//    fabr_n_alt("key", string, sqstring, symbolk, NULL),
+//    blanks,
+//    fabr_string(":"),
+//    fabr_n("value"),
+//    NULL);
+//
+//fabr_parser *entries =
+//  fabr_n_seq(
+//    "entries",
+//    entry,
+//    fabr_seq(fabr_rex(",?"), entry, fabr_q("?"), fabr_r("*")),
+//    fabr_r("?")
+//  );
+//
+//fabr_parser *object =
+//  fabr_n_seq(
+//    "object",
+//    fabr_rex("\\{[ \t\n\r]*"), entries, fabr_rex("[ \t\n\r]*}"), NULL);
+//
+//fabr_parser *values =
+//  fabr_n_seq(
+//    "values",
+//    fabr_n("value"),
+//    fabr_seq(fabr_rex(",?"), fabr_n("value"), fabr_q("?"), fabr_r("*")),
+//    fabr_r("?")
+//  );
+//
+//fabr_parser *array =
+//  fabr_n_seq(
+//    "array",
+//    fabr_rex("\\[[ \t\n\r]*"), values, fabr_rex("[ \t\n\r]*]"), NULL);
+//
+//fabr_parser *jtrue = fabr_n_string("true", "true");
+//fabr_parser *jfalse = fabr_n_string("false", "false");
+//fabr_parser *jnull = fabr_n_string("null", "null");
+//
+//fdja_parser =
+//  fabr_n_seq(
+//    "value",
+//    blanks,
+//    fabr_altg(
+//      fabr_alt(
+//        string, sqstring, number, object, array, jtrue, jfalse, jnull, NULL),
+//      symbolv,
+//      NULL),
+//    blanks,
+//    NULL);
+//
+//// number & symbol
+//
+//fdja_number_parser = number;
+//fdja_symbol_parser = symbolv;
+//
+//// obj
+//
+//fdja_obj_parser =
+//  fabr_seq(
+//    fabr_rex("[ \t\r\n]*(#[^\n\r]*[\n\r]+)?"), fabr_q("*"),
+//    fabr_n_seq("object", fabr_rex("\\{?"), entries, fabr_rex("\\}?"), NULL),
+//    fabr_rex("[ \t\r\n]*(#[^\n\r]*)?"), fabr_q("*"),
+//    NULL);
+//
+//// radial
+//
+//fabr_parser *syk_dol =
+//  fabr_seq(
+//    fabr_string("$("), fabr_n("symk"), fabr_string(")"), NULL);
+//fabr_parser *syk_str =
+//  fabr_rex(
+//    "("
+//      "[^\\$ \b\f\n\r\t\"',\\[\\]\\{\\}\\)#\\\\:]" "|"
+//      "\\$[^\\( \b\f\n\r\t\"',\\[\\]\\{\\}\\)#\\\\:]"
+//    ")+");
+//fabr_parser *symk =
+//  fabr_n_rep(
+//    "symk", fabr_alt(syk_dol, syk_str, NULL), 1, -1);
+//
+//fabr_parser *syv_dol =
+//  fabr_seq(
+//    fabr_string("$("), fabr_n("symv"), fabr_string(")"), NULL);
+//fabr_parser *syv_str =
+//  fabr_rex(
+//    "("
+//      //"[^\\$ \b\f\n\r\t\"',\\[\\]\\{\\}\\)#\\\\]" "|" // accept dollar...
+//      "[^ \b\f\n\r\t\"',\\[\\]\\{\\}\\)#\\\\]" "|"
+//      "\\$[^\\( \b\f\n\r\t\"',\\[\\]\\{\\}\\)#\\\\]"
+//    ")+");
+//fabr_parser *symv =
+//  fabr_n_rep(
+//    "symv", fabr_alt(syv_dol, syv_str, NULL), 1, -1);
+//
+////fabr_parser *symbolh = fabr_n_rex("symbolh", "[^ \t\n\r,\\[\\]\\{\\}#]+");
+//fabr_parser *spaces = fabr_rex("[ \t]*");
+//
+//fabr_parser *rad_i = fabr_name("rad_i", spaces);
+//
+//fabr_parser *comma =
+//  fabr_seq(spaces, fabr_seq(fabr_string(","), blanks, fabr_r("?")), NULL);
+//
+//fabr_parser *rad_p =
+//  fabr_n_seq(
+//    "rad_p",
+//    fabr_string("("), blanks, fabr_n("rad_g"), blanks, fabr_string(")"),
+//    NULL);
+//
+//fabr_parser *rad_v =
+//  fabr_n_altg(
+//    "rad_v",
+//    fabr_alt(
+//      rad_p,
+//      string, sqstring, rxstring,
+//      number, object, array, jtrue, jfalse, jnull,
+//      NULL),
+//    symv,
+//    NULL);
+//
+//fabr_parser *rad_e =
+//  fabr_n_seq(
+//    "rad_e",
+//    fabr_seq(
+//      fabr_n_alt("rad_k", string, sqstring, symk, NULL),
+//      spaces, fabr_str(":"), blanks,
+//      NULL), fabr_q("?"),
+//    rad_v,
+//    NULL);
+//
+//fabr_parser *rad_h =
+//  fabr_n_altg("rad_h", rad_v, symv, NULL);
+//
+//fabr_parser *rad_g =
+//  fabr_n_seq("rad_g", rad_h, fabr_seq(comma, rad_e, NULL), fabr_q("*"), NULL);
+//
+//fabr_parser *rad_l =
+//  fabr_n_seq("rad_l", rad_i, rad_g, NULL);
+//
+//fabr_parser *rad_eol =
+//  fabr_rex("[ \t]*(#[^\n\r]*)?");
+//
+//fabr_parser *rad_line =
+//  fabr_seq(rad_l, fabr_q("?"), rad_eol, NULL);
+//
+//fdja_radial_parser =
+//  fabr_seq(
+//    rad_line,
+//    fabr_seq(
+//      fabr_rex("[\n\r]+"),
+//      rad_line,
+//      fabr_r("*")),
+//    NULL);
 
-static void fdja_parser_init()
-{
-  // djan (JSON & co)
-
-  fabr_parser *blanks = // blanks and comments
-    fabr_rex("([ \t]*((#[^\r\n]*)?([\r\n]|$))?)*");
-
-  fabr_parser *string =
-    fabr_n_rex(
-      "string",
-      "\""
-        "("
-          "\\\\[\"\\/\\\\bfnrt]" "|"
-          "\\\\u[0-9a-fA-F]{4}" "|"
-          "[^"
-            "\"" "\\\\" /*"\\/"*/ "\b" "\f" "\n" "\r" "\t"
-          "]"
-        ")*"
-      "\"");
-  fabr_parser *sqstring =
-    fabr_n_rex(
-      "sqstring",
-      "'"
-        "("
-          "\\\\['\\/\\\\bfnrt]" "|"
-          "\\\\u[0-9a-fA-F]{4}" "|"
-          "[^"
-            "'" "\\\\" /*"\\/"*/ "\b" "\f" "\n" "\r" "\t"
-          "]"
-        ")*"
-      "'");
-  fabr_parser *rxstring = // only for radial
-    fabr_n_rex(
-      "rxstring",
-      "/"
-        "("
-          "\\\\['\\/\\\\bfnrt]" "|"
-          "\\\\u[0-9a-fA-F]{4}" "|"
-          "[^"
-            "/" "\\\\" "\b" "\f" "\n" "\r" "\t"
-          "]"
-        ")*"
-      "/i?");
-
-  fabr_parser *symbolk =
-    fabr_n_rex(
-      "symbol",
-      "[^ \b\f\n\r\t\"',\\[\\]\\{\\}#\\\\:]+");
-  fabr_parser *symbolv =
-    fabr_n_rex(
-      "symbol",
-      "[^ \b\f\n\r\t\"',\\[\\]\\{\\}#\\\\]+");
-
-  fabr_parser *number =
-    fabr_n_rex("number", "-?[0-9]+(\\.[0-9]+)?([eE][+-]?[0-9]+)?");
-
-  fabr_parser *entry =
-    fabr_n_seq(
-      "entry",
-      blanks,
-      fabr_n_alt("key", string, sqstring, symbolk, NULL),
-      blanks,
-      fabr_string(":"),
-      fabr_n("value"),
-      NULL);
-
-  fabr_parser *entries =
-    fabr_n_seq(
-      "entries",
-      entry,
-      fabr_seq(fabr_rex(",?"), entry, fabr_q("?"), fabr_r("*")),
-      fabr_r("?")
-    );
-
-  fabr_parser *object =
-    fabr_n_seq(
-      "object",
-      fabr_rex("\\{[ \t\n\r]*"), entries, fabr_rex("[ \t\n\r]*}"), NULL);
-
-  fabr_parser *values =
-    fabr_n_seq(
-      "values",
-      fabr_n("value"),
-      fabr_seq(fabr_rex(",?"), fabr_n("value"), fabr_q("?"), fabr_r("*")),
-      fabr_r("?")
-    );
-
-  fabr_parser *array =
-    fabr_n_seq(
-      "array",
-      fabr_rex("\\[[ \t\n\r]*"), values, fabr_rex("[ \t\n\r]*]"), NULL);
-
-  fabr_parser *jtrue = fabr_n_string("true", "true");
-  fabr_parser *jfalse = fabr_n_string("false", "false");
-  fabr_parser *jnull = fabr_n_string("null", "null");
-
-  fdja_parser =
-    fabr_n_seq(
-      "value",
-      blanks,
-      fabr_altg(
-        fabr_alt(
-          string, sqstring, number, object, array, jtrue, jfalse, jnull, NULL),
-        symbolv,
-        NULL),
-      blanks,
-      NULL);
-
-  // number & symbol
-
-  fdja_number_parser = number;
-  fdja_symbol_parser = symbolv;
-
-  // obj
-
-  fdja_obj_parser =
-    fabr_seq(
-      fabr_rex("[ \t\r\n]*(#[^\n\r]*[\n\r]+)?"), fabr_q("*"),
-      fabr_n_seq("object", fabr_rex("\\{?"), entries, fabr_rex("\\}?"), NULL),
-      fabr_rex("[ \t\r\n]*(#[^\n\r]*)?"), fabr_q("*"),
-      NULL);
-
-  // radial
-
-  fabr_parser *syk_dol =
-    fabr_seq(
-      fabr_string("$("), fabr_n("symk"), fabr_string(")"), NULL);
-  fabr_parser *syk_str =
-    fabr_rex(
-      "("
-        "[^\\$ \b\f\n\r\t\"',\\[\\]\\{\\}\\)#\\\\:]" "|"
-        "\\$[^\\( \b\f\n\r\t\"',\\[\\]\\{\\}\\)#\\\\:]"
-      ")+");
-  fabr_parser *symk =
-    fabr_n_rep(
-      "symk", fabr_alt(syk_dol, syk_str, NULL), 1, -1);
-
-  fabr_parser *syv_dol =
-    fabr_seq(
-      fabr_string("$("), fabr_n("symv"), fabr_string(")"), NULL);
-  fabr_parser *syv_str =
-    fabr_rex(
-      "("
-        //"[^\\$ \b\f\n\r\t\"',\\[\\]\\{\\}\\)#\\\\]" "|" // accept dollar...
-        "[^ \b\f\n\r\t\"',\\[\\]\\{\\}\\)#\\\\]" "|"
-        "\\$[^\\( \b\f\n\r\t\"',\\[\\]\\{\\}\\)#\\\\]"
-      ")+");
-  fabr_parser *symv =
-    fabr_n_rep(
-      "symv", fabr_alt(syv_dol, syv_str, NULL), 1, -1);
-
-  //fabr_parser *symbolh = fabr_n_rex("symbolh", "[^ \t\n\r,\\[\\]\\{\\}#]+");
-  fabr_parser *spaces = fabr_rex("[ \t]*");
-
-  fabr_parser *rad_i = fabr_name("rad_i", spaces);
-
-  fabr_parser *comma =
-    fabr_seq(spaces, fabr_seq(fabr_string(","), blanks, fabr_r("?")), NULL);
-
-  fabr_parser *rad_p =
-    fabr_n_seq(
-      "rad_p",
-      fabr_string("("), blanks, fabr_n("rad_g"), blanks, fabr_string(")"),
-      NULL);
-
-  fabr_parser *rad_v =
-    fabr_n_altg(
-      "rad_v",
-      fabr_alt(
-        rad_p,
-        string, sqstring, rxstring,
-        number, object, array, jtrue, jfalse, jnull,
-        NULL),
-      symv,
-      NULL);
-
-  fabr_parser *rad_e =
-    fabr_n_seq(
-      "rad_e",
-      fabr_seq(
-        fabr_n_alt("rad_k", string, sqstring, symk, NULL),
-        spaces, fabr_str(":"), blanks,
-        NULL), fabr_q("?"),
-      rad_v,
-      NULL);
-
-  fabr_parser *rad_h =
-    fabr_n_altg("rad_h", rad_v, symv, NULL);
-
-  fabr_parser *rad_g =
-    fabr_n_seq("rad_g", rad_h, fabr_seq(comma, rad_e, NULL), fabr_q("*"), NULL);
-
-  fabr_parser *rad_l =
-    fabr_n_seq("rad_l", rad_i, rad_g, NULL);
-
-  fabr_parser *rad_eol =
-    fabr_rex("[ \t]*(#[^\n\r]*)?");
-
-  fabr_parser *rad_line =
-    fabr_seq(rad_l, fabr_q("?"), rad_eol, NULL);
-
-  fdja_radial_parser =
-    fabr_seq(
-      rad_line,
-      fabr_seq(
-        fabr_rex("[\n\r]+"),
-        rad_line,
-        fabr_r("*")),
-      NULL);
-}
-
-static fabr_parser *fdja_path_parser = NULL;
-
-static void fdja_path_parser_init()
-{
-  fabr_parser *index = fabr_n_rex("index", "-?[0-9]+");
-  fabr_parser *key = fabr_n_rex("key", "(\\\\.|[^\n\r\t\\.])+");
-  fabr_parser *node = fabr_n_altg("node", index, key, NULL);
-
-  fdja_path_parser =
-    fabr_seq(
-      node,
-      fabr_seq(fabr_string("."), node, NULL), fabr_q("*"),
-      NULL);
-}
+// PATH PARSER
+//
+//fabr_parser *index = fabr_n_rex("index", "-?[0-9]+");
+//fabr_parser *key = fabr_n_rex("key", "(\\\\.|[^\n\r\t\\.])+");
+//fabr_parser *node = fabr_n_altg("node", index, key, NULL);
+//
+//fdja_path_parser =
+//  fabr_seq(
+//    node,
+//    fabr_seq(fabr_string("."), node, NULL), fabr_q("*"),
+//    NULL);
 
 // forward declarations
 static fdja_value *fdja_extract_value(char *input, fabr_tree *t);
@@ -451,8 +439,6 @@ static fdja_value *fdja_extract_value(char *input, fabr_tree *t)
 
 fdja_value *fdja_parse(char *input)
 {
-  if (fdja_parser == NULL) fdja_parser_init();
-
   fabr_tree *t = fabr_parse_all(input, 0, fdja_parser);
 
   //printf(">%s<\n", input);
@@ -734,8 +720,6 @@ static void fdja_parse_radl(char *input, fabr_tree *radl, flu_list *values)
 
 fdja_value *fdja_parse_radial(char *input, const char *origin)
 {
-  if (fdja_parser == NULL) fdja_parser_init();
-
   fabr_tree *t = fabr_parse_all(input, 0, fdja_radial_parser);
   // todo: deal with errors (t->result < 0) (well, it's cared for downstream)
 
@@ -822,8 +806,6 @@ fdja_value *fdja_parse_r(const char *format, ...)
 
 fdja_value *fdja_parse_obj(char *input)
 {
-  if (fdja_parser == NULL) fdja_parser_init();
-
   fabr_tree *t = fabr_parse_all(input, 0, fdja_obj_parser);
 
   //printf(">%s<\n", input);
@@ -964,15 +946,11 @@ int fdja_to_json_f(fdja_value *v, const char *path, ...)
 
 static int fdja_is_symbol(char *s)
 {
-  if (fdja_parser == NULL) fdja_parser_init();
-
   return fabr_match(s, fdja_symbol_parser);
 }
 
 static int fdja_is_number(char *s)
 {
-  if (fdja_parser == NULL) fdja_parser_init();
-
   return fabr_match(s, fdja_number_parser);
 }
 
@@ -1280,8 +1258,6 @@ static void unslash(char *s)
 
 fdja_value *fdja_vlookup(fdja_value *v, const char *path, va_list ap)
 {
-  if (fdja_path_parser == NULL) fdja_path_parser_init();
-
   char *p = flu_svprintf(path, ap);
 
   //printf("p >%s<\n", p);
