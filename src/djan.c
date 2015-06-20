@@ -94,7 +94,13 @@ fdja_value *fdja_object_malloc()
 //
 //fabr_parser *blanks = // blanks and comments
 //  fabr_rex("([ \t]*((#[^\r\n]*)?([\r\n]|$))?)*");
-//
+
+static fabr_tree *_blanks(fabr_input *i)
+{
+  //return fabr_rex(NULL, i, "([ \t]*((#[^\r\n]*)?([\r\n]|$))?)*");
+  return fabr_rex(NULL, i, "[ \t]*");
+}
+
 //fabr_parser *string =
 //  fabr_n_rex(
 //    "string",
@@ -196,9 +202,18 @@ fdja_value *fdja_object_malloc()
 //    blanks,
 //    NULL);
 
+static fabr_tree *_value(fabr_input *i)
+{
+  return fabr_str(NULL, i, "toto");
+}
+
 static fabr_tree *_djan(fabr_input *i)
 {
-  return NULL;
+  return fabr_seq("value", i,
+    _blanks,
+    _value,
+    _blanks,
+    NULL);
 }
 
 //// number & symbol
@@ -469,9 +484,9 @@ static fdja_value *fdja_extract_value(char *input, fabr_tree *t)
 
 fdja_value *fdja_parse(char *input)
 {
+  printf(">[1;33m%s[0;0m<\n", input);
   fabr_tree *t = fabr_parse_all(input, _djan);
 
-  //printf(">%s<\n", input);
   //puts("[1;30m"); puts(fabr_parser_to_string(t->parser)); puts("[0;0m");
   //puts(fabr_tree_to_string(t, input, 1));
 
