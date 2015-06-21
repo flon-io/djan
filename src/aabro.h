@@ -210,8 +210,8 @@ int fabr_match(const char *input, fabr_parser *p);
 
 #endif // FLON_AABRO_H
 
-//commit d066c456d9133ca33f9e4d1da35d0061aaedc119
+//commit a4f103bcacda209be185f0594c0236504dee7a9a
 //Author: John Mettraux <jmettraux@gmail.com>
-//Date:   Sat Jun 20 12:21:49 2015 +0900
+//Date:   Sun Jun 21 07:49:03 2015 +0900
 //
-//    set const on fabr_tree_str() char input
+//    fix "no progress" issue for rex_rep()

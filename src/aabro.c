@@ -367,8 +367,6 @@ fabr_tree *fabr_seq(
 
   fabr_tree *r = fabr_tree_malloc(name, "seq", i, 0);
 
-  //if (*(i->string + i->offset) == 0) { r->result = 0; return r; } // EOS
-
   fabr_tree **next = &r->child;
 
   va_list ap; va_start(ap, p);
@@ -457,8 +455,6 @@ fabr_tree *fabr_alt(
   fabr_tree *r = fabr_tree_malloc(name, "alt", i, 0);
   r->result = 0;
 
-  //if (*(i->string + i->offset) == 0) return r; // EOS
-
   fabr_tree **next = &r->child;
 
   va_list ap; va_start(ap, p);
@@ -495,8 +491,6 @@ fabr_tree *fabr_rep(
   while (1)
   {
     size_t ffo = i->offset;
-
-    //if (*(i->string + i->offset) == 0) break; // EOS
 
     fabr_tree *t = p(i);
 
@@ -741,15 +735,23 @@ static fabr_tree *rex_str(fabr_input *i, char *rx, size_t rxn)
   {
     char rc = rx_at(rx, rxn, ri++);
     char prc = rc;
+
     if (rc == '\\') rc = rx_at(rx, rxn, ri++);
     //printf(". rc >%c<\n", rc);
     if (rc == '\0') break;
 
     char ic = *(i->string + i->offset + ii++);
     //printf("  ic >%c<\n", ic);
+
+    if (rc == '$' && prc == rc) // unescaped dollar
+    {
+      if (ic != '\n' && ic != '\r' && ic != '\0') r->result = 0;
+      ii--; break;
+    }
+
     if (ic == '\0') { r->result = 0; break; }
 
-    if (rc == '.' && prc == rc && ic != '\n') continue;
+    if (rc == '.' && prc == rc && ic != '\n' && ic != '\r') continue;
 
     if (ic != rc) { r->result = 0; break; }
   }
@@ -760,7 +762,8 @@ static fabr_tree *rex_str(fabr_input *i, char *rx, size_t rxn)
   }
   if (r->length == 0) r->result = 0; // ...
 
-  //printf("        rex_str() result: %d %zu\n", r->result, r->length);
+  //printf(
+  //  "        rex_str() result: %d %zu\n", r->result, r->length);
 
   return r;
 }
@@ -833,7 +836,7 @@ static fabr_tree *rex_rep(fabr_input *i, char *rx, size_t rxn)
 
   while (1)
   {
-    //if (*(i->string + i->offset) == 0) break; // EOS
+    size_t ffo = i->offset;
 
     fabr_tree *t = p(i, rx + off, z - off);
     *next = t;
@@ -844,6 +847,8 @@ static fabr_tree *rex_rep(fabr_input *i, char *rx, size_t rxn)
     r->length += t->length;
 
     if (++count == mm[1]) break;
+
+    if (ffo == i->offset) break; // no progress
 
     next = &(t->sibling);
   }
@@ -872,7 +877,6 @@ static fabr_tree *rex_seq(fabr_input *i, char *rx, size_t rxn)
 
   while (1)
   {
-    //if (*(i->string + i->offset) == '\0') break; // EOS
     if (rx_at(crx, crxn, 0) == '\0') break;
 
     *next = rex_rep(i, crx, crxn);
@@ -926,7 +930,6 @@ static fabr_tree *rex_alt(fabr_input *i, char *rx, size_t rxn)
     //printf(
     //  "  %zu.%zu i+o       >[1;33m%s[0;0m<\n",
     //  m, n, i->string + i->offset);
-    //n++;
 
     for (size_t j = 0, range = 0, groups = 0; ; j++)
     {
@@ -958,6 +961,11 @@ static fabr_tree *rex_alt(fabr_input *i, char *rx, size_t rxn)
 
       // else continue
     }
+
+    //printf(
+    //  "  %zu.%zu rex_alt() result: %d %zu\n",
+    //  m, n, prev->result, prev->length);
+    //n++;
 
     if (prev->result == 1) break;
 
@@ -1008,8 +1016,6 @@ fabr_tree *fabr_eseq(
 
   for (int j = 0; ; j = j == 1 ? 0 : 1)
   {
-    //if (*(i->string + i->offset) == 0) break; // EOS
-
     fabr_tree *t = ps[j](i);
     fabr_tree **n = next;
     *next = t;
@@ -1116,8 +1122,8 @@ int fabr_match(const char *input, fabr_parser *p)
   return r;
 }
 
-//commit d066c456d9133ca33f9e4d1da35d0061aaedc119
+//commit a4f103bcacda209be185f0594c0236504dee7a9a
 //Author: John Mettraux <jmettraux@gmail.com>
-//Date:   Sat Jun 20 12:21:49 2015 +0900
+//Date:   Sun Jun 21 07:49:03 2015 +0900
 //
-//    set const on fabr_tree_str() char input
+//    fix "no progress" issue for rex_rep()
