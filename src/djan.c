@@ -367,21 +367,28 @@ static fabr_tree *_radial(fabr_input *i)
   return NULL;
 }
 
-// PATH PARSER
-//
-//fabr_parser *index = fabr_n_rex("index", "-?[0-9]+");
-//fabr_parser *key = fabr_n_rex("key", "(\\\\.|[^\n\r\t\\.])+");
-//fabr_parser *node = fabr_n_altg("node", index, key, NULL);
-//
-//fdja_path_parser =
-//  fabr_seq(
-//    node,
-//    fabr_seq(fabr_string("."), node, NULL), fabr_q("*"),
-//    NULL);
+// path parser
+
+static fabr_tree *_pa_key(fabr_input *i)
+{
+  return fabr_rex("key", i, "(\\\\.|[^\n\r\t\\.])+");
+}
+static fabr_tree *_pa_index(fabr_input *i)
+{
+  return fabr_rex("index", i, "-?[0-9]+");
+}
+static fabr_tree *_pa_node(fabr_input *i)
+{
+  return fabr_alt("node", i, _pa_index, _pa_key, NULL);
+}
+static fabr_tree *_pa_dot(fabr_input *i)
+{
+  return fabr_str(NULL, i, ".");
+}
 
 static fabr_tree *_path(fabr_input *i)
 {
-  return NULL;
+  return fabr_jseq(NULL, i, _pa_node, _pa_dot);
 }
 
 // forward declarations
@@ -1327,15 +1334,13 @@ fdja_value *fdja_vlookup(fdja_value *v, const char *path, va_list ap)
 {
   char *p = flu_svprintf(path, ap);
 
-  //printf("p >%s<\n", p);
-  //fabr_tree *tt = fabr_parse_f(p, _path, 0);
-  //flu_putf(fabr_tree_to_string(tt, p, 1));
-
+  //printf("fdja_vlookup() >[1;33m%s[0;0m<\n", p);
+  //fabr_tree *t = fabr_parse_f(p, _path, FABR_F_ALL);
   fabr_tree *t = fabr_parse_all(p, _path);
 
   if (t->result != 1) { fabr_tree_free(t); free(p); return NULL; }
 
-  //puts(fabr_tree_to_string(t, p, 1));
+  fabr_puts_tree(t, p, 1);
 
   fdja_value *vv = v;
 
@@ -1345,14 +1350,16 @@ fdja_value *fdja_vlookup(fdja_value *v, const char *path, va_list ap)
   {
     fabr_tree *tt = ((fabr_tree *)n->item)->child;
     char ltype = tt->name[0];
+    //printf("ltype '%c' / vv->type '%c'\n", ltype, vv->type);
 
-    //puts(fabr_tree_to_string(tt, p, 1));
+    fabr_puts_tree(tt, p, 1);
 
     if (ltype == 'i' && vv->type == 'o') { ltype = 'k'; }
     else if (ltype == 'i' && vv->type != 'a') { vv = NULL; break; }
     else if (ltype == 'k' && vv->type != 'o') { vv = NULL; break; }
 
     char *s = fabr_tree_string(p, tt);
+    //printf("s >%s<\n", s);
 
     if (ltype == 'i')
     {
