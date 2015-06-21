@@ -200,21 +200,29 @@ static fabr_tree *_number(fabr_input *i)
 
 static fabr_tree *_sbstart(fabr_input *i)
 {
-  return fabr_rex(NULL, i, "\\[[ \t\n\r]*");
+  return fabr_rex("[", i, "\\[[ \t\n\r]*");
+    // TODO anonymize me
 }
 static fabr_tree *_sbend(fabr_input *i)
 {
-  return fabr_rex(NULL, i, "[ \t\n\r]*]");
+  return fabr_rex("]", i, "]");
+    // TODO anonymize me
 }
 static fabr_tree *_sep(fabr_input *i)
 {
-  return fabr_rex(NULL, i, "[ \t\n\r]*,?[ \t\n\r]*");
+  return fabr_rex(",", i, "([ \t\n\r]*,[ \t\n\r]*|[ \t\n\r]+)");
+    // TODO anonymize me
+}
+
+static fabr_tree *_value_then_blank(fabr_input *i)
+{
+  return fabr_seq("vtb", i, _value, _blanks, NULL);
 }
 
 static fabr_tree *_array(fabr_input *i)
 {
   //t = fabr_eseq("z", &i, _es_sta, _es_elt, _es_sep, _es_end);
-  return fabr_eseq("array", i, _sbstart, _value, _sep, _sbend);
+  return fabr_eseq("array", i, _sbstart, _value_then_blank, _sep, _sbend);
 }
 
 //fabr_parser *jtrue = fabr_n_string("true", "true");

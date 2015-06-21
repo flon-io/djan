@@ -293,6 +293,14 @@ context "parsing"
         expect(v != NULL);
         expect(fdja_to_json(v) ===f "[]");
       }
+
+      it "parses [ 1 # comment \\n 3 ]"
+      {
+        v = fdja_dparse("[ 1 # comment \n 3 ]");
+
+        expect(v != NULL);
+        expect(fdja_to_json(v) ===f "[1,3]");
+      }
     }
 
     context "objects"
