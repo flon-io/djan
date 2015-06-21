@@ -61,12 +61,19 @@ char *fabr_tree_to_string(fabr_tree *t, const char *input, short color);
  */
 void fabr_puts_tree(fabr_tree *t, const char *input, short color);
 
+
 /* Returns a string representation (JSON) of the fabr_tree.
  * The children are not displayed. If the tree is a leaf and the input
  * is not NULL, the parsed string is displayed, else the children count
  * is displayed.
  */
 char *fabr_tree_to_str(fabr_tree *t, const char *input, short color);
+
+/* Like fabr_puts_tree() but the last arg accept flags (1 for colours,
+ * 2 for children, so 3 for both).
+ */
+void fabr_tree_puts(fabr_tree *t, const char *input, short flags);
+#define fabr_puts(t, input, flags) fabr_tree_puts(t, input, flags)
 
 /* Returns a copy of the string behind the fabr_tree.
  * Returns an empty string if the tree is not a successful one.
@@ -218,8 +225,8 @@ int fabr_match(const char *input, fabr_parser *p);
 
 #endif // FLON_AABRO_H
 
-//commit 1618864d97855b1e6a0191ab31d49f8e1a603342
+//commit 1c41ec25267b67d7da019d2b3675dd15c8bc61a2
 //Author: John Mettraux <jmettraux@gmail.com>
-//Date:   Sun Jun 21 15:45:08 2015 +0900
+//Date:   Mon Jun 22 06:23:57 2015 +0900
 //
-//    implement fabr_tree_list_cn() and _list_named_cn()
+//    implement fabr_tree_puts() (and fabr_puts())

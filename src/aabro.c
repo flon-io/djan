@@ -133,7 +133,7 @@ static void fabr_t_to_s(
   if (t->name) free(name);
   if (t->note) free(note);
 
-  if (children != 1 && (input == NULL || t->result != 1 || t->child))
+  if (children == 0 && (input == NULL || t->result != 1 || t->child))
   {
     size_t cc = 0; for (fabr_tree *c = t->child; c; c = c->sibling) ++cc;
     flu_sbprintf(b, "%zu ]%s", cc, clearc);
@@ -188,6 +188,17 @@ char *fabr_tree_to_str(fabr_tree *t, const char *input, short color)
   fabr_t_to_s(t, input, b, 0, 0, color);
 
   return flu_sbuffer_to_string(b);
+}
+
+void fabr_tree_puts(fabr_tree *t, const char *input, short flags)
+{
+  flu_sbuffer *b = flu_sbuffer_malloc();
+  fabr_t_to_s(t, input, b, 0, flags & 2, flags & 1);
+  char *s = flu_sbuffer_to_string(b);
+
+  puts(s);
+
+  free(s);
 }
 
 
@@ -1149,8 +1160,8 @@ int fabr_match(const char *input, fabr_parser *p)
   return r;
 }
 
-//commit 1618864d97855b1e6a0191ab31d49f8e1a603342
+//commit 1c41ec25267b67d7da019d2b3675dd15c8bc61a2
 //Author: John Mettraux <jmettraux@gmail.com>
-//Date:   Sun Jun 21 15:45:08 2015 +0900
+//Date:   Mon Jun 22 06:23:57 2015 +0900
 //
-//    implement fabr_tree_list_cn() and _list_named_cn()
+//    implement fabr_tree_puts() (and fabr_puts())
