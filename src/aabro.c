@@ -233,16 +233,20 @@ char *fabr_lookup_string(const char *input, fabr_tree *t, const char *name)
   return tt ? fabr_tree_string(input, tt) : NULL;
 }
 
-static void fabr_t_list(flu_list *l, fabr_tree *t, fabr_tree_func *f)
+static void fabr_t_list(
+  flu_list *l, fabr_tree *t, fabr_tree_func *f, int skip)
 {
-  short r = f(t);
+  if ( ! skip)
+  {
+    short r = f(t);
 
-  if (r < 0) { return; }
-  if (r > 0) { flu_list_add(l, t); return; }
+    if (r < 0) { return; }
+    if (r > 0) { flu_list_add(l, t); return; }
+  }
 
   for (fabr_tree *c = t->child; c != NULL; c = c->sibling)
   {
-    fabr_t_list(l, c, f);
+    fabr_t_list(l, c, f, 0);
   }
 }
 
@@ -250,19 +254,33 @@ flu_list *fabr_tree_list(fabr_tree *t, fabr_tree_func *f)
 {
   flu_list *l = flu_list_malloc();
 
-  fabr_t_list(l, t, f);
+  fabr_t_list(l, t, f, 0);
 
   return l;
 }
 
-static void fabr_t_list_named(flu_list *l, fabr_tree *t, const char *name)
+flu_list *fabr_tree_list_cn(fabr_tree *t, fabr_tree_func *f)
 {
-  if (t->result != 1) { return; }
-  if (t->name && strcmp(t->name, name) == 0) { flu_list_add(l, t); return; }
+  flu_list *l = flu_list_malloc();
+
+  fabr_t_list(l, t, f, 1);
+
+  return l;
+}
+
+static void fabr_t_list_named(
+  flu_list *l, fabr_tree *t, const char *name, int skip)
+{
+  if ( ! skip)
+  {
+    if (t->result != 1) { return; }
+    if (t->name && name == NULL) { flu_list_add(l, t); return; }
+    if (t->name && strcmp(t->name, name) == 0) { flu_list_add(l, t); return; }
+  }
 
   for (fabr_tree *c = t->child; c != NULL; c = c->sibling)
   {
-    fabr_t_list_named(l, c, name);
+    fabr_t_list_named(l, c, name, 0);
   }
 }
 
@@ -270,7 +288,16 @@ flu_list *fabr_tree_list_named(fabr_tree *t, const char *name)
 {
   flu_list *l = flu_list_malloc();
 
-  fabr_t_list_named(l, t, name);
+  fabr_t_list_named(l, t, name, 0);
+
+  return l;
+}
+
+flu_list *fabr_tree_list_named_cn(fabr_tree *t, const char *name)
+{
+  flu_list *l = flu_list_malloc();
+
+  fabr_t_list_named(l, t, name, 1);
 
   return l;
 }
@@ -1122,8 +1149,8 @@ int fabr_match(const char *input, fabr_parser *p)
   return r;
 }
 
-//commit a4f103bcacda209be185f0594c0236504dee7a9a
+//commit 1618864d97855b1e6a0191ab31d49f8e1a603342
 //Author: John Mettraux <jmettraux@gmail.com>
-//Date:   Sun Jun 21 07:49:03 2015 +0900
+//Date:   Sun Jun 21 15:45:08 2015 +0900
 //
-//    fix "no progress" issue for rex_rep()
+//    implement fabr_tree_list_cn() and _list_named_cn()

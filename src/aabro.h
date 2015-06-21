@@ -115,10 +115,18 @@ typedef short fabr_tree_func(const fabr_tree *);
  */
 flu_list *fabr_tree_list(fabr_tree *t, fabr_tree_func *f);
 
+/* Like fabr_tree_list() but doesn't consider the root of t.
+ */
+flu_list *fabr_tree_list_cn(fabr_tree *t, fabr_tree_func *f);
+
 /* Given a tree (starting point) and a fabr_tree_func, collects all the
  * [sub-trees] that have a result to 1 and the given name.
  */
 flu_list *fabr_tree_list_named(fabr_tree *t, const char *name);
+
+/* Like fabr_tree_list_named() but doesn't consider the root of t.
+ */
+flu_list *fabr_tree_list_named_cn(fabr_tree *t, const char *name);
 
 /* Like fabr_tree_list() but returns directly an array of fabr_tree*.
  */
@@ -210,8 +218,8 @@ int fabr_match(const char *input, fabr_parser *p);
 
 #endif // FLON_AABRO_H
 
-//commit a4f103bcacda209be185f0594c0236504dee7a9a
+//commit 1618864d97855b1e6a0191ab31d49f8e1a603342
 //Author: John Mettraux <jmettraux@gmail.com>
-//Date:   Sun Jun 21 07:49:03 2015 +0900
+//Date:   Sun Jun 21 15:45:08 2015 +0900
 //
-//    fix "no progress" issue for rex_rep()
+//    implement fabr_tree_list_cn() and _list_named_cn()
