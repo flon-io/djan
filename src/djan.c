@@ -439,25 +439,23 @@ static char *fdja_sq_unescape(const char *s, size_t n)
 
 static char *fdja_extract_key(char *input, fabr_tree *t)
 {
-  //printf("dek()\n%s\n", fabr_tree_to_string(t, input));
+  //printf("dek() "); fabr_puts(t, input, 3);
 
-  fabr_tree *c = t->child;
-  while (c->result != 1) c = c->sibling; // unpruned trees are ok too
+  //while (t->result != 1) t = t->sibling; // unpruned trees are ok too
 
-  if (strcmp(c->name, "string") == 0)
-    return flu_n_unescape(input + c->offset + 1, c->length - 2);
+  if (strcmp(t->name, "string") == 0)
+    return flu_n_unescape(input + t->offset + 1, t->length - 2);
 
-  if (strcmp(c->name, "sqstring") == 0)
-    //return fdja_sq_unescape(input + c->offset + 1, c->length - 2);
-    return flu_n_unescape(input + c->offset + 1, c->length - 2);
+  if (strcmp(t->name, "sqstring") == 0)
+    return flu_n_unescape(input + t->offset + 1, t->length - 2);
 
-  //if (strcmp(c->name, "symbol") == 0)
-  return strndup(input + c->offset, c->length);
+  //if (strcmp(t->name, "symbol") == 0)
+  return strndup(input + t->offset, t->length);
 }
 
 static fdja_value *fdja_extract_entries(char *input, fabr_tree *t)
 {
-  //printf("%s\n", fabr_tree_to_string(t, input));
+  //printf("dees() "); fabr_puts(t, input, 3);
 
   flu_list *ts = fabr_tree_list_named(t, "entry");
 
@@ -467,9 +465,10 @@ static fdja_value *fdja_extract_entries(char *input, fabr_tree *t)
   for (flu_node *n = ts->first; n != NULL; n = n->next)
   {
     fabr_tree *tt = (fabr_tree *)n->item;
-    //printf("**\n%s\n", fabr_tree_to_string(tt, input));
-    fdja_value *v = fdja_extract_value(input, fabr_t_child(tt, 4));
-    v->key = fdja_extract_key(input, fabr_t_child(tt, 1));
+    //printf("dees() ent "); fabr_puts(tt, input, 3);
+    fdja_value *v = fdja_extract_value(input, tt->child->sibling->sibling);
+    v->key = fdja_extract_key(input, tt->child->child);
+    //printf("dees() ent key >%s<\n", v->key);
     if (first == NULL) first = v;
     if (child != NULL) child->sibling = v;
     child = v;
@@ -508,8 +507,8 @@ static fdja_value *fdja_extract_v(char *input, fabr_tree *t)
 {
   if (t == NULL) return NULL;
 
-  //printf("fdja_extract_v() "); fabr_puts_tree(t, input, 1);
-  //printf("fdja_extract_v() t->name >%s<\n", t->name);
+  //printf("de_v() "); fabr_puts(t, input, 3);
+  //printf("de_v() t->name >%s<\n", t->name);
 
   char ty = '-';
 
@@ -526,7 +525,7 @@ static fdja_value *fdja_extract_v(char *input, fabr_tree *t)
   fdja_value *v = fdja_value_malloc(ty, input, t->offset, t->length, 0);
 
   if (ty == 'o')
-    v->child = fdja_extract_entries(input, fabr_t_child(t, 1));
+    v->child = fdja_extract_entries(input, t);
   else if (ty == 'a')
     v->child = fdja_extract_values(input, t);
 
@@ -535,8 +534,7 @@ static fdja_value *fdja_extract_v(char *input, fabr_tree *t)
 
 static fdja_value *fdja_extract_value(char *input, fabr_tree *t)
 {
-  //printf("fdja_extract_value() %s\n", fabr_tree_to_string(t, input, 1));
-  //printf("fdja_extract_value() %s\n", fabr_tree_to_str(t, input, 1));
+  //printf("fdja_extract_value() "); fabr_puts(t, input, 3);
 
   if (t->result != 1) return NULL;
 
@@ -552,7 +550,7 @@ fdja_value *fdja_parse(char *input)
   //fabr_tree_free(tt);
 
   fabr_tree *t = fabr_parse_all(input, _djan);
-  //fabr_puts_tree(t, input, 1);
+  //fabr_puts(t, input, 3);
 
   fdja_value *v = fdja_extract_value(input, t);
   fabr_tree_free(t);
