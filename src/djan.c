@@ -402,7 +402,7 @@ static fabr_tree *_pa_index(fabr_input *i)
 }
 static fabr_tree *_pa_node(fabr_input *i)
 {
-  return fabr_alt("node", i, _pa_key, _pa_index, NULL);
+  return fabr_altg("node", i, 0, _pa_index, _pa_key, NULL);
 }
 static fabr_tree *_pa_dot(fabr_input *i)
 {
@@ -1362,11 +1362,11 @@ fdja_value *fdja_vlookup(fdja_value *v, const char *path, va_list ap)
 
   char *p = flu_svprintf(path, ap);
 
-  //printf("fdja_vlookup() >[1;33m%s[0;0m<\n", p);
+  printf("fdja_vlookup() >[1;33m%s[0;0m<\n", p);
   //fabr_tree *t = fabr_parse_f(p, _path, FABR_F_ALL);
   fabr_tree *t = fabr_parse_all(p, _path);
 
-  //fabr_puts(t, p, 3);
+  fabr_puts(t, p, 3);
 
   if (t->result != 1) { fabr_tree_free(t); free(p); return NULL; }
 
