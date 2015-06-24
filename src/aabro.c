@@ -485,15 +485,63 @@ fabr_tree *fabr_seq(
   return r;
 }
 
-fabr_tree *fabr_alt(
-  char *name, fabr_input *i, fabr_parser *p, ...)
-{
-  //size_t m = mm++; printf("A %zu fabr_alt() \"%s\"\n", m, name);
+//fabr_tree *fabr_p_alt(
+//  const char *input,
+//  size_t offset, size_t depth,
+//  fabr_parser *p,
+//  int flags)
+//{
+//  short result = 0;
+//
+//  fabr_tree *first = NULL;
+//  fabr_tree *prev = NULL;
+//  fabr_tree *winner = NULL;
+//
+//  for (size_t i = 0; p->children[i] != NULL; i++)
+//  {
+//    fabr_parser *pc = p->children[i];
+//
+//    fabr_tree *t = fabr_do_parse(input, offset, depth + 1, pc, flags);
+//
+//    if (first == NULL) first = t;
+//    if (prev != NULL) prev->sibling = t;
+//    prev = t;
+//
+//    if (t->result == 1) result = 1;
+//    if (t->result < 0) result = t->result;
+//
+//    if (result < 0) break;
+//    if (t->result != 1) continue;
+//
+//    if (p->type == fabr_pt_alt)
+//    {
+//      winner = t; break;
+//    }
+//    if (winner != NULL && t->length <= winner->length)
+//    {
+//      t->result = 0; continue;
+//    }
+//    if (winner) winner->result = 0;
+//    winner = t;
+//  }
+//
+//  return fabr_tree_malloc(
+//    result, offset, winner ? winner->length : 0, NULL, p, first);
+//}
 
-  fabr_tree *r = fabr_tree_malloc(name, "alt", i, 0);
+fabr_tree *fabr_altg(
+  char *name, fabr_input *i, short greedy, fabr_parser *p, ...)
+{
+  //size_t m = mm++; printf("A %zu fabr_altg() %d \"%s\"\n", m, greedy, name);
+
+  size_t off = i->offset;
+
+  fabr_tree *r = fabr_tree_malloc(name, greedy ? "altg" : "alt", i, 0);
   r->result = 0;
 
   fabr_tree **next = &r->child;
+
+  fabr_tree *winner = NULL;
 
   va_list ap; va_start(ap, p);
   while (1)
@@ -501,17 +549,36 @@ fabr_tree *fabr_alt(
     fabr_tree *t = p(i);
     *next = t;
 
-    if (t->result != 0) { r->result = t->result; r->length = t->length; break; }
+    if (t->result == -1) { winner = t; break; }
+
+    if (t->result == 1)
+    {
+      if ( ! greedy) { winner = t; break; }
+      if (winner == NULL || t->length > winner->length)
+      {
+        if (winner) winner->result = 0;
+         winner = t;
+      }
+    }
 
     p = va_arg(ap, fabr_parser *); if (p == NULL) break;
+
+    i->offset = off;
     next = &(t->sibling);
   }
   va_end(ap);
 
+  if (winner)
+  {
+    r->result = winner->result;
+    r->length = winner->length;
+  }
+
   if (r->result == 1 && (i->flags & FABR_F_PRUNE)) fabr_prune(r);
 
   //printf(
-  //  "  %zu fabr_alt() \"%s\" res %d len %zu\n", m, name, r->result, r->length);
+  //  "  %zu fabr_alt() %d \"%s\" res %d len %zu\n",
+  //  m, greedy, name, r->result, r->length);
 
   return r;
 }
@@ -1160,8 +1227,8 @@ int fabr_match(const char *input, fabr_parser *p)
   return r;
 }
 
-//commit 1c41ec25267b67d7da019d2b3675dd15c8bc61a2
+//commit bddf1d69db11a9ba3264d17d51ccbdc408a7db11
 //Author: John Mettraux <jmettraux@gmail.com>
-//Date:   Mon Jun 22 06:23:57 2015 +0900
+//Date:   Thu Jun 25 06:35:45 2015 +0900
 //
-//    implement fabr_tree_puts() (and fabr_puts())
+//    implement fabr_altg()

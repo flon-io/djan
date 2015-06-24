@@ -173,8 +173,10 @@ fabr_tree *fabr_str(
 fabr_tree *fabr_seq(
   char *name, fabr_input *i, fabr_parser *p, ...);
 
-fabr_tree *fabr_alt(
-  char *name, fabr_input *i, fabr_parser *p, ...);
+fabr_tree *fabr_altg(
+  char *name, fabr_input *i, short greedy, fabr_parser *p, ...);
+#define fabr_alt(name, i, p, ...) \
+  fabr_altg(name, i, 0, p, __VA_ARGS__)
 
 fabr_tree *fabr_rep(
   char *name, fabr_input *i, fabr_parser *p, size_t min, size_t max);
@@ -225,8 +227,8 @@ int fabr_match(const char *input, fabr_parser *p);
 
 #endif // FLON_AABRO_H
 
-//commit 1c41ec25267b67d7da019d2b3675dd15c8bc61a2
+//commit bddf1d69db11a9ba3264d17d51ccbdc408a7db11
 //Author: John Mettraux <jmettraux@gmail.com>
-//Date:   Mon Jun 22 06:23:57 2015 +0900
+//Date:   Thu Jun 25 06:35:45 2015 +0900
 //
-//    implement fabr_tree_puts() (and fabr_puts())
+//    implement fabr_altg()
