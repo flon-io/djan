@@ -240,7 +240,7 @@ static fabr_tree *_sep(fabr_input *i)
   return fabr_rex(NULL, i, "([ \t\n\r]*,[ \t\n\r]*|[ \t\n\r]+)");
     // TODO make it spaces - optional comma - blank (comments)
 
-  //return fabr_rex("_sep", i, "([ \t\n\r]*,?([ \t]*((#[^\r\n]*)?([\r\n]|$))?)*");
+  //return fabr_rex("_sep", i, "[ \t\n\r]*,?([ \t]*((#[^\r\n]*)?([\r\n]|$))?)*");
 }
 
 static fabr_tree *_pbstart(fabr_input *i)
@@ -256,6 +256,10 @@ static fabr_tree *_pbend(fabr_input *i)
 static fabr_tree *_object(fabr_input *i)
 {
   return fabr_eseq("object", i, _pbstart, _entry, _sep, _pbend);
+}
+static fabr_tree *_obj(fabr_input *i)
+{
+  return fabr_jseq("object", i, _entry, _sep);
 }
 
 static fabr_tree *_sbstart(fabr_input *i)
@@ -554,11 +558,11 @@ fdja_value *fdja_parse(char *input)
   //printf("fdja_parse() >[1;33m%s[0;0m<\n", input);
 
   //fabr_tree *tt = fabr_parse_f(input, _djan, FABR_F_ALL);
-  //fabr_puts_tree(tt, input, 1);
+  //printf("fdja_parse():\n"); fabr_puts_tree(tt, input, 1);
   //fabr_tree_free(tt);
 
   fabr_tree *t = fabr_parse_all(input, _djan);
-  //fabr_puts(t, input, 3);
+  //printf("fdja_parse() (pruned):\n"); fabr_puts(t, input, 3);
 
   fdja_value *v = fdja_extract_value(input, t);
   fabr_tree_free(t);
@@ -923,11 +927,11 @@ fdja_value *fdja_parse_obj(char *input)
 {
   //printf("fdja_parse_obj() >[1;33m%s[0;0m<\n", input);
 
-  //fabr_tree *at = fabr_parse_f(input, _djan, FABR_F_ALL);
+  //fabr_tree *at = fabr_parse_f(input, _obj, FABR_F_ALL);
   //fabr_puts(at, input, 3);
   //fabr_tree_free(at);
 
-  fabr_tree *t = fabr_parse_all(input, _object);
+  fabr_tree *t = fabr_parse_all(input, _obj);
   //fabr_puts(t, input, 3);
 
   if (t->result != 1) { fabr_tree_free(t); return NULL; }
@@ -1371,14 +1375,14 @@ fdja_value *fdja_vlookup(fdja_value *v, const char *path, va_list ap)
 
   char *p = flu_svprintf(path, ap);
 
-  printf("fdja_vlookup() >[1;33m%s[0;0m<\n", p);
+  //printf("fdja_vlookup() >[1;33m%s[0;0m<\n", p);
 
-  fabr_tree *at = fabr_parse_f(p, _path, FABR_F_ALL);
-  fabr_puts(at, p, 3);
-  fabr_tree_free(at);
+  //fabr_tree *at = fabr_parse_f(p, _path, FABR_F_ALL);
+  //fabr_puts(at, p, 3);
+  //fabr_tree_free(at);
 
   fabr_tree *t = fabr_parse_all(p, _path);
-  fabr_puts(t, p, 3);
+  //fabr_puts(t, p, 3);
 
   if (t->result != 1) { fabr_tree_free(t); free(p); return NULL; }
 
