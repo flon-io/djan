@@ -183,6 +183,9 @@ context "update"
       expect(r == NULL);
     }
 
+    it "returns NULL if the target is NULL"
+      // TODO maybe
+
     it "re-sets values"
     {
       v = fdja_dparse("{ a: 0, b: 1, c: 2 }");
