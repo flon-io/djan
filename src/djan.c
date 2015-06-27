@@ -285,7 +285,7 @@ static fabr_tree *_null(fabr_input *i) { return fabr_str("null", i, "null"); }
 static fabr_tree *_value(fabr_input *i)
 {
   return fabr_alt(NULL, i,
-    _number, _object, _array, _true, _false, _null, _symbol,
+    _string, _sqstring, _number, _object, _array, _true, _false, _null, _symbol,
     NULL);
 }
 
@@ -543,14 +543,14 @@ static fdja_value *fdja_extract_value(char *input, fabr_tree *t)
 
 fdja_value *fdja_parse(char *input)
 {
-  //printf(">[1;33m%s[0;0m<\n", input);
+  printf("fdja_parse() >[1;33m%s[0;0m<\n", input);
 
   //fabr_tree *tt = fabr_parse_f(input, _djan, FABR_F_ALL);
   //fabr_puts_tree(tt, input, 1);
   //fabr_tree_free(tt);
 
   fabr_tree *t = fabr_parse_all(input, _djan);
-  //fabr_puts(t, input, 3);
+  fabr_puts(t, input, 3);
 
   fdja_value *v = fdja_extract_value(input, t);
   fabr_tree_free(t);
