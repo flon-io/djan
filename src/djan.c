@@ -230,10 +230,17 @@ static fabr_tree *_entry(fabr_input *i)
     NULL);
 }
 
+//static fabr_tree *_blank(fabr_input *i)
+//{
+//  return fabr_rex(NULL, i, "([ \t]*((#[^\r\n]*)?([\r\n]|$))?)*");
+//  //return fabr_rex(NULL, i, "[ \t]*");
+//}
 static fabr_tree *_sep(fabr_input *i)
 {
   return fabr_rex(NULL, i, "([ \t\n\r]*,[ \t\n\r]*|[ \t\n\r]+)");
     // TODO make it spaces - optional comma - blank (comments)
+
+  //return fabr_rex("_sep", i, "([ \t\n\r]*,?([ \t]*((#[^\r\n]*)?([\r\n]|$))?)*");
 }
 
 static fabr_tree *_pbstart(fabr_input *i)
@@ -285,6 +292,7 @@ static fabr_tree *_null(fabr_input *i) { return fabr_str("null", i, "null"); }
 static fabr_tree *_value(fabr_input *i)
 {
   return fabr_alt(NULL, i,
+  //return fabr_altg(NULL, i, 1,
     _string, _sqstring, _number, _object, _array, _true, _false, _null, _symbol,
     NULL);
 }
@@ -402,11 +410,11 @@ static fabr_tree *_pa_index(fabr_input *i)
 }
 static fabr_tree *_pa_node(fabr_input *i)
 {
-  return fabr_altg("node", i, 0, _pa_index, _pa_key, NULL);
+  return fabr_altg("node", i, 1, _pa_key, _pa_index, NULL);
 }
 static fabr_tree *_pa_dot(fabr_input *i)
 {
-  return fabr_str(NULL, i, ".");
+  return fabr_str("DOT", i, ".");
 }
 
 static fabr_tree *_path(fabr_input *i)
@@ -543,14 +551,14 @@ static fdja_value *fdja_extract_value(char *input, fabr_tree *t)
 
 fdja_value *fdja_parse(char *input)
 {
-  printf("fdja_parse() >[1;33m%s[0;0m<\n", input);
+  //printf("fdja_parse() >[1;33m%s[0;0m<\n", input);
 
   //fabr_tree *tt = fabr_parse_f(input, _djan, FABR_F_ALL);
   //fabr_puts_tree(tt, input, 1);
   //fabr_tree_free(tt);
 
   fabr_tree *t = fabr_parse_all(input, _djan);
-  fabr_puts(t, input, 3);
+  //fabr_puts(t, input, 3);
 
   fdja_value *v = fdja_extract_value(input, t);
   fabr_tree_free(t);
@@ -913,13 +921,14 @@ fdja_value *fdja_parse_r(const char *format, ...)
 
 fdja_value *fdja_parse_obj(char *input)
 {
-  fabr_tree *t = fabr_parse_all(input, _object);
+  //printf("fdja_parse_obj() >[1;33m%s[0;0m<\n", input);
 
-  //printf(">%s<\n", input);
-  //puts("[1;30m");
-  //flu_putf(fabr_parser_to_string(t->parser));
-  //puts("[0;0m");
-  //flu_putf(fabr_tree_to_string(t, input, 1));
+  //fabr_tree *at = fabr_parse_f(input, _djan, FABR_F_ALL);
+  //fabr_puts(at, input, 3);
+  //fabr_tree_free(at);
+
+  fabr_tree *t = fabr_parse_all(input, _object);
+  //fabr_puts(t, input, 3);
 
   if (t->result != 1) { fabr_tree_free(t); return NULL; }
 
@@ -1363,9 +1372,12 @@ fdja_value *fdja_vlookup(fdja_value *v, const char *path, va_list ap)
   char *p = flu_svprintf(path, ap);
 
   printf("fdja_vlookup() >[1;33m%s[0;0m<\n", p);
-  //fabr_tree *t = fabr_parse_f(p, _path, FABR_F_ALL);
-  fabr_tree *t = fabr_parse_all(p, _path);
 
+  fabr_tree *at = fabr_parse_f(p, _path, FABR_F_ALL);
+  fabr_puts(at, p, 3);
+  fabr_tree_free(at);
+
+  fabr_tree *t = fabr_parse_all(p, _path);
   fabr_puts(t, p, 3);
 
   if (t->result != 1) { fabr_tree_free(t); free(p); return NULL; }

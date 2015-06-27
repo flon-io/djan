@@ -74,25 +74,26 @@ void fabr_tree_free(fabr_tree *t)
   free(t);
 }
 
-static void fabr_prune(fabr_tree *t)
+void fabr_prune(fabr_tree *t)
 {
   fabr_tree **next = &t->child;
 
-  for (fabr_tree *c = t->child; c != NULL; )
+  for (fabr_tree *c = t->child; c; )
   {
-    if (c->result == 0)
-    {
-      *next = NULL;
-      fabr_tree *s = c->sibling;
-      fabr_tree_free(c);
-      c = s;
-    }
-    else // 1 (when -1 fabr_prune() is not called)
+    fabr_tree *s = c->sibling;
+
+    if (c->result != 0)
     {
       *next = c;
-      c = c->sibling;
       next = &c->sibling;
+      *next = NULL;
     }
+    else
+    {
+      fabr_tree_free(c);
+    }
+
+    c = s;
   }
 }
 
@@ -485,50 +486,6 @@ fabr_tree *fabr_seq(
   return r;
 }
 
-//fabr_tree *fabr_p_alt(
-//  const char *input,
-//  size_t offset, size_t depth,
-//  fabr_parser *p,
-//  int flags)
-//{
-//  short result = 0;
-//
-//  fabr_tree *first = NULL;
-//  fabr_tree *prev = NULL;
-//  fabr_tree *winner = NULL;
-//
-//  for (size_t i = 0; p->children[i] != NULL; i++)
-//  {
-//    fabr_parser *pc = p->children[i];
-//
-//    fabr_tree *t = fabr_do_parse(input, offset, depth + 1, pc, flags);
-//
-//    if (first == NULL) first = t;
-//    if (prev != NULL) prev->sibling = t;
-//    prev = t;
-//
-//    if (t->result == 1) result = 1;
-//    if (t->result < 0) result = t->result;
-//
-//    if (result < 0) break;
-//    if (t->result != 1) continue;
-//
-//    if (p->type == fabr_pt_alt)
-//    {
-//      winner = t; break;
-//    }
-//    if (winner != NULL && t->length <= winner->length)
-//    {
-//      t->result = 0; continue;
-//    }
-//    if (winner) winner->result = 0;
-//    winner = t;
-//  }
-//
-//  return fabr_tree_malloc(
-//    result, offset, winner ? winner->length : 0, NULL, p, first);
-//}
-
 fabr_tree *fabr_altg(
   char *name, fabr_input *i, short greedy, fabr_parser *p, ...)
 {
@@ -554,10 +511,10 @@ fabr_tree *fabr_altg(
     if (t->result == 1)
     {
       if ( ! greedy) { winner = t; break; }
-      if (winner == NULL || t->length > winner->length)
+      if (winner == NULL || t->length >= winner->length)
       {
-        if (winner) winner->result = 0;
-         winner = t;
+        if (winner) { winner->result = 0; winner->length = 0; }
+        winner = t;
       }
     }
 
@@ -572,7 +529,10 @@ fabr_tree *fabr_altg(
   {
     r->result = winner->result;
     r->length = winner->length;
+    i->offset = off + winner->length;
   }
+
+  //fabr_puts(r, i->string, 3);
 
   if (r->result == 1 && (i->flags & FABR_F_PRUNE)) fabr_prune(r);
 
@@ -1231,8 +1191,8 @@ int fabr_match(const char *input, fabr_parser *p)
   return r;
 }
 
-//commit b60cde7eae8c8eed1a972fc666bbcab3e8a72c19
+//commit 541128641dc309cf11bfd6626286498520d5412b
 //Author: John Mettraux <jmettraux@gmail.com>
-//Date:   Sat Jun 27 07:00:13 2015 +0900
+//Date:   Sat Jun 27 18:24:28 2015 +0900
 //
-//    accept empty lists for eseq (not jseq)
+//    fix fabr_prune() vs sparse children
