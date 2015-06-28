@@ -567,6 +567,7 @@ static fdja_value *fdja_extract_values(char *input, fabr_tree *t)
 
 static fdja_value *fdja_extract_v(char *input, fabr_tree *t)
 {
+  //printf("de_v() t %p\n", t);
   if (t == NULL) return NULL;
 
   //printf("de_v() "); fabr_puts(t, input, 3);
@@ -986,9 +987,7 @@ fdja_value *fdja_parse_obj(char *input)
 
   if (t->result != 1) { fabr_tree_free(t); return NULL; }
 
-  fabr_tree *tt = fabr_t_child(t, 1);
-
-  fdja_value *v = fdja_extract_v(input, tt);
+  fdja_value *v = fdja_extract_v(input, t->child);
   if (v) v->sowner = 1;
 
   fabr_tree_free(t);
