@@ -73,6 +73,29 @@ context "parsing obj"
       );
     }
 
+    it "parses with brackets (2)"
+    {
+      v = fdja_dparse_obj(""
+        " {\n"
+        "type: car\n"
+        "make: honda\n"
+        "parts: [ 123, 456, 789, whiskey ]\n"
+        "details: { name: beetle, year: 1969 }"
+        " }"
+      );
+
+      ensure(v != NULL);
+
+      ensure(fdja_to_json(v) ===f ""
+        "{"
+          "\"type\":\"car\","
+          "\"make\":\"honda\","
+          "\"parts\":[123,456,789,\"whiskey\"],"
+          "\"details\":{\"name\":\"beetle\",\"year\":1969}"
+        "}"
+      );
+    }
+
     it "parses with comments"
     {
       v = fdja_dparse_obj(""

@@ -308,10 +308,17 @@ static fabr_tree *_object(fabr_input *i)
 {
   return fabr_eseq("object", i, _pbstart, _entry, _sep, _pbend);
 }
-static fabr_tree *_obj(fabr_input *i)
+static fabr_tree *_bjec(fabr_input *i)
 {
   return fabr_jseq("object", i, _entry, _sep);
-  //return fabr_eseq("object", i, _postval, _entry, _sep, NULL);
+}
+static fabr_tree *_ob(fabr_input *i)
+{
+  return fabr_alt(NULL, i, _object, _bjec, NULL);
+}
+static fabr_tree *_obj(fabr_input *i)
+{
+  return fabr_seq(NULL, i, _postval, _ob, NULL);
 }
 
 static fabr_tree *_sbstart(fabr_input *i)
@@ -987,7 +994,9 @@ fdja_value *fdja_parse_obj(char *input)
 
   if (t->result != 1) { fabr_tree_free(t); return NULL; }
 
-  fdja_value *v = fdja_extract_v(input, t->child);
+  fabr_tree *tobj = fabr_tree_lookup(t, "object");
+
+  fdja_value *v = fdja_extract_v(input, tobj);
   if (v) v->sowner = 1;
 
   fabr_tree_free(t);
