@@ -111,31 +111,38 @@ static fabr_tree *_com(fabr_input *i)
 {
   return fabr_alt(NULL, i, _shacom, _slacom, NULL);
 }
-//static fabr_tree *_eol(fabr_input *i)
-//{
-//  return fabr_seq(NULL, i,
-//    _ws, fabr_star, _com, fabr_qmark, _rn, fabr_star,
-//    NULL);
-//}
-  // TODO
+static fabr_tree *_eol(fabr_input *i)
+{
+  return fabr_seq(NULL, i,
+    _ws, fabr_star, _com, fabr_qmark, _rn, fabr_star,
+    NULL);
+}
 
 static fabr_tree *_postval(fabr_input *i)
 {
-  // TODO
-  return fabr_seq(NULL, i, _ws, fabr_star, NULL);
+  //return fabr_seq(NULL, i, _ws, fabr_star, NULL);
+  return fabr_seq("POSTVAL", i, _eol, fabr_star, NULL);
 }
 
-static fabr_tree *_sep_cm(fabr_input *i)
-{
-  return fabr_seq(NULL, i, _comma, _postval, fabr_qmark, NULL);
-}
-static fabr_tree *_sep_rn(fabr_input *i)
-{
-  return fabr_seq(NULL, i, _rn, _postval, fabr_qmark, NULL);
-}
+//static fabr_tree *_sep_cm(fabr_input *i)
+//{
+//  return fabr_seq(NULL, i, _comma, _postval, fabr_qmark, NULL);
+//}
+//static fabr_tree *_sep_rn(fabr_input *i)
+//{
+//  return fabr_seq(NULL, i, _rn, _postval, fabr_qmark, NULL);
+//}
+  //
+//static fabr_tree *_separator(fabr_input *i)
+//{
+//  return fabr_rng(NULL, i, ", \t\r\n");
+//}
+  //
 static fabr_tree *_sep(fabr_input *i)
 {
-  return fabr_alt(NULL, i, _sep_cm, _sep_rn, NULL);
+  //return fabr_alt("SEP", i, _sep_cm, _sep_rn, NULL);
+  //return fabr_seq("SEP", i, _separator, _postval, NULL);
+  return fabr_seq("SEP", i, _comma, fabr_qmark, _postval, NULL);
 }
 
 //static fabr_tree *_blank(fabr_input *i)
@@ -166,19 +173,6 @@ static fabr_tree *_sep(fabr_input *i)
 
 static fabr_tree *_value(fabr_input *i); // forward
 
-//fabr_parser *string =
-//  fabr_n_rex(
-//    "string",
-//    "\""
-//      "("
-//        "\\\\[\"\\/\\\\bfnrt]" "|"
-//        "\\\\u[0-9a-fA-F]{4}" "|"
-//        "[^"
-//          "\"" "\\\\" /*"\\/"*/ "\b" "\f" "\n" "\r" "\t"
-//        "]"
-//      ")*"
-//    "\"");
-
 static fabr_tree *_string(fabr_input *i)
 {
   return fabr_rex("string", i,
@@ -192,19 +186,6 @@ static fabr_tree *_string(fabr_input *i)
       ")*"
     "\"");
 }
-
-//fabr_parser *sqstring =
-//  fabr_n_rex(
-//    "sqstring",
-//    "'"
-//      "("
-//        "\\\\['\\/\\\\bfnrt]" "|"
-//        "\\\\u[0-9a-fA-F]{4}" "|"
-//        "[^"
-//          "'" "\\\\" /*"\\/"*/ "\b" "\f" "\n" "\r" "\t"
-//        "]"
-//      ")*"
-//    "'");
 
 static fabr_tree *_sqstring(fabr_input *i)
 {
@@ -248,9 +229,6 @@ static fabr_tree *_symbol(fabr_input *i)
   return fabr_rex("symbol", i, "[^ \b\f\n\r\t\"',\\[\\]\\{\\}#\\\\:]+");
 }
 
-//fabr_parser *number =
-//  fabr_n_rex("number", "-?[0-9]+(\\.[0-9]+)?([eE][+-]?[0-9]+)?");
-
 static fabr_tree *_number(fabr_input *i)
 {
   return fabr_rex("number", i, "-?[0-9]+(\\.[0-9]+)?([eE][+-]?[0-9]+)?");
@@ -260,16 +238,6 @@ static fabr_tree *_val(fabr_input *i)
 {
   return fabr_seq(NULL, i, _value, _postval, NULL);
 }
-
-//fabr_parser *entry =
-//  fabr_n_seq(
-//    "entry",
-//    blanks,
-//    fabr_n_alt("key", string, sqstring, symbolk, NULL),
-//    blanks,
-//    fabr_string(":"),
-//    fabr_n("value"),
-//    NULL);
 
 static fabr_tree *_key(fabr_input *i)
 {
