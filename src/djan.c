@@ -121,7 +121,7 @@ static fabr_tree *_eol(fabr_input *i)
 static fabr_tree *_postval(fabr_input *i)
 {
   //return fabr_seq(NULL, i, _ws, fabr_star, NULL);
-  return fabr_seq("POSTVAL", i, _eol, fabr_star, NULL);
+  return fabr_seq(NULL, i, _eol, fabr_star, NULL);
 }
 
 //static fabr_tree *_sep_cm(fabr_input *i)
@@ -142,7 +142,7 @@ static fabr_tree *_sep(fabr_input *i)
 {
   //return fabr_alt("SEP", i, _sep_cm, _sep_rn, NULL);
   //return fabr_seq("SEP", i, _separator, _postval, NULL);
-  return fabr_seq("SEP", i, _comma, fabr_qmark, _postval, NULL);
+  return fabr_seq(NULL, i, _comma, fabr_qmark, _postval, NULL);
 }
 
 //static fabr_tree *_blank(fabr_input *i)
