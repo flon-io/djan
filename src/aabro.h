@@ -234,8 +234,8 @@ int fabr_match(const char *input, fabr_parser *p);
 
 #endif // FLON_AABRO_H
 
-//commit 6fdc207fdfb470c44a92636581c2a5017c3f304c
+//commit e2aef2eb5a15a2ce671c8226cac6fc5ae2e190c5
 //Author: John Mettraux <jmettraux@gmail.com>
-//Date:   Sat Jul 4 13:53:31 2015 +0900
+//Date:   Tue Jul 7 07:14:44 2015 +0900
 //
-//    solve fabr_eseq() versus empty sep
+//    fix fabr_eseq() vs real zero-length seps
