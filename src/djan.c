@@ -309,24 +309,16 @@ static fabr_tree *_true(fabr_input *i) { return fabr_str("true", i, "true"); }
 static fabr_tree *_false(fabr_input *i) { return fabr_str("false", i, "false"); }
 static fabr_tree *_null(fabr_input *i) { return fabr_str("null", i, "null"); }
 
-//fdja_parser =
-//  fabr_n_seq(
-//    "value",
-//    blanks,
-//    fabr_altg(
-//      fabr_alt(
-//        string, sqstring, number, object, array, jtrue, jfalse, jnull, NULL),
-//      symbolv,
-//      NULL),
-//    blanks,
-//    NULL);
+static fabr_tree *_v(fabr_input *i)
+{
+  return fabr_alt(NULL, i,
+    _string, _sqstring, _number, _object, _array, _true, _false, _null,
+    NULL);
+}
 
 static fabr_tree *_value(fabr_input *i)
 {
-  return fabr_alt(NULL, i,
-  //return fabr_altg(NULL, i, 1,
-    _string, _sqstring, _number, _object, _array, _true, _false, _null, _symbol,
-    NULL);
+  return fabr_altg(NULL, i, 1, _symbol, _v, NULL);
 }
 
 static fabr_tree *_djan(fabr_input *i)
