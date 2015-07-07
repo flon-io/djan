@@ -178,10 +178,12 @@ fabr_tree *fabr_str(
 fabr_tree *fabr_seq(
   char *name, fabr_input *i, fabr_parser *p, ...);
 
-fabr_tree *fabr_altg(
+fabr_tree *fabr_altgr(
   char *name, fabr_input *i, short greedy, fabr_parser *p, ...);
+#define fabr_altg(name, i, p, ...) \
+  fabr_altgr(name, i, 1, p, __VA_ARGS__)
 #define fabr_alt(name, i, p, ...) \
-  fabr_altg(name, i, 0, p, __VA_ARGS__)
+  fabr_altgr(name, i, 0, p, __VA_ARGS__)
 
 fabr_tree *fabr_rep(
   char *name, fabr_input *i, fabr_parser *p, size_t min, size_t max);
@@ -234,8 +236,8 @@ int fabr_match(const char *input, fabr_parser *p);
 
 #endif // FLON_AABRO_H
 
-//commit e2aef2eb5a15a2ce671c8226cac6fc5ae2e190c5
+//commit bbf7f212bdce4c6a1503fd993313335570d1abcc
 //Author: John Mettraux <jmettraux@gmail.com>
-//Date:   Tue Jul 7 07:14:44 2015 +0900
+//Date:   Wed Jul 8 06:15:01 2015 +0900
 //
-//    fix fabr_eseq() vs real zero-length seps
+//    make _alt and _altg "fronts" to _altgr

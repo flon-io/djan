@@ -312,7 +312,7 @@ static fabr_tree *_v(fabr_input *i)
 
 static fabr_tree *_value(fabr_input *i)
 {
-  return fabr_altg(NULL, i, 1, _symbol, _v, NULL);
+  return fabr_altg(NULL, i, _symbol, _v, NULL);
 }
 
 static fabr_tree *_djan(fabr_input *i)
@@ -425,7 +425,7 @@ static fabr_tree *_pa_index(fabr_input *i)
 }
 static fabr_tree *_pa_node(fabr_input *i)
 {
-  return fabr_altg("node", i, 1, _pa_key, _pa_index, NULL);
+  return fabr_altg("node", i, _pa_key, _pa_index, NULL);
 }
 static fabr_tree *_pa_dot(fabr_input *i)
 {

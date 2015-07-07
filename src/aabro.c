@@ -486,7 +486,7 @@ fabr_tree *fabr_seq(
   return r;
 }
 
-fabr_tree *fabr_altg(
+fabr_tree *fabr_altgr(
   char *name, fabr_input *i, short greedy, fabr_parser *p, ...)
 {
   //size_t m = mm++; printf("A %zu fabr_altg() %d \"%s\"\n", m, greedy, name);
@@ -1212,8 +1212,8 @@ int fabr_match(const char *input, fabr_parser *p)
   return r;
 }
 
-//commit e2aef2eb5a15a2ce671c8226cac6fc5ae2e190c5
+//commit bbf7f212bdce4c6a1503fd993313335570d1abcc
 //Author: John Mettraux <jmettraux@gmail.com>
-//Date:   Tue Jul 7 07:14:44 2015 +0900
+//Date:   Wed Jul 8 06:15:01 2015 +0900
 //
-//    fix fabr_eseq() vs real zero-length seps
+//    make _alt and _altg "fronts" to _altgr
