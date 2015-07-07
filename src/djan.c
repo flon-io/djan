@@ -286,7 +286,7 @@ static fabr_tree *_ob(fabr_input *i)
 }
 static fabr_tree *_obj(fabr_input *i)
 {
-  return fabr_seq(NULL, i, _postval, _ob, NULL);
+  return fabr_seq(NULL, i, _postval, _ob, _postval, NULL);
 }
 
 static fabr_tree *_sbstart(fabr_input *i)
