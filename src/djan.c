@@ -214,19 +214,13 @@ static fabr_tree *_sqstring(fabr_input *i)
 //      ")*"
 //    "/i?");
 
-//fabr_parser *symbolk =
-//  fabr_n_rex(
-//    "symbol",
-//    "[^ \b\f\n\r\t\"',\\[\\]\\{\\}#\\\\:]+");
-//fabr_parser *symbolv =
-//  fabr_n_rex(
-//    "symbol",
-//    "[^ \b\f\n\r\t\"',\\[\\]\\{\\}#\\\\]+");
-//
+static fabr_tree *_symbolk(fabr_input *i)
+{
+  return fabr_rex("symbol", i, "[^ \b\f\n\r\t\"',\\[\\]\\{\\}#\\\\:]+");
+}
 static fabr_tree *_symbol(fabr_input *i)
 {
-  //return fabr_rex("symbol", i, "[^ \b\f\n\r\t\"',\\[\\]\\{\\}#\\\\]+");
-  return fabr_rex("symbol", i, "[^ \b\f\n\r\t\"',\\[\\]\\{\\}#\\\\:]+");
+  return fabr_rex("symbol", i, "[^ \b\f\n\r\t\"',\\[\\]\\{\\}#\\\\]+");
 }
 
 static fabr_tree *_number(fabr_input *i)
@@ -241,7 +235,7 @@ static fabr_tree *_val(fabr_input *i)
 
 static fabr_tree *_key(fabr_input *i)
 {
-  return fabr_alt("key", i, _string, _sqstring, _symbol, NULL);
+  return fabr_alt("key", i, _string, _sqstring, _symbolk, NULL);
     // TODO make it _then_blank
 }
 
