@@ -432,7 +432,7 @@ static fabr_tree *_rad_ce(fabr_input *i)
 
 static fabr_tree *_rad_h(fabr_input *i)
 {
-  return fabr_altg("rad_h", i, _symbol, NULL); // FIXME
+  return fabr_altg("rad_h", i, _symbol, NULL); // FIXME _rad_v
 }
 
 //fabr_parser *rad_g =
@@ -866,7 +866,7 @@ static fdja_value *parse_radg(char *input, ssize_t ind, fabr_tree *radg)
   printf("parse_radg() "); fabr_puts(radg, input, 3);
 
   fabr_tree *radh = fabr_tree_lookup(radg, "rad_h");
-  flu_list *es = fabr_tree_list_named_n(radg->child->sibling, "rad_e");
+  flu_list *es = fabr_tree_list_named(radg->child->sibling, "rad_e");
 
   fdja_value *r = fdja_value_malloc('a', NULL, 0, 0, 0);
   fdja_value *vname = NULL;
@@ -874,7 +874,8 @@ static fdja_value *parse_radg(char *input, ssize_t ind, fabr_tree *radg)
   fdja_value *vline = fdja_v("%zu", count_lines(input, radg->offset));
   fdja_value *vchildren = fdja_value_malloc('a', NULL, 0, 0, 0);
 
-  if (es->first == NULL && ! (is_stringy(radh->child->child)))
+  //if (es->first == NULL && ! (is_stringy(radh->child->child)))
+  if (es->first == NULL && ! (is_stringy(radh->child)))
   {
     // single value
 
