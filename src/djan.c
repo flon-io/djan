@@ -429,7 +429,7 @@ static fabr_tree *_pa_node(fabr_input *i)
 }
 static fabr_tree *_pa_dot(fabr_input *i)
 {
-  return fabr_str("DOT", i, ".");
+  return fabr_str(NULL, i, ".");
 }
 
 static fabr_tree *_path(fabr_input *i)
