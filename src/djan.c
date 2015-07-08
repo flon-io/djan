@@ -345,9 +345,6 @@ static fabr_tree *_djan(fabr_input *i)
 //    "symv", fabr_alt(syv_dol, syv_str, NULL), 1, -1);
 //
 ////fabr_parser *symbolh = fabr_n_rex("symbolh", "[^ \t\n\r,\\[\\]\\{\\}#]+");
-//fabr_parser *spaces = fabr_rex("[ \t]*");
-//
-//fabr_parser *rad_i = fabr_name("rad_i", spaces);
 //
 //fabr_parser *comma =
 //  fabr_seq(spaces, fabr_seq(fabr_string(","), blanks, fabr_r("?")), NULL);
@@ -381,13 +378,37 @@ static fabr_tree *_djan(fabr_input *i)
 //
 //fabr_parser *rad_h =
 //  fabr_n_altg("rad_h", rad_v, symv, NULL);
-//
+
+static fabr_tree *_rad_h(fabr_input *i)
+{
+  return fabr_altg("rad_h", i, _symbol, NULL); // FIXME
+}
+
 //fabr_parser *rad_g =
 //  fabr_n_seq("rad_g", rad_h, fabr_seq(comma, rad_e, NULL), fabr_q("*"), NULL);
+
+static fabr_tree *_rad_g(fabr_input *i)
+{
+  return fabr_seq("rad_g", i, _rad_h, NULL); // FIXME
+}
+
+//fabr_parser *spaces = fabr_rex("[ \t]*");
 //
+//fabr_parser *rad_i = fabr_name("rad_i", spaces);
+
+static fabr_tree *_rad_i(fabr_input *i)
+{
+  return fabr_rex("rad_i", i, "[ \t]*");
+}
+
 //fabr_parser *rad_l =
 //  fabr_n_seq("rad_l", rad_i, rad_g, NULL);
-//
+
+static fabr_tree *_rad_l(fabr_input *i)
+{
+  return fabr_seq("rad_l", i, _rad_i, _rad_g, NULL);
+}
+
 //fabr_parser *rad_eol =
 //  fabr_rex("[ \t]*(#[^\n\r]*)?");
 //
@@ -403,9 +424,19 @@ static fabr_tree *_djan(fabr_input *i)
 //      fabr_r("*")),
 //    NULL);
 
+static fabr_tree *_rad_eol(fabr_input *i)
+{
+  return fabr_rex("EOL", i, "[ \t]*(#[^\n\r]*)?[\n\r]?");
+}
+
+static fabr_tree *_rad_line(fabr_input *i)
+{
+  return fabr_seq(NULL, i, _rad_l, fabr_qmark, _rad_eol, NULL);
+}
+
 static fabr_tree *_radial(fabr_input *i)
 {
-  return NULL;
+  return fabr_rep(NULL, i, _rad_line, 0, 0);
 }
 
 // path parser
@@ -781,6 +812,8 @@ static fdja_value *parse_radg(char *input, ssize_t ind, fabr_tree *radg)
 {
   // rad_h rad_e*
 
+  printf("parse_radg() "); fabr_puts(radg, input, 3);
+
   fabr_tree *radh = fabr_tree_lookup(radg, "rad_h");
   flu_list *es = fabr_tree_list_named(radg->child->sibling, "rad_e");
 
@@ -851,7 +884,7 @@ fdja_value *fdja_parse_radial(char *input, const char *origin)
   fabr_tree *t = fabr_parse_all(input, _radial);
   // todo: deal with errors (t->result < 0) (well, it's cared for downstream)
 
-  //flu_putf(fabr_tree_to_string(t, input, 1));
+  fabr_puts(t, input, 3);
     //
     // debugging input and cleaned up tree
 

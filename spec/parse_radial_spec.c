@@ -30,18 +30,6 @@ context "parsing radial"
       ensure(v == NULL);
     }
 
-    it "tracks the origin of the string"
-    {
-      v = fdja_parse_radial(
-        rdz_strdup("sequence timeout: 1d"),
-        "var/lib/one.rad");
-
-      ensure(v != NULL);
-
-      ensure(fdja_tod(v) ===f ""
-        "[ sequence, { timeout: 1d }, 1, [], var/lib/one.rad ]");
-    }
-
     it "parses a single line"
     {
       v = fdja_dparse_radial(
@@ -71,6 +59,18 @@ context "parsing radial"
           "[ participant, { _0: bravo }, 2, [] ] "
         "] ]"
       );
+    }
+
+    it "tracks the origin of the string"
+    {
+      v = fdja_parse_radial(
+        rdz_strdup("sequence timeout: 1d"),
+        "var/lib/one.rad");
+
+      ensure(v != NULL);
+
+      ensure(fdja_tod(v) ===f ""
+        "[ sequence, { timeout: 1d }, 1, [], var/lib/one.rad ]");
     }
 
     it "parses a tree of lines"
