@@ -236,7 +236,6 @@ static fabr_tree *_val(fabr_input *i)
 static fabr_tree *_key(fabr_input *i)
 {
   return fabr_alt("key", i, _string, _sqstring, _symbolk, NULL);
-    // TODO make it _then_blank
 }
 
 static fabr_tree *_colon(fabr_input *i)
@@ -258,12 +257,10 @@ static fabr_tree *_entry(fabr_input *i)
 static fabr_tree *_pbstart(fabr_input *i)
 {
   return fabr_rex(NULL, i, "\\{[ \t\n\r]*");
-    // TODO use _then_blank
 }
 static fabr_tree *_pbend(fabr_input *i)
 {
   return fabr_rex(NULL, i, "}");
-    // TODO use _then_blank
 }
 
 static fabr_tree *_object(fabr_input *i)
@@ -286,12 +283,10 @@ static fabr_tree *_obj(fabr_input *i)
 static fabr_tree *_sbstart(fabr_input *i)
 {
   return fabr_rex(NULL, i, "\\[[ \t\n\r]*");
-    // TODO use _then_blank
 }
 static fabr_tree *_sbend(fabr_input *i)
 {
   return fabr_rex(NULL, i, "]");
-    // TODO use _then_blank
 }
 
 static fabr_tree *_array(fabr_input *i)
@@ -851,15 +846,15 @@ static void fdja_parse_radl(char *input, fabr_tree *radl, flu_list *values)
 
 fdja_value *fdja_parse_radial(char *input, const char *origin)
 {
+  printf("fdja_parse_radial() >[1;33m%s[0;0m< \"%s\"\n", input, origin);
+
   fabr_tree *t = fabr_parse_all(input, _radial);
   // todo: deal with errors (t->result < 0) (well, it's cared for downstream)
 
-  //printf(">%s<\n", input);
   //flu_putf(fabr_tree_to_string(t, input, 1));
     //
     // debugging input and cleaned up tree
 
-  //printf(">%s<\n", input);
   //fabr_tree *tt = fabr_parse_f(input, _radial, FABR_F_ALL);
   //flu_putf(fabr_tree_to_string(tt, input, 1));
   //fabr_tree_free(tt);
