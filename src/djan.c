@@ -870,7 +870,7 @@ static fdja_value *parse_radg(char *input, ssize_t ind, fabr_tree *radg)
   //printf("parse_radg() "); fabr_puts(radg, input, 3);
 
   fabr_tree *radh = fabr_tree_lookup(radg, "rad_h");
-  flu_list *es = fabr_tree_list_named(radg->child->sibling, "rad_e");
+  flu_list *es = fabr_tree_list_named(radg, "rad_e");
 
   fdja_value *r = fdja_value_malloc('a', NULL, 0, 0, 0);
   fdja_value *vname = NULL;
