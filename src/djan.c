@@ -419,7 +419,9 @@ static fabr_tree *_rad_com(fabr_input *i)
 }
 static fabr_tree *_rad_comma(fabr_input *i)
 {
-  return fabr_seq(NULL, i, _ws, fabr_star, _rad_com, fabr_qmark, NULL);
+  return fabr_seq(NULL, i,
+    _ws, fabr_star, _rad_com, fabr_qmark, _ws, fabr_star,
+    NULL);
 }
 
 static fabr_tree *_rad_ce(fabr_input *i)
@@ -939,7 +941,7 @@ fdja_value *fdja_parse_radial(char *input, const char *origin)
   fabr_tree *t = fabr_parse_all(input, _radial);
   // todo: deal with errors (t->result < 0) (well, it's cared for downstream)
 
-  fabr_puts(t, input, 3);
+  //fabr_puts(t, input, 3);
     //
     // debugging input and cleaned up tree
 
