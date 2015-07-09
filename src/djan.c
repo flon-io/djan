@@ -839,10 +839,11 @@ static fdja_value *parse_radg(char *input, ssize_t ind, fabr_tree *radg);
 
 static fdja_value *parse_radv(char *input, fabr_tree *radv)
 {
-  printf("parse_radv() "); fabr_puts(radv, input, 3);
+  //printf("parse_radv() "); fabr_puts(radv, input, 3);
 
-  //fabr_tree *c = fabr_tree_lookup(radv->child, NULL);
   fabr_tree *c = fabr_tree_lookup(radv, NULL);
+
+  //printf("parse_radv() c "); fabr_puts(c, input, 3);
 
   if (strcmp(c->name, "rad_p") != 0) return fdja_extract_v(input, c);
   return parse_radg(input, -1, fabr_tree_lookup(c, "rad_g"));
@@ -866,7 +867,7 @@ static fdja_value *parse_radg(char *input, ssize_t ind, fabr_tree *radg)
 {
   // rad_h rad_e*
 
-  printf("parse_radg() "); fabr_puts(radg, input, 3);
+  //printf("parse_radg() "); fabr_puts(radg, input, 3);
 
   fabr_tree *radh = fabr_tree_lookup(radg, "rad_h");
   flu_list *es = fabr_tree_list_named(radg->child->sibling, "rad_e");
@@ -898,8 +899,8 @@ static fdja_value *parse_radg(char *input, ssize_t ind, fabr_tree *radg)
     {
       fabr_tree *ak = fabr_subtree_lookup(n->item, "rad_k");
       fabr_tree *av = fabr_subtree_lookup(n->item, "rad_v");
-      fdja_value *va = parse_radv(input, av);
-      fdja_push(vatts, va);
+      fdja_value *va = parse_radv(input, av->child);
+      //fdja_push(vatts, va);
       char *k = ak ? fabr_tree_string(input, ak) : flu_sprintf("_%zu", j);
       fdja_set(vatts, k, va);
       free(k);
