@@ -384,7 +384,9 @@ static fabr_tree *_rad_k(fabr_input *i)
 
 static fabr_tree *_rad_kcol(fabr_input *i)
 {
-  return fabr_seq(NULL, i, _rad_k, _ws, fabr_star, _colon, _eol, NULL);
+  return fabr_seq(NULL, i,
+    _rad_k, _ws, fabr_star, _colon, _eol, _ws, fabr_star,
+    NULL);
 }
 
 static fabr_tree *_rad_e(fabr_input *i)

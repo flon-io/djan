@@ -185,7 +185,7 @@ context "parsing radial"
       v = fdja_dparse_radial(
         "participant charly, # charlie\n"
         "  aa:     # zero\n"
-        "    0,    # zero indeed\n"
+        "    0,    // zero indeed\n"
         "  bb: one # one\n"
       );
 
