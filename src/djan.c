@@ -185,7 +185,6 @@ static fabr_tree *_string(fabr_input *i)
       ")*"
     "\"");
 }
-
 static fabr_tree *_sqstring(fabr_input *i)
 {
   return fabr_rex("sqstring", i,
@@ -199,19 +198,19 @@ static fabr_tree *_sqstring(fabr_input *i)
       ")*"
     "'");
 }
-
-//fabr_parser *rxstring = // only for radial
-//  fabr_n_rex(
-//    "rxstring",
-//    "/"
-//      "("
-//        "\\\\['\\/\\\\bfnrt]" "|"
-//        "\\\\u[0-9a-fA-F]{4}" "|"
-//        "[^"
-//          "/" "\\\\" "\b" "\f" "\n" "\r" "\t"
-//        "]"
-//      ")*"
-//    "/i?");
+static fabr_tree *_rxstring(fabr_input *i)
+{
+  return fabr_rex("rxstring", i,
+    "/"
+      "("
+        "\\\\['\\/\\\\bfnrt]" "|"
+        "\\\\u[0-9a-fA-F]{4}" "|"
+        "[^"
+          "/" "\\\\" "\b" "\f" "\n" "\r" "\t"
+        "]"
+      ")*"
+    "/i?");
+}
 
 static fabr_tree *_symbolk(fabr_input *i)
 {
@@ -364,7 +363,9 @@ static fabr_tree *_djan(fabr_input *i)
 
 static fabr_tree *_rad_v(fabr_input *i)
 {
-  return fabr_alt("rad_v", i, _value, NULL); // FIXME rad_p
+  return fabr_alt("rad_v", i,
+    _rxstring, _value,
+    NULL); // FIXME rad_p
 }
 
 //fabr_parser *rad_e =
