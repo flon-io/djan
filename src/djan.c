@@ -436,7 +436,9 @@ static fabr_tree *_rad_ce(fabr_input *i)
 
 static fabr_tree *_rad_h(fabr_input *i)
 {
-  return fabr_altg("rad_h", i, _symbol, NULL); // FIXME _rad_v
+  //return fabr_altg("rad_h", i, _symbol, _rad_v, NULL);
+    // TODO is _symbol necessary?
+  return fabr_seq("rad_h", i, _rad_v, NULL);
 }
 
 //fabr_parser *rad_g =
@@ -481,7 +483,7 @@ static fabr_tree *_rad_l(fabr_input *i)
 
 static fabr_tree *_rad_eol(fabr_input *i)
 {
-  return fabr_rex("EOL", i, "[ \t]*(#[^\n\r]*)?[\n\r]?");
+  return fabr_rex(NULL, i, "[ \t]*(#[^\n\r]*)?[\n\r]?");
 }
 
 static fabr_tree *_rad_line(fabr_input *i)
@@ -831,12 +833,10 @@ static void fdja_stack_radl(flu_list *values, fdja_value *v)
   }
 }
 
-static int is_stringy(fabr_tree *t)
-{
-  if (t->name == NULL) return 0;
-  if (*t->name == 's') return 1; // string, sqstring, symbol
-  return 0;
-}
+//static int is_stringy(fabr_tree *t)
+//{
+//  return t->name && *t->name == 's'; // string, sqstring, symbol
+//}
 
 static fdja_value *parse_radg(char *input, ssize_t ind, fabr_tree *radg);
   // forward...
@@ -873,7 +873,8 @@ static fdja_value *parse_radg(char *input, ssize_t ind, fabr_tree *radg)
 
   //printf("parse_radg() "); fabr_puts(radg, input, 3);
 
-  fabr_tree *radh = fabr_tree_lookup(radg, "rad_h");
+  fdja_value *h = parse_radv(input, fabr_tree_lookup(radg, "rad_v")->child);
+
   flu_list *es = fabr_tree_list_named(radg, "rad_e");
 
   fdja_value *r = fdja_value_malloc('a', NULL, 0, 0, 0);
@@ -882,19 +883,19 @@ static fdja_value *parse_radg(char *input, ssize_t ind, fabr_tree *radg)
   fdja_value *vline = fdja_v("%zu", count_lines(input, radg->offset));
   fdja_value *vchildren = fdja_value_malloc('a', NULL, 0, 0, 0);
 
-  if ((es == NULL || es->first == NULL) && ! (is_stringy(radh->child)))
+  if ((es == NULL || es->first == NULL) && ! fdja_is_stringy(h))
   {
     // single value
 
     vname = fdja_s("val");
 
-    fdja_set(vatts, "_0", fdja_extract_value(input, radh->child->child));
+    fdja_set(vatts, "_0", h);
   }
   else
   {
     // vanilla tree node
 
-    vname = parse_radv(input, radh->child);
+    vname = h;
 
     // attributes
 
@@ -943,7 +944,7 @@ fdja_value *fdja_parse_radial(char *input, const char *origin)
   fabr_tree *t = fabr_parse_all(input, _radial);
   // todo: deal with errors (t->result < 0) (well, it's cared for downstream)
 
-  //fabr_puts(t, input, 3);
+  fabr_puts(t, input, 3);
     //
     // debugging input and cleaned up tree
 
