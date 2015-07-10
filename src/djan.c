@@ -349,7 +349,26 @@ static fabr_tree *_djan(fabr_input *i)
 //    "rad_p",
 //    fabr_string("("), blanks, fabr_n("rad_g"), blanks, fabr_string(")"),
 //    NULL);
-//
+
+static fabr_tree *_rad_g(fabr_input *i); // forward
+
+static fabr_tree *_pstart(fabr_input *i) { return fabr_str(NULL, i, "("); }
+static fabr_tree *_pend(fabr_input *i) { return fabr_str(NULL, i, ")"); }
+
+//static fabr_tree *_rad_comma(fabr_input *i)
+//{
+//  return fabr_seq(NULL, i,
+//    _ws, fabr_star, _rad_com, fabr_qmark, _ws, fabr_star,
+//    NULL);
+//}
+
+static fabr_tree *_rad_p(fabr_input *i)
+{
+  return fabr_seq("rad_p", i,
+    _pstart, _ws, fabr_star, _rad_g, _ws, fabr_star, _pend,
+    NULL);
+}
+
 //fabr_parser *rad_v =
 //  fabr_n_altg(
 //    "rad_v",
@@ -363,20 +382,8 @@ static fabr_tree *_djan(fabr_input *i)
 
 static fabr_tree *_rad_v(fabr_input *i)
 {
-  return fabr_alt("rad_v", i,
-    _rxstring, _value,
-    NULL); // FIXME rad_p
+  return fabr_alt("rad_v", i, _rxstring, _rad_p, _value, NULL);
 }
-
-//fabr_parser *rad_e =
-//  fabr_n_seq(
-//    "rad_e",
-//    fabr_seq(
-//      fabr_n_alt("rad_k", string, sqstring, symk, NULL),
-//      spaces, fabr_str(":"), blanks,
-//      NULL), fabr_q("?"),
-//    rad_v,
-//    NULL);
 
 static fabr_tree *_rad_k(fabr_input *i)
 {
@@ -397,24 +404,6 @@ static fabr_tree *_rad_e(fabr_input *i)
     _rad_kcol, fabr_qmark, _rad_v,
     NULL);
 }
-
-  /*
-static fabr_tree *_ws(fabr_input *i) { return fabr_rng(NULL, i, " \t"); }
-static fabr_tree *_rn(fabr_input *i) { return fabr_rng(NULL, i, "\r\n"); }
-static fabr_tree *_comma(fabr_input *i) { return fabr_str(NULL, i, ","); }
-
-// ...
-
-static fabr_tree *_eol(fabr_input *i)
-{
-  return fabr_seq(NULL, i,
-    _ws, fabr_star, _com, fabr_qmark, _rn, fabr_star,
-    NULL);
-}
-  */
-
-//fabr_parser *comma =
-//  fabr_seq(spaces, fabr_seq(fabr_string(","), blanks, fabr_r("?")), NULL);
 
 static fabr_tree *_rad_com(fabr_input *i)
 {
@@ -442,45 +431,20 @@ static fabr_tree *_rad_h(fabr_input *i)
   return fabr_seq("rad_h", i, _rad_v, NULL);
 }
 
-//fabr_parser *rad_g =
-//  fabr_n_seq("rad_g", rad_h, fabr_seq(comma, rad_e, NULL), fabr_q("*"), NULL);
-
 static fabr_tree *_rad_g(fabr_input *i)
 {
   return fabr_seq("rad_g", i, _rad_h, _rad_ce, fabr_star, NULL);
 }
-
-//fabr_parser *spaces = fabr_rex("[ \t]*");
-//
-//fabr_parser *rad_i = fabr_name("rad_i", spaces);
 
 static fabr_tree *_rad_i(fabr_input *i)
 {
   return fabr_rex("rad_i", i, "[ \t]*");
 }
 
-//fabr_parser *rad_l =
-//  fabr_n_seq("rad_l", rad_i, rad_g, NULL);
-
 static fabr_tree *_rad_l(fabr_input *i)
 {
   return fabr_seq("rad_l", i, _rad_i, _rad_g, NULL);
 }
-
-//fabr_parser *rad_eol =
-//  fabr_rex("[ \t]*(#[^\n\r]*)?");
-//
-//fabr_parser *rad_line =
-//  fabr_seq(rad_l, fabr_q("?"), rad_eol, NULL);
-//
-//fdja_radial_parser =
-//  fabr_seq(
-//    rad_line,
-//    fabr_seq(
-//      fabr_rex("[\n\r]+"),
-//      rad_line,
-//      fabr_r("*")),
-//    NULL);
 
 static fabr_tree *_rad_eol(fabr_input *i)
 {
