@@ -212,13 +212,42 @@ static fabr_tree *_rxstring(fabr_input *i)
     "/i?");
 }
 
+static fabr_tree *_colon(fabr_input *i) { return fabr_str(NULL, i, ":"); }
+static fabr_tree *_dolstart(fabr_input *i) { return fabr_str(NULL, i, "$("); }
+static fabr_tree *_pstart(fabr_input *i) { return fabr_str(NULL, i, "("); }
+static fabr_tree *_pend(fabr_input *i) { return fabr_str(NULL, i, ")"); }
+
+static fabr_tree *_symcore(fabr_input *i)
+{
+  return fabr_rex(NULL, i, "[^: \b\f\n\r\t\"',\\[\\]\\{\\}#\\\\]+");
+}
+
+static fabr_tree *_dol(fabr_input *i)
+{
+  return fabr_rex(NULL, i, "[^ \r\n\t\\)]+");
+}
+
+static fabr_tree *_symdol(fabr_input *i)
+{
+  return fabr_seq(NULL, i, _dolstart, _dol, _pend, NULL);
+}
+
+static fabr_tree *_symeltk(fabr_input *i)
+{
+  return fabr_alt(NULL, i, _symcore, _symdol, NULL);
+}
+static fabr_tree *_symelt(fabr_input *i)
+{
+  return fabr_alt(NULL, i, _symcore, _colon, _symdol, NULL);
+}
+
 static fabr_tree *_symbolk(fabr_input *i)
 {
-  return fabr_rex("symbol", i, "[^ \b\f\n\r\t\"',\\[\\]\\{\\}#\\\\:]+");
+  return fabr_rep("symbolk", i, _symeltk, 1, 0);
 }
 static fabr_tree *_symbol(fabr_input *i)
 {
-  return fabr_rex("symbol", i, "[^ \b\f\n\r\t\"',\\[\\]\\{\\}#\\\\]+");
+  return fabr_rep("symbol", i, _symelt, 1, 0);
 }
 
 static fabr_tree *_number(fabr_input *i)
@@ -236,10 +265,6 @@ static fabr_tree *_key(fabr_input *i)
   return fabr_alt("key", i, _string, _sqstring, _symbolk, NULL);
 }
 
-static fabr_tree *_colon(fabr_input *i)
-{
-  return fabr_str(NULL, i, ":");
-}
 static fabr_tree *_col(fabr_input *i)
 {
   return fabr_seq(NULL, i, _colon, _postval, NULL);
@@ -351,9 +376,6 @@ static fabr_tree *_djan(fabr_input *i)
 //    NULL);
 
 static fabr_tree *_rad_g(fabr_input *i); // forward
-
-static fabr_tree *_pstart(fabr_input *i) { return fabr_str(NULL, i, "("); }
-static fabr_tree *_pend(fabr_input *i) { return fabr_str(NULL, i, ")"); }
 
 //static fabr_tree *_rad_comma(fabr_input *i)
 //{
@@ -909,13 +931,13 @@ fdja_value *fdja_parse_radial(char *input, const char *origin)
   fabr_tree *t = fabr_parse_all(input, _radial);
   // todo: deal with errors (t->result < 0) (well, it's cared for downstream)
 
-  fabr_puts(t, input, 3);
+  //fabr_puts(t, input, 3);
     //
     // debugging input and cleaned up tree
 
-  //fabr_tree *tt = fabr_parse_f(input, _radial, FABR_F_ALL);
-  //flu_putf(fabr_tree_to_string(tt, input, 1));
-  //fabr_tree_free(tt);
+  fabr_tree *tt = fabr_parse_f(input, _radial, FABR_F_ALL);
+  flu_putf(fabr_tree_to_string(tt, input, 1));
+  fabr_tree_free(tt);
     //
     // debugging whole tree (no pruning)
 
