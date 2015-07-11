@@ -449,15 +449,15 @@ static fabr_tree *_rad_h(fabr_input *i)
   return fabr_seq("rad_h", i, _rad_v, NULL);
 }
 
-//static fabr_tree *_rad_es(fabr_input *i)
-//{
-//  return fabr_rep("rad_es", i, _rad_ce, 0, 0);
-//}
+static fabr_tree *_rad_es(fabr_input *i)
+{
+  //return fabr_rep("rad_es", i, _rad_ce, 0, 0);
+  return fabr_rep(NULL, i, _rad_ce, 0, 0);
+}
 
 static fabr_tree *_rad_g(fabr_input *i)
 {
-  return fabr_seq("rad_g", i, _rad_h, _rad_ce, fabr_star, NULL);
-  //return fabr_seq("rad_g", i, _rad_h, _rad_es, NULL);
+  return fabr_seq("rad_g", i, _rad_h, _rad_es, NULL);
 }
 
 static fabr_tree *_rad_i(fabr_input *i)
@@ -860,13 +860,11 @@ static fdja_value *parse_radg(char *input, ssize_t ind, fabr_tree *radg)
 {
   // rad_h rad_e*
 
-  //printf("parse_radg() "); fabr_puts(radg, input, 3);
+  //printf("\nparse_radg() "); fabr_puts(radg, input, 3);
 
-  fdja_value *h = parse_radv(input, fabr_tree_lookup(radg, "rad_v")->child);
+  fdja_value *h = parse_radv(input, radg->child->child->child);
 
-  flu_list *es = fabr_tree_list_named(radg, "rad_e");
-  //flu_list *es = fabr_tree_list_named(fabr_tree_lookup(radg, "rad_es"), "rad_e");
-  //printf("parse_radg() es->size %zu\n", es->size);
+  flu_list *es = fabr_tree_list_named(radg->child->sibling, "rad_e");
 
   fdja_value *r = fdja_value_malloc('a', NULL, 0, 0, 0);
   fdja_value *vname = NULL;
@@ -930,12 +928,12 @@ static void fdja_parse_radl(char *input, fabr_tree *radl, flu_list *values)
 
 fdja_value *fdja_parse_radial(char *input, const char *origin)
 {
-  printf("fdja_parse_radial() >[1;33m%s[0;0m< \"%s\"\n", input, origin);
+  //printf("fdja_parse_radial() >[1;33m%s[0;0m< \"%s\"\n", input, origin);
 
   fabr_tree *t = fabr_parse_all(input, _radial);
   // todo: deal with errors (t->result < 0) (well, it's cared for downstream)
 
-  fabr_puts(t, input, 3);
+  //fabr_puts(t, input, 3);
     //
     // debugging input and cleaned up tree
 
