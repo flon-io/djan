@@ -236,8 +236,8 @@ int fabr_match(const char *input, fabr_parser *p);
 
 #endif // FLON_AABRO_H
 
-//commit 8549c8a26cf41bc6393cbf2ec064bf3ba11e2085
+//commit e90cc528232935b4f70234e002010850b7c4a2bd
 //Author: John Mettraux <jmettraux@gmail.com>
-//Date:   Thu Jul 9 08:00:28 2015 +0900
+//Date:   Sun Jul 12 07:14:47 2015 +0900
 //
-//    comment out spec debug output
+//    prevent altg from cumulating non-winners
