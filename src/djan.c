@@ -1796,6 +1796,7 @@ fdja_value *fdja_oset(fdja_value *object, const char *key, ...)
 
 int fdja_merge(fdja_value *dst, fdja_value *src)
 {
+  if (dst == NULL || src == NULL) return 0;
   if (dst->type != 'o' || src->type != 'o') return 0;
 
   for (fdja_value *n = src->child; n; n = n->sibling)

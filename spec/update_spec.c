@@ -284,6 +284,11 @@ context "update"
       expect(fdja_to_json(vv) ===f "{\"b\":1}");
     }
 
+    it "returns 0 if one of the arg is NULL"
+    {
+      expect(fdja_merge(NULL, NULL) == 0);
+    }
+
     it "returns 0 if one of the arg is not an object"
     {
       v = fdja_v("{ a: 0 }");
