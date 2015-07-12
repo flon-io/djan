@@ -294,9 +294,33 @@ context "parsing"
         expect(fdja_to_json(v) ===f "[]");
       }
 
+      it "parses [ # comment \\n 1 3 ]"
+      {
+        v = fdja_dparse("[ # comment \n 1 3 ]");
+
+        expect(v != NULL);
+        expect(fdja_to_json(v) ===f "[1,3]");
+      }
+
       it "parses [ 1 # comment \\n 3 ]"
       {
         v = fdja_dparse("[ 1 # comment \n 3 ]");
+
+        expect(v != NULL);
+        expect(fdja_to_json(v) ===f "[1,3]");
+      }
+
+      it "parses [ 1 // comment \\n 3 ]"
+      {
+        v = fdja_dparse("[ 1 // comment \n 3 ]");
+
+        expect(v != NULL);
+        expect(fdja_to_json(v) ===f "[1,3]");
+      }
+
+      it "parses [ 1 3 // comment\\n ]"
+      {
+        v = fdja_dparse("[ 1 3 // comment\n ]");
 
         expect(v != NULL);
         expect(fdja_to_json(v) ===f "[1,3]");
