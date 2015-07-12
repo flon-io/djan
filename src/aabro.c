@@ -707,10 +707,10 @@ static ssize_t quantify(char *rx, size_t rxn, size_t *reps)
 
     char cc = rx_at(rx, rxn, i);
 
-    if (cc == '\0') break;
-    if (cc == ',') comma++; if (comma > 1) break; else continue;
+    if (cc == '\0') { break; }
+    if (cc == ',') { comma++; if (comma > 1) break; /*else*/ continue; }
     if (cc == '}') { z = i; break; }
-    if (cc < '0' || cc > '9') break;
+    if (cc < '0' || cc > '9') { break; }
   }
 
   if (z == 0) return -1; // error
@@ -722,7 +722,7 @@ static ssize_t quantify(char *rx, size_t rxn, size_t *reps)
   char *comma = rx_chr(rx, rxn, ',');
 
   reps[1] = comma == NULL ? reps[0] : strtol(comma + 1, NULL, 10);
-  return z;
+  return z + 1;
 }
 
 static size_t find_range_end(char *rx, size_t rxn)
@@ -892,7 +892,8 @@ static fabr_tree *rex_rep(fabr_input *i, char *rx, size_t rxn)
 
   //printf(
   //  "      %zu qtf >%s<%zu mml %zd mm[%zu, %zu]\n",
-  //  m, rx + z + off, rxn - z - off, mml, mm[0], mm[1]);
+  //  //m, rx + z + off, rxn - z - off, mml, mm[0], mm[1]);
+  //  0, rx + z + off, rxn - z - off, mml, mm[0], mm[1]);
 
   if (mml == -1)
   {
@@ -1045,7 +1046,7 @@ static fabr_tree *rex_alt(fabr_input *i, char *rx, size_t rxn)
     //  m, n, prev->result, prev->length);
     //n++;
 
-    if (prev->result == 1) break;
+    if (prev->result != 0) break;
 
   } while (c != 0);
 
@@ -1220,8 +1221,8 @@ int fabr_match(const char *input, fabr_parser *p)
   return r;
 }
 
-//commit e90cc528232935b4f70234e002010850b7c4a2bd
+//commit 70fd5417fdcf7a2f1938c9b89383e53fbd447276
 //Author: John Mettraux <jmettraux@gmail.com>
-//Date:   Sun Jul 12 07:14:47 2015 +0900
+//Date:   Sun Jul 12 11:55:39 2015 +0900
 //
-//    prevent altg from cumulating non-winners
+//    fix a{2} and a{2,3}
