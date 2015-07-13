@@ -269,14 +269,16 @@ static fabr_tree *_key(fabr_input *i)
   return fabr_alt("key", i, _string, _sqstring, _symbolk, NULL);
 }
 
-static fabr_tree *_col(fabr_input *i)
-{
-  return fabr_seq(NULL, i, _colon, _postval, NULL);
-}
+//static fabr_tree *_col(fabr_input *i)
+//{
+//  return fabr_seq(NULL, i, _colon, _postval, NULL);
+//}
 
 static fabr_tree *_entry(fabr_input *i)
 {
-  return fabr_seq("entry", i, _key, _col, _val, NULL);
+  return fabr_seq("entry", i,
+    _key, _postval, _colon, _postval, _value, _postval,
+    NULL);
 }
 static fabr_tree *_entry_qmark(fabr_input *i)
 {
@@ -567,10 +569,16 @@ static fdja_value *fdja_extract_entries(char *input, fabr_tree *t)
   for (flu_node *n = ts->first; n != NULL; n = n->next)
   {
     fabr_tree *tt = (fabr_tree *)n->item;
+
     //printf("dees() ent "); fabr_puts(tt, input, 3);
-    fdja_value *v = fdja_extract_value(input, tt->child->sibling->sibling);
-    v->key = fdja_extract_key(input, tt->child->child);
+
+    fdja_value *v =
+      fdja_extract_value(input, tt->child->sibling->sibling->sibling->sibling);
+    v->key =
+      fdja_extract_key(input, tt->child->child);
+
     //printf("dees() ent key >%s<\n", v->key);
+
     if (first == NULL) first = v;
     if (child != NULL) child->sibling = v;
     child = v;

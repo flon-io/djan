@@ -438,6 +438,14 @@ context "parsing"
         expect(v != NULL);
         expect(fdja_to_json(v) ===f "{}");
       }
+
+      it "parses {b : 1}"
+      {
+        v = fdja_dparse("{b : 1}");
+
+        expect(v != NULL);
+        expect(fdja_to_json(v) ===f "{\"b\":1}");
+      }
     }
 
     context "symbols"

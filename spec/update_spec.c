@@ -277,6 +277,9 @@ context "update"
       v = fdja_v("{ a: 0 }");
       vv = fdja_v("{ b : 1}");
 
+      expect(v != NULL);
+      expect(vv != NULL);
+
       int r = fdja_merge(v, vv);
 
       expect(r == 1);
