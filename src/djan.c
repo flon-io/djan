@@ -261,15 +261,8 @@ static fabr_tree *_obj(fabr_input *i)
   return fabr_seq(NULL, i, _postval, _ob, _postval, NULL);
 }
 
-static fabr_tree *_sbstart(fabr_input *i)
-{
-  return fabr_rex(NULL, i, "\\[[ \t\n\r]*");
-    // TODO eol comments
-}
-static fabr_tree *_sbend(fabr_input *i)
-{
-  return fabr_str(NULL, i, "]");
-}
+static fabr_tree *_sbstart(fabr_input *i) { return fabr_str(NULL, i, "["); }
+static fabr_tree *_sbend(fabr_input *i) { return fabr_str(NULL, i, "]"); }
 
 static fabr_tree *_array(fabr_input *i)
 {
