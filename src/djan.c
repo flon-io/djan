@@ -92,9 +92,6 @@ fdja_value *fdja_object_malloc()
 
 // DJAN PARSERS
 
-//fabr_parser *blanks = // blanks and comments
-//  fabr_rex("([ \t]*((#[^\r\n]*)?([\r\n]|$))?)*");
-
 static fabr_tree *_ws(fabr_input *i) { return fabr_rng(NULL, i, " \t"); }
 static fabr_tree *_rn(fabr_input *i) { return fabr_rng(NULL, i, "\r\n"); }
 static fabr_tree *_comma(fabr_input *i) { return fabr_str(NULL, i, ","); }
@@ -123,52 +120,10 @@ static fabr_tree *_postval(fabr_input *i)
   return fabr_seq(NULL, i, _eol, fabr_star, NULL);
 }
 
-//static fabr_tree *_sep_cm(fabr_input *i)
-//{
-//  return fabr_seq(NULL, i, _comma, _postval, fabr_qmark, NULL);
-//}
-//static fabr_tree *_sep_rn(fabr_input *i)
-//{
-//  return fabr_seq(NULL, i, _rn, _postval, fabr_qmark, NULL);
-//}
-  //
-//static fabr_tree *_separator(fabr_input *i)
-//{
-//  return fabr_rng(NULL, i, ", \t\r\n");
-//}
-  //
 static fabr_tree *_sep(fabr_input *i)
 {
-  //return fabr_alt("SEP", i, _sep_cm, _sep_rn, NULL);
-  //return fabr_seq("SEP", i, _separator, _postval, NULL);
   return fabr_seq(NULL, i, _comma, fabr_qmark, _postval, NULL);
 }
-
-//static fabr_tree *_blank(fabr_input *i)
-//{
-//  return fabr_rex(NULL, i, "[ \t]+");
-//}
-//static fabr_tree *_eol(fabr_input *i)
-//{
-//  return fabr_rex(NULL, i, "([ \t]*((#[^\r\n]*)?([\r\n]|$))?)*");
-//}
-//static fabr_tree *_blank_or_eol(fabr_input *i)
-//{
-//  return fabr_alt(NULL, i, _eol, _blank, NULL);
-//}
-//
-//static fabr_tree *_comma(fabr_input *i)
-//{
-//  return fabr_str(NULL, i, ",");
-//}
-//static fabr_tree *_sep(fabr_input *i)
-//{
-//  //return fabr_rex(NULL, i, "([ \t\n\r]*,[ \t\n\r]*|[ \t\n\r]+)");
-//    // TODO make it spaces - optional comma - blank (comments)
-//
-//  //return fabr_rex("_sep", i, "[ \t\n\r]*,?([ \t]*((#[^\r\n]*)?([\r\n]|$))?)*");
-//  return fabr_rex(NULL, i, ",[ \t\n\r]*|[ \t\n\r]+)");
-//}
 
 static fabr_tree *_value(fabr_input *i); // forward
 
@@ -269,11 +224,6 @@ static fabr_tree *_key(fabr_input *i)
   return fabr_alt("key", i, _string, _sqstring, _symbolk, NULL);
 }
 
-//static fabr_tree *_col(fabr_input *i)
-//{
-//  return fabr_seq(NULL, i, _colon, _postval, NULL);
-//}
-
 static fabr_tree *_entry(fabr_input *i)
 {
   return fabr_seq("entry", i,
@@ -348,50 +298,8 @@ static fabr_tree *_djan(fabr_input *i)
 }
 
 //// radial
-//
-//fabr_parser *syk_dol =
-//  fabr_seq(
-//    fabr_string("$("), fabr_n("symk"), fabr_string(")"), NULL);
-//fabr_parser *syk_str =
-//  fabr_rex(
-//    "("
-//      "[^\\$ \b\f\n\r\t\"',\\[\\]\\{\\}\\)#\\\\:]" "|"
-//      "\\$[^\\( \b\f\n\r\t\"',\\[\\]\\{\\}\\)#\\\\:]"
-//    ")+");
-//fabr_parser *symk =
-//  fabr_n_rep(
-//    "symk", fabr_alt(syk_dol, syk_str, NULL), 1, -1);
-//
-//fabr_parser *syv_dol =
-//  fabr_seq(
-//    fabr_string("$("), fabr_n("symv"), fabr_string(")"), NULL);
-//fabr_parser *syv_str =
-//  fabr_rex(
-//    "("
-//      //"[^\\$ \b\f\n\r\t\"',\\[\\]\\{\\}\\)#\\\\]" "|" // accept dollar...
-//      "[^ \b\f\n\r\t\"',\\[\\]\\{\\}\\)#\\\\]" "|"
-//      "\\$[^\\( \b\f\n\r\t\"',\\[\\]\\{\\}\\)#\\\\]"
-//    ")+");
-//fabr_parser *symv =
-//  fabr_n_rep(
-//    "symv", fabr_alt(syv_dol, syv_str, NULL), 1, -1);
-//
-////fabr_parser *symbolh = fabr_n_rex("symbolh", "[^ \t\n\r,\\[\\]\\{\\}#]+");
-//
-//fabr_parser *rad_p =
-//  fabr_n_seq(
-//    "rad_p",
-//    fabr_string("("), blanks, fabr_n("rad_g"), blanks, fabr_string(")"),
-//    NULL);
 
 static fabr_tree *_rad_g(fabr_input *i); // forward
-
-//static fabr_tree *_rad_comma(fabr_input *i)
-//{
-//  return fabr_seq(NULL, i,
-//    _ws, fabr_star, _rad_com, fabr_qmark, _ws, fabr_star,
-//    NULL);
-//}
 
 static fabr_tree *_rad_p(fabr_input *i)
 {
@@ -400,17 +308,6 @@ static fabr_tree *_rad_p(fabr_input *i)
     NULL);
       // TODO use _eol instead of _ws
 }
-
-//fabr_parser *rad_v =
-//  fabr_n_altg(
-//    "rad_v",
-//    fabr_alt(
-//      rad_p,
-//      string, sqstring, rxstring,
-//      number, object, array, jtrue, jfalse, jnull,
-//      NULL),
-//    symv,
-//    NULL);
 
 static fabr_tree *_rad_v(fabr_input *i)
 {
@@ -460,7 +357,6 @@ static fabr_tree *_rad_h(fabr_input *i)
 
 static fabr_tree *_rad_es(fabr_input *i)
 {
-  //return fabr_rep("rad_es", i, _rad_ce, 0, 0);
   return fabr_rep(NULL, i, _rad_ce, 0, 0);
 }
 
@@ -836,11 +732,6 @@ static void fdja_stack_radl(flu_list *values, fdja_value *v)
     flu_list_unshift(values, v);
   }
 }
-
-//static int is_stringy(fabr_tree *t)
-//{
-//  return t->name && *t->name == 's'; // string, sqstring, symbol
-//}
 
 static fdja_value *parse_radg(char *input, ssize_t ind, fabr_tree *radg);
   // forward...
