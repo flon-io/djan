@@ -278,6 +278,10 @@ static fabr_tree *_entry(fabr_input *i)
 {
   return fabr_seq("entry", i, _key, _col, _val, NULL);
 }
+static fabr_tree *_entry_qmark(fabr_input *i)
+{
+  return fabr_rep(NULL, i, _entry, 0, 1);
+}
 
 static fabr_tree *_pbstart(fabr_input *i)
 {
@@ -290,11 +294,11 @@ static fabr_tree *_pbend(fabr_input *i)
 
 static fabr_tree *_object(fabr_input *i)
 {
-  return fabr_eseq("object", i, _pbstart, _entry, _sep, _pbend);
+  return fabr_eseq("object", i, _pbstart, _entry_qmark, _sep, _pbend);
 }
 static fabr_tree *_bjec(fabr_input *i)
 {
-  return fabr_jseq("object", i, _entry, _sep);
+  return fabr_jseq("object", i, _entry_qmark, _sep);
 }
 static fabr_tree *_ob(fabr_input *i)
 {
