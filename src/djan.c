@@ -259,6 +259,10 @@ static fabr_tree *_val(fabr_input *i)
 {
   return fabr_seq(NULL, i, _value, _postval, NULL);
 }
+static fabr_tree *_val_qmark(fabr_input *i)
+{
+  return fabr_rep(NULL, i, _val, 0, 1);
+}
 
 static fabr_tree *_key(fabr_input *i)
 {
@@ -272,9 +276,7 @@ static fabr_tree *_col(fabr_input *i)
 
 static fabr_tree *_entry(fabr_input *i)
 {
-  return fabr_seq("entry", i,
-    _key, _col, _val,
-    NULL);
+  return fabr_seq("entry", i, _key, _col, _val, NULL);
 }
 
 static fabr_tree *_pbstart(fabr_input *i)
@@ -315,7 +317,7 @@ static fabr_tree *_sbend(fabr_input *i)
 
 static fabr_tree *_array(fabr_input *i)
 {
-  return fabr_eseq("array", i, _sbstart, _val, _sep, _sbend);
+  return fabr_eseq("array", i, _sbstart, _val_qmark, _sep, _sbend);
 }
 
 static fabr_tree *_true(fabr_input *i) { return fabr_str("true", i, "true"); }
