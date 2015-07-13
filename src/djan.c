@@ -235,14 +235,8 @@ static fabr_tree *_entry_qmark(fabr_input *i)
   return fabr_rep(NULL, i, _entry, 0, 1);
 }
 
-static fabr_tree *_pbstart(fabr_input *i)
-{
-  return fabr_rex(NULL, i, "\\{[ \t\n\r]*");
-}
-static fabr_tree *_pbend(fabr_input *i)
-{
-  return fabr_rex(NULL, i, "}");
-}
+static fabr_tree *_pbstart(fabr_input *i) { return fabr_str(NULL, i, "{"); }
+static fabr_tree *_pbend(fabr_input *i) { return fabr_rex(NULL, i, "}"); }
 
 static fabr_tree *_object(fabr_input *i)
 {
