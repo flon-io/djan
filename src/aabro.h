@@ -236,8 +236,8 @@ int fabr_match(const char *input, fabr_parser *p);
 
 #endif // FLON_AABRO_H
 
-//commit 70fd5417fdcf7a2f1938c9b89383e53fbd447276
+//commit 72e3adf41698498f21138f0905522c33d5376931
 //Author: John Mettraux <jmettraux@gmail.com>
-//Date:   Sun Jul 12 11:55:39 2015 +0900
+//Date:   Mon Jul 13 07:33:00 2015 +0900
 //
-//    fix a{2} and a{2,3}
+//    prevent inf loop on eseq zero-length sep and elt
