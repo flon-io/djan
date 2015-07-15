@@ -420,20 +420,32 @@ context "parsing radial"
       }
 
       it "accepts # eol comments"
-//      {
-//        v = fdja_dparse_radial(
-//          "if ( # really?\n"
-//          "   a > b)\n"
-//        );
-//
-//        ensure(v != NULL);
-//
-//        ensure(fdja_tod(v) ===f ""
-//          "[ if, { _0: [ a, { _0: >, _1: b }, 1, [] ] }, 1, [] ]"
-//        );
-//      }
+      {
+        v = fdja_dparse_radial(
+          "if ( # really?\n"
+          "   a > b)\n"
+        );
+
+        ensure(v != NULL);
+
+        ensure(fdja_tod(v) ===f ""
+          "[ if, { _0: [ a, { _0: >, _1: b }, 2, [] ] }, 1, [] ]"
+        );
+      }
 
       it "accepts // eol comments"
+      {
+        v = fdja_dparse_radial(
+          "if ( // really?\n"
+          "   a > b)\n"
+        );
+
+        ensure(v != NULL);
+
+        ensure(fdja_tod(v) ===f ""
+          "[ if, { _0: [ a, { _0: >, _1: b }, 2, [] ] }, 1, [] ]"
+        );
+      }
     }
 
     context "and // regexes"

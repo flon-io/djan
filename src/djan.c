@@ -284,16 +284,15 @@ static fabr_tree *_djan(fabr_input *i)
   return fabr_seq(NULL, i, _postval, _val, NULL);
 }
 
-//// radial
+// radial
 
 static fabr_tree *_rad_g(fabr_input *i); // forward
 
 static fabr_tree *_rad_p(fabr_input *i)
 {
   return fabr_seq("rad_p", i,
-    _pstart, _ws, fabr_star, _rad_g, _ws, fabr_star, _pend,
+    _pstart, _eol, _ws, fabr_star, _rad_g, _eol, _pend,
     NULL);
-      // TODO use _eol instead of _ws
 }
 
 static fabr_tree *_rad_v(fabr_input *i)
