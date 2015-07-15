@@ -1088,7 +1088,7 @@ fabr_tree *fabr_eseq(
     fabr_tree *t = startp(i);
     *next = t;
 
-    if (t->result != 1) { r->result = 0; return r; }
+    if (t->result != 1) { r->result = t->result; return r; }
 
     r->length += t->length;
     next = &t->sibling;
@@ -1228,8 +1228,10 @@ int fabr_match(const char *input, fabr_parser *p)
   return r;
 }
 
-//commit 72e3adf41698498f21138f0905522c33d5376931
+//commit 932612069f2614e398a6038eab7ce33919a3f263
 //Author: John Mettraux <jmettraux@gmail.com>
-//Date:   Mon Jul 13 07:33:00 2015 +0900
+//Date:   Wed Jul 15 06:55:37 2015 +0900
 //
-//    prevent inf loop on eseq zero-length sep and elt
+//    don't let eseq silence errors in its start parser
+//    
+//    closes gh-14

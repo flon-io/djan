@@ -236,8 +236,10 @@ int fabr_match(const char *input, fabr_parser *p);
 
 #endif // FLON_AABRO_H
 
-//commit 72e3adf41698498f21138f0905522c33d5376931
+//commit 932612069f2614e398a6038eab7ce33919a3f263
 //Author: John Mettraux <jmettraux@gmail.com>
-//Date:   Mon Jul 13 07:33:00 2015 +0900
+//Date:   Wed Jul 15 06:55:37 2015 +0900
 //
-//    prevent inf loop on eseq zero-length sep and elt
+//    don't let eseq silence errors in its start parser
+//    
+//    closes gh-14
