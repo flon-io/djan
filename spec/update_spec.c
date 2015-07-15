@@ -184,7 +184,13 @@ context "update"
     }
 
     it "returns NULL if the target is NULL"
-      // TODO maybe
+    {
+      v = NULL;
+      vv = fdja_v("false");
+      fdja_value *r = fdja_set(v, "a", vv);
+
+      expect(r == NULL);
+    }
 
     it "re-sets values"
     {

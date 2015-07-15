@@ -1588,6 +1588,7 @@ _over:
 
 fdja_value *fdja_set(fdja_value *object, const char *key, ...)
 {
+  if (object == NULL) return NULL;
   if (object->type != 'o') return NULL;
 
   va_list ap; va_start(ap, key);
