@@ -487,6 +487,16 @@ context "update"
       expect(fdja_to_json(v) ===F fdja_vj("[ a, b, 2 ]"));
     }
 
+    it "sets in the object immediately at hand"
+    {
+      v = fdja_dparse("{ message: ok, x: y }");
+
+      fdja_value *r = fdja_pset(v, "message", fdja_s("bad"));
+
+      expect(r != NULL);
+      expect(fdja_to_json(v) ===F fdja_vj("{ message: bad, x: y }"));
+    }
+
     it "returns 0 when outside of array reach"
     {
       v = fdja_dparse("{ a: [ 0 ] }");
@@ -566,6 +576,17 @@ context "update"
       expect(r != NULL);
       expect(fdja_tod(v) ===f "{ a: { b: 1 } }");
       expect(fdja_tod(r) ===f "1");
+    }
+
+    it "sets over at the root"
+    {
+      v = fdja_v("{ message: ok, _links: {} }");
+
+      fdja_value *r = fdja_psetv(v, "message", "\"not ok\"");
+
+      expect(r != NULL);
+      expect(fdja_to_json(r) ===f "\"not ok\"");
+      expect(fdja_to_json(v) ===f "{\"message\":\"not ok\",\"_links\":{}}");
     }
 
     it "returns NULL when it cannot set"
