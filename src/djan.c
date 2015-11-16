@@ -1822,17 +1822,20 @@ _over:
   return r;
 }
 
-fdja_value *fdja_psetv(fdja_value *start, const char *path, ...)
+static fdja_value *fdja_psetx(
+  char mode, fdja_value *start, const char *path, va_list ap)
 {
-  va_list ap; va_start(ap, path);
   char *p = flu_svprintf(path, ap);
   char *f = va_arg(ap, char *);
   char *s = flu_svprintf(f, ap);
-  va_end(ap);
 
   fdja_value *r = NULL;
 
-  fdja_value *v = fdja_parse(s);
+  fdja_value *v = NULL;
+  //
+  if (mode == 'v') { v = fdja_parse(s); }
+  else { v = fdja_s(s); free(s); }
+  //
   if (v == NULL) { free(s); goto _over; }
 
   r = fdja_pset(start, p, v);
@@ -1841,6 +1844,24 @@ fdja_value *fdja_psetv(fdja_value *start, const char *path, ...)
 _over:
 
   free(p);
+
+  return r;
+}
+
+fdja_value *fdja_psetv(fdja_value *start, const char *path, ...)
+{
+  va_list ap; va_start(ap, path);
+  fdja_value *r = fdja_psetx('v', start, path, ap);
+  va_end(ap);
+
+  return r;
+}
+
+fdja_value *fdja_psets(fdja_value *start, const char *path, ...)
+{
+  va_list ap; va_start(ap, path);
+  fdja_value *r = fdja_psetx('s', start, path, ap);
+  va_end(ap);
 
   return r;
 }

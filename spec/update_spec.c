@@ -631,6 +631,19 @@ context "update"
     }
   }
 
+  describe "fdja_psets()"
+  {
+    it "sets"
+    {
+      v = fdja_dparse("{ a: {} }");
+
+      fdja_value *r = fdja_psets(v, "a.type-%i", 0, "%s car", "blue");
+
+      expect(r != NULL);
+      expect(fdja_to_json(v) ===f "{\"a\":{\"type-0\":\"blue car\"}}");
+    }
+  }
+
   describe "fdja_oset()"
   {
     it "sets"

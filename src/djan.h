@@ -290,6 +290,10 @@ fdja_value *fdja_pset(fdja_value *start, const char *path, ...);
  */
 fdja_value *fdja_psetv(fdja_value *start, const char *path, ...);
 
+/* Like fdja_psetv() but the last arguments are passed to fdja_s() instead.
+ */
+fdja_value *fdja_psets(fdja_value *start, const char *path, ...);
+
 /* Empties old and replaces its content with the content of new.
  * The key and the child/sibling links of old are preserved.
  *
