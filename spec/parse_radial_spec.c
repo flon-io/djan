@@ -388,6 +388,19 @@ context "parsing radial"
         );
       }
 
+      it "reads '(' groups (2)"
+      {
+        v = fdja_dparse_radial(
+          "sub (1 + 2)\n"
+        );
+
+        ensure(v != NULL);
+
+        ensure(fdja_tod(v) ===f ""
+          "[ sub, { _0: [ 1, { _0: +, _1: 2 }, 1, [] ] }, 1, [] ]"
+        );
+      }
+
       it "accepts '(' groups as head"
       {
         v = fdja_dparse_radial(
