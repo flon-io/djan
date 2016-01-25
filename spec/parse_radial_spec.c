@@ -397,7 +397,9 @@ context "parsing radial"
         ensure(v != NULL);
 
         ensure(fdja_tod(v) ===f ""
-          "[ sub, { _0: [ 1, { _0: +, _1: 2 }, 1, [] ] }, 1, [] ]"
+          "[ sub, { "
+            "_0: [ [ val, { _0: 1 }, 1, [] ], { _0: +, _1: 2 }, 1, [] ]"
+          " }, 1, [] ]"
         );
       }
 

@@ -754,7 +754,8 @@ static fdja_value *parse_radg(char *input, ssize_t ind, fabr_tree *radg)
 
   //printf("\nparse_radg() "); fabr_puts(radg, input, 3);
 
-  fdja_value *h = parse_radv(input, radg->child->child->child);
+  fabr_tree *th = radg->child->child->child;
+  fdja_value *h = parse_radv(input, th);
 
   flu_list *es = fabr_tree_list_named(radg->child->sibling, "rad_e");
 
@@ -762,26 +763,27 @@ static fdja_value *parse_radg(char *input, ssize_t ind, fabr_tree *radg)
   fdja_value *vname = NULL;
   fdja_value *vatts = fdja_value_malloc('o', NULL, 0, 0, 0);
   fdja_value *vline = fdja_v("%zu", count_lines(input, radg->offset));
-  fdja_value *vchildren = fdja_value_malloc('a', NULL, 0, 0, 0);
 
-  if ((es == NULL || es->first == NULL) && ! fdja_is_stringy(h))
+  if (fdja_is_stringy(h) || th->name && strcmp(th->name, "rad_p") == 0)
   {
-    // single value
-
-    vname = fdja_s("val");
-
-    fdja_set(vatts, "_0", h);
+    vname = h;
   }
   else
   {
-    // vanilla tree node
+    vname = fdja_array_malloc();
+    fdja_push(vname, fdja_s("val"));
+    fdja_value *as = fdja_object_malloc();
+    fdja_set(as, "_0", h);
+    fdja_push(vname, as);
+    fdja_push(vname, fdja_clone(vline));
+    fdja_push(vname, fdja_array_malloc());
+  }
 
-    vname = h;
-
-    // attributes
-
+  if (es)
+  {
     size_t j = 0;
-    if (es) for (flu_node *n = es->first; n; n = n->next)
+
+    for (flu_node *n = es->first; n; n = n->next)
     {
       fabr_tree *ak = fabr_subtree_lookup(n->item, "rad_k");
       fabr_tree *av = fabr_subtree_lookup(n->item, "rad_v");
@@ -794,10 +796,20 @@ static fdja_value *parse_radg(char *input, ssize_t ind, fabr_tree *radg)
     }
   }
 
-  r->child = vname;
-  vname->sibling = vatts;
-  vatts->sibling = vline;
-  vline->sibling = vchildren;
+  if (vname->type == 'a' && vatts->child == NULL)
+  {
+    fdja_free(vatts);
+    fdja_free(vline);
+    fdja_free(r);
+    r = vname;
+  }
+  else
+  {
+    r->child = vname;
+    vname->sibling = vatts;
+    vatts->sibling = vline;
+    vline->sibling = fdja_array_malloc();
+  }
 
   flu_list_free(es);
 
